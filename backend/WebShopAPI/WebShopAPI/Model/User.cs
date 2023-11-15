@@ -1,4 +1,6 @@
-﻿namespace WebShopAPI.Model
+﻿using WebShopAPI.Model.OrderModel;
+
+namespace WebShopAPI.Model
 {
     public class User
     {
@@ -12,5 +14,6 @@
         public decimal Bonus { get; set; }
 
         public List<OrderItem> OrderItems { get; set; }
+        public List<Order> Orders { get; set; }
     }
 }
