@@ -1,4 +1,6 @@
-﻿namespace WebShopAPI.Model
+﻿using WebShopAPI.Model.OrderModel;
+
+namespace WebShopAPI.Model
 {
     public class OrderItem
     {
