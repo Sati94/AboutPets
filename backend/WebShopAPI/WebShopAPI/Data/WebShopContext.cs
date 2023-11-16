@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
@@ -7,7 +8,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebShopAPI.Data
 {
-    public class WebShopContext : IdentityDbContext<User>
+    public class WebShopContext : IdentityDbContext<IdentityUser, IdentityRole,string>
     {
         public WebShopContext(DbContextOptions<WebShopContext> options) : base(options)
         {
@@ -32,7 +33,10 @@ namespace WebShopAPI.Data
                 .WithOne(p => p.User)
                 .HasForeignKey<UserProfile>(p => p.UserId);
 
-            modelBuilder.Entity<OrderItem>()
+    
+        
+
+           modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.User)
                 .WithMany(u => u.OrderItems)
                 .HasForeignKey(oi => oi.UserId)
