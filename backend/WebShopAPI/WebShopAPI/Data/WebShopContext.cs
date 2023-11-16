@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.UserModels;
@@ -6,7 +7,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebShopAPI.Data
 {
-    public class WebShopContext : DbContext
+    public class WebShopContext : IdentityDbContext<User>
     {
         public WebShopContext(DbContextOptions<WebShopContext> options) : base(options)
         {

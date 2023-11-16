@@ -1,8 +1,9 @@
-﻿using WebShopAPI.Model.OrderModel;
+﻿using Microsoft.AspNetCore.Identity;
+using WebShopAPI.Model.OrderModel;
 
 namespace WebShopAPI.Model.UserModels
 {
-    public class User
+    public class User : IdentityUser
     {
         public int UserId { get; set; }
         public string UserName { get; set; }
