@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
+using WebShopAPI.Model.UserModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebShopAPI.Data
@@ -56,12 +57,15 @@ namespace WebShopAPI.Data
             modelBuilder.Entity<OrderItem>()
                .Property(oi => oi.Price)
                .HasColumnType("decimal(18, 2)");
+
             modelBuilder.Entity<Order>()
                .Property(o => o.TotalPrice)
                .HasColumnType("decimal(18, 2)");
+
             modelBuilder.Entity<Product>()
                .Property(p => p.Price)
                .HasColumnType("decimal(18, 2)");
+
             modelBuilder.Entity<User>()
                .Property(u => u.Bonus)
                .HasColumnType("decimal(18, 2)");

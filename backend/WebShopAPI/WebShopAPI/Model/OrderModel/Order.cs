@@ -1,4 +1,5 @@
 ﻿using WebShopAPI.Model.OrderModel.OrderStatus;
+using WebShopAPI.Model.UserModels;
 
 namespace WebShopAPI.Model.OrderModel
 {

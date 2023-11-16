@@ -1,4 +1,5 @@
 ﻿using WebShopAPI.Model.OrderModel;
+using WebShopAPI.Model.UserModels;
 
 namespace WebShopAPI.Model
 {
