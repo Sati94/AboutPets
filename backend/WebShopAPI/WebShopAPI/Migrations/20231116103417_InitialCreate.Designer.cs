@@ -12,7 +12,7 @@ using WebShopAPI.Data;
 namespace WebShopAPI.Migrations
 {
     [DbContext(typeof(WebShopContext))]
-    [Migration("20231115140705_InitialCreate")]
+    [Migration("20231116103417_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -122,7 +122,7 @@ namespace WebShopAPI.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("WebShopAPI.Model.User", b =>
+            modelBuilder.Entity("WebShopAPI.Model.UserModels.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -130,16 +130,37 @@ namespace WebShopAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Useres");
+                });
+
+            modelBuilder.Entity("WebShopAPI.Model.UserModels.UserProfile", b =>
+                {
+                    b.Property<int>("UserProfileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserProfileId"));
+
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Bonus")
                         .HasColumnType("decimal(18, 2)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -149,17 +170,19 @@ namespace WebShopAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.ToTable("Useres");
+                    b.HasKey("UserProfileId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("WebShopAPI.Model.OrderItem", b =>
@@ -176,10 +199,10 @@ namespace WebShopAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebShopAPI.Model.User", "User")
+                    b.HasOne("WebShopAPI.Model.UserModels.User", "User")
                         .WithMany("OrderItems")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -191,9 +214,20 @@ namespace WebShopAPI.Migrations
 
             modelBuilder.Entity("WebShopAPI.Model.OrderModel.Order", b =>
                 {
-                    b.HasOne("WebShopAPI.Model.User", "User")
+                    b.HasOne("WebShopAPI.Model.UserModels.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebShopAPI.Model.UserModels.UserProfile", b =>
+                {
+                    b.HasOne("WebShopAPI.Model.UserModels.User", "User")
+                        .WithOne("Profile")
+                        .HasForeignKey("WebShopAPI.Model.UserModels.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -210,11 +244,14 @@ namespace WebShopAPI.Migrations
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("WebShopAPI.Model.User", b =>
+            modelBuilder.Entity("WebShopAPI.Model.UserModels.User", b =>
                 {
                     b.Navigation("OrderItems");
 
                     b.Navigation("Orders");
+
+                    b.Navigation("Profile")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

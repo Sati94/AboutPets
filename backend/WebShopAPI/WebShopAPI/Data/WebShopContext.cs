@@ -19,7 +19,7 @@ namespace WebShopAPI.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;");
+            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=False;TrustServerCertificate=True;MultipleActiveResultSets=True;Connection Timeout=30");
         }
        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,7 +34,8 @@ namespace WebShopAPI.Data
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.User)
                 .WithMany(u => u.OrderItems)
-                .HasForeignKey(oi => oi.UserId);
+                .HasForeignKey(oi => oi.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p=> p.OrderItems)
@@ -72,7 +73,7 @@ namespace WebShopAPI.Data
                .Property(p => p.Price)
                .HasColumnType("decimal(18, 2)");
 
-            modelBuilder.Entity<User>()
+            modelBuilder.Entity<UserProfile>()
                .Property(u => u.Bonus)
                .HasColumnType("decimal(18, 2)");
 
