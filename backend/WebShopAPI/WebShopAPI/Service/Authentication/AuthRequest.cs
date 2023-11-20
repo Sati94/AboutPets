@@ -1,6 +1,6 @@
 ﻿namespace WebShopAPI.Service.Authentication
 {
-    public class AuthRequest
-    {
-    }
+    public record AuthRequest(string Email, string Password);
+    
+    
 }
