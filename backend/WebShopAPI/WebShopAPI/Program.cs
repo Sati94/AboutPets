@@ -26,6 +26,16 @@ builder.Services.AddDbContext<WebShopContext>();
 var app = builder.Build();
 AddRoles();
 AddAdmin();
+
+app.UseCors(builder =>
+{
+    builder.AllowAnyOrigin();
+    builder.AllowAnyHeader();
+    builder.AllowAnyMethod();
+
+});
+
+
             
 if (app.Environment.IsDevelopment())
    {
@@ -35,6 +45,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 
