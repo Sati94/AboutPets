@@ -1,4 +1,5 @@
-﻿using WebShopAPI.Model.OrderModel;
+﻿using System.Text.Json.Serialization;
+using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.UserModels;
 
 namespace WebShopAPI.Model
@@ -10,6 +11,7 @@ namespace WebShopAPI.Model
         public int Quantity { get; set; }
         public decimal Price { get; set; }
 
+        [JsonIgnore]
         public int OrderId { get; set; }
         public Order Order { get; set; }
 

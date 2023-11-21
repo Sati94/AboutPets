@@ -1,4 +1,6 @@
-﻿namespace WebShopAPI.Model.UserModels
+﻿using System.Text.Json.Serialization;
+
+namespace WebShopAPI.Model.UserModels
 {
     public class UserProfile
     {
@@ -10,6 +12,7 @@
         public decimal Bonus { get; set; }
 
         public string UserId { get; set; }
+        [JsonIgnore]
         public User User { get; set; }
     }
 }

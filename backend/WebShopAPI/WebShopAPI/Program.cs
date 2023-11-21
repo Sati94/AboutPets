@@ -7,8 +7,7 @@ using WebShopAPI.Model.UserModels;
 using System.Numerics;
 using System.Text;
 using WebShopAPI.Data;
-
-
+using WebShopAPI.Service.ProductServiceMap;
 
 var builder = WebApplication.CreateBuilder(args);
 AddAuthentication();
@@ -19,6 +18,7 @@ ConfigureSwagger();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddDbContext<WebShopContext>();
 

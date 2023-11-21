@@ -1,5 +1,6 @@
 ﻿using WebShopAPI.Data;
 using WebShopAPI.Model;
+using WebShopAPI.Model.DTOS;
 using WebShopAPI.Model.CategoryClasses;
 
 namespace WebShopAPI.Service.ProductServiceMap
@@ -11,7 +12,7 @@ namespace WebShopAPI.Service.ProductServiceMap
         {
             _context = context;
         }
-        public async Task<Product> CreatePorductAsync(Product product)
+        public async Task<Product> CreatePorductAsync(ProductDto product)
         {
              var newProduct  = new Product 
              {

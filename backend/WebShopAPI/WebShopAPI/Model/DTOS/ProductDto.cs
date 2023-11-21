@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Text.Json.Serialization;
-using WebShopAPI.Model.CategoryClasses;
+﻿using WebShopAPI.Model.CategoryClasses;
 
-namespace WebShopAPI.Model
+namespace WebShopAPI.Model.DTOS
 {
-    public class Product
+    public class ProductDto
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; }
@@ -15,8 +13,5 @@ namespace WebShopAPI.Model
         public Category Category { get; set; }
         public SubCategory SubCategory { get; set; }
         public string ImageBase64 { get; set; }
-
-        [JsonIgnore]
-        public List<OrderItem> OrderItems { get; set; }
     }
 }

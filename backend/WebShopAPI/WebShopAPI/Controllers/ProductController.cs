@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Model;
+using WebShopAPI.Model.DTOS;
 using WebShopAPI.Service.ProductServiceMap;
 
 namespace WebShopAPI.Controllers
@@ -16,9 +17,9 @@ namespace WebShopAPI.Controllers
             _productService = productService;
         }
         [HttpPost("/create/product"), Authorize(Roles ="Admin")]
-        public async Task<ActionResult<Product>> CreateProduct(Product product)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductDto product)
         {
-            var newProduct = _productService.CreatePorductAsync(product);
+            var newProduct = await _productService.CreatePorductAsync(product);
             return Ok(newProduct);
         }
 
