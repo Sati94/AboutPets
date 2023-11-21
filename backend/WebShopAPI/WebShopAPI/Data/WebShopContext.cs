@@ -21,7 +21,7 @@ namespace WebShopAPI.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=False;TrustServerCertificate=True;MultipleActiveResultSets=True;Connection Timeout=30");
+            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;");
         }
        
         protected override void OnModelCreating(ModelBuilder modelBuilder)

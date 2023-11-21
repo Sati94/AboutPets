@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -38,10 +37,11 @@ app.UseCors(builder =>
 
             
 if (app.Environment.IsDevelopment())
-   {
+{
      app.UseSwagger();
      app.UseSwaggerUI();
-   }
+     app.UseDeveloperExceptionPage();
+}
 
 app.UseHttpsRedirection();
 
@@ -153,7 +153,7 @@ async Task CreateAdminIfNotExists()
 {
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    var adminInDb = await userManager.FindByEmailAsync("admin@admin1.com");
+    var adminInDb = await userManager.FindByEmailAsync("admin@admin.com");
     if (adminInDb == null)
     {
         var admin = new IdentityUser { UserName = "admin", Email = "admin@admin.com" };
@@ -162,16 +162,7 @@ async Task CreateAdminIfNotExists()
         if (adminCreated.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "Admin");
-            var customUser = new User
-            {
-                UserName = admin.UserName,
-                Email = admin.Email,
-                UserId = admin.Id
-            };
-            using var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
-            dbContext.Users.Add(customUser);
-            await dbContext.SaveChangesAsync();
-
+        
         }
     }
 
