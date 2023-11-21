@@ -1,4 +1,5 @@
-﻿using WebShopAPI.Model.CategoryClasses;
+﻿using System.Text.Json.Serialization;
+using WebShopAPI.Model.CategoryClasses;
 
 namespace WebShopAPI.Model
 {
@@ -12,7 +13,8 @@ namespace WebShopAPI.Model
         public decimal Discount { get; set; }
         public Category Category { get; set; }
         public SubCategory SubCategory { get; set; }
-
+        public string ImageBase64 { get; set; }
+        [JsonIgnore]
         public List<OrderItem> OrderItems { get; set; }
     }
 }
