@@ -156,7 +156,7 @@ async Task CreateAdminIfNotExists()
     var adminInDb = await userManager.FindByEmailAsync("admin@admin1.com");
     if (adminInDb == null)
     {
-        var admin = new IdentityUser { UserName = "admin1", Email = "admin@admin1.com" };
+        var admin = new IdentityUser { UserName = "admin", Email = "admin@admin.com" };
         var adminCreated = await userManager.CreateAsync(admin, "admin1234");
 
         if (adminCreated.Succeeded)
@@ -166,7 +166,7 @@ async Task CreateAdminIfNotExists()
             {
                 UserName = admin.UserName,
                 Email = admin.Email,
-                UserId = int.Parse(admin.Id)
+                UserId = admin.Id
             };
             using var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
             dbContext.Users.Add(customUser);

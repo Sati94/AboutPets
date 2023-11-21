@@ -12,7 +12,7 @@ namespace WebShopAPI.Service.Authentication
         private const int ExpirationMinutes = 30;
         public string CreateToken(IdentityUser user, string role)
         {
-            var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
+             var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
             var token = CreateJwtToken(
                 CreateClaims(user, role),
                 CreateSigningCredentials(),

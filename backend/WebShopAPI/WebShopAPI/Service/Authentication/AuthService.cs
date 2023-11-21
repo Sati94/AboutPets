@@ -27,7 +27,7 @@ namespace WebShopAPI.Service.Authentication
             }
             await _userManager.AddToRoleAsync(identityuser, role);
 
-            _dataContext.Users.Add(new User { UserName = username, Email = email, UserId = int.Parse(identityuser.Id) });
+            _dataContext.Users.Add(new User { UserName = username, Email = email, UserId = identityuser.Id });
 
             await _dataContext.SaveChangesAsync();
             return new AuthResult(true, identityuser.Id, email, username, "");

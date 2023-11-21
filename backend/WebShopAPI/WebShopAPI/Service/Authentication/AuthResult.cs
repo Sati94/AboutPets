@@ -2,7 +2,7 @@
 {
     public record AuthResult(
         bool Success,
-        int? UserId,
+        string? UserId,
         string Email,
         string UserName,
         string Token

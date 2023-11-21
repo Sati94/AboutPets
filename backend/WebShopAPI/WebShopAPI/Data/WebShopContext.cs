@@ -8,7 +8,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebShopAPI.Data
 {
-    public class WebShopContext : IdentityDbContext<IdentityUser, IdentityRole,string>
+    public class WebShopContext : IdentityDbContext<IdentityUser, IdentityRole, string>
     {
         public WebShopContext(DbContextOptions<WebShopContext> options) : base(options)
         {

@@ -5,12 +5,12 @@ using WebShopAPI.Service.Authentication;
 
 namespace WebShopAPI.Controllers
 {
-    public class AuthContorller : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
         private readonly WebShopContext _webShopcontext;
 
-        public AuthContorller(IAuthService authService, WebShopContext webShopcontext)
+        public AuthController(IAuthService authService, WebShopContext webShopcontext)
         {
             _authService = authService;
             _webShopcontext = webShopcontext;
@@ -51,10 +51,10 @@ namespace WebShopAPI.Controllers
                 AddErrors(result);
                 return BadRequest(ModelState);
             }
-            return Ok(new AuthResponse(int.Parse(result.UserId), result.Email, result.UserName, result.Token));
+            return Ok(new AuthResponse(result.UserId, result.Email, result.UserName, result.Token));
         }
     }
 
 
 }
-}
+
