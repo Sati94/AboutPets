@@ -22,10 +22,10 @@ namespace WebShopAPI.Controllers
             var newProduct = await _productService.CreatePorductAsync(product);
             return Ok(newProduct);
         }
-        [HttpGet("/product"), Authorize(Roles = "Admin,User")]
+        [HttpGet("/product/avaiable"), Authorize(Roles = "Admin,User")]
         public async Task<ActionResult<IEnumerable<Product>>> AllProductAsync()
         {
-            var products = await _productService.GetAllProducAsync();
+            var products = await _productService.GetAllProductAsync();
             return Ok(products);
         }
         [HttpPut("/product/update/{productId}"), Authorize(Roles = "Admin")]
@@ -37,6 +37,16 @@ namespace WebShopAPI.Controllers
                 return NotFound("This product doesn't exsist!");
             }
             return Ok(result);  
+        }
+        [HttpGet("/product/{productId}"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<ProductDto>> GetProductByIdAsync(int productId)
+        {
+            var product = await _productService.GetProductById(productId);
+            if(product == null)
+            {
+                return NotFound("This product doesn't exsist!");
+            }
+            return Ok(product);
         }
 
     }

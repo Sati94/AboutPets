@@ -13,7 +13,7 @@ namespace WebShopAPI.Service.ProductServiceMap
         {
             _context = context;
         }
-        public async Task<IEnumerable<Product>> GetAllProducAsync()
+        public async Task<IEnumerable<Product>> GetAllProductAsync()
         {
             return await _context.Products.ToListAsync();
         }
@@ -52,6 +52,26 @@ namespace WebShopAPI.Service.ProductServiceMap
             _context.Products.Update(productToUpdate);
             await _context.SaveChangesAsync();
             return productToUpdate;
+        }
+        public async Task<ProductDto> GetProductById(int productId)
+        {
+            var product = await _context.Products
+                .Where(p => p.ProductId == productId)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    Discount = p.Discount,
+                    Category = p.Category,
+                    SubCategory = p.SubCategory,
+                    ImageBase64 = p.ImageBase64
+                })
+                .FirstOrDefaultAsync();
+           
+            return product;
         }
     }
 }
