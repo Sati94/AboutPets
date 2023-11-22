@@ -2,7 +2,7 @@
 {
     public enum Category
     {
-        Dog,
-        Cat
+        Dog = 1,
+        Cat = 2
     }
 }

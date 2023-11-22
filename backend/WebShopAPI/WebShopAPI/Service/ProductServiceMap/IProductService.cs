@@ -13,5 +13,6 @@ namespace WebShopAPI.Service.ProductServiceMap
         Task<Product> DeleteProductById(int productId);
         Task<IEnumerable<Product>> GetProductsByCategory(int category);
         Task<IEnumerable<Product>> GetProductsBySubCategory(int subCategory);
+        Task<IEnumerable<Product>> GetProductsBySubAndMainCategory(int subCategory, int category);
     }
 }

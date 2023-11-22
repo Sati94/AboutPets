@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Model;
+using WebShopAPI.Model.CategoryClasses;
 using WebShopAPI.Model.DTOS;
 using WebShopAPI.Service.ProductServiceMap;
 
@@ -48,7 +49,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(product);
         }
-        [HttpDelete("/product/delete/{productId}")]
+        [HttpDelete("/product/delete/{productId}"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<Product>> DeleteProductByIdAsync(int productId)
         {
             var product = await _productService.DeleteProductById(productId);
@@ -58,20 +59,33 @@ namespace WebShopAPI.Controllers
             }
             return Ok(product);
         }
-        [HttpGet("/products/{category}"),Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategoryAsync(int category)
+        [HttpGet("/products/category/{category}"),Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategoryAsync(Category category)
         {
-            var products = await _productService.GetProductsByCategory(category);
+            var products = await _productService.GetProductsByCategory((int)category);
+            
             if(!products.Any())
             {
                 return NotFound("This product doesn't exist!");
             }
             return Ok(products);
         }
-        [HttpGet("/products/categories/{subcategory}"), Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubCategoryAsync(int subcategory)
+        [HttpGet("/products/category/subCategory{subCategory}"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubCategoryAsync(SubCategory subCategory)
         {
-            var products = await _productService.GetProductsBySubCategory(subcategory);
+            var products = await _productService.GetProductsBySubCategory((int)subCategory);
+           
+            if (!products.Any())
+            {
+                return NotFound("This product doesn't exist!");
+            }
+            return Ok(products);
+        }
+        [HttpGet("/products/{category}/{subCategory}"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubAndMainCategoryAsync(Category category, SubCategory subCategory)
+        {
+            var products = await _productService.GetProductsBySubAndMainCategory((int)category, (int)subCategory);
+           
             if (!products.Any())
             {
                 return NotFound("This product doesn't exist!");

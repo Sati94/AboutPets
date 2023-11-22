@@ -86,12 +86,18 @@ namespace WebShopAPI.Service.ProductServiceMap
         }
         public async Task<IEnumerable<Product>> GetProductsByCategory(int category)
         {
-            var products = await _context.Products.Where(p => (int)p.Category == (int)category).ToListAsync();
+            var products = await _context.Products.Where(p => (int)p.Category == category).ToListAsync();
             return products;
         }
         public async Task<IEnumerable<Product>> GetProductsBySubCategory(int subCategory)
         {
-            var products = await _context.Products.Where(p=>(int)p.SubCategory == (int)subCategory).ToListAsync();
+            var products = await _context.Products.Where(p=>(int)p.SubCategory == subCategory).ToListAsync();
+            return products;
+        }
+        public async Task<IEnumerable<Product>> GetProductsBySubAndMainCategory(int subCategory, int category)
+        {
+           var products = await _context.Products.Where(p => (int)p.SubCategory == subCategory && (int)p.Category == category).ToListAsync();
+
             return products;
         }
     }

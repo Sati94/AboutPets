@@ -2,9 +2,9 @@
 {
     public enum SubCategory
     {
-        Games,
-        Accessories,
-        WetFood,
-        DryFood
+        Games = 1,
+        Accessories = 2,
+        WetFood = 3,
+        DryFood = 4
     }
 }
