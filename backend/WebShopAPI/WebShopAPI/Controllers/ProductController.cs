@@ -48,6 +48,16 @@ namespace WebShopAPI.Controllers
             }
             return Ok(product);
         }
+        [HttpDelete("/product/delete/{productId}")]
+        public async Task<ActionResult<Product>> DeleteProductByIdAsync(int productId)
+        {
+            var product = await _productService.DeleteProductById(productId);
+            if( product == null)
+            {
+                return NotFound("This product doesn't exsist!");
+            }
+            return Ok(product);
+        }
 
     }
 }

@@ -73,5 +73,16 @@ namespace WebShopAPI.Service.ProductServiceMap
            
             return product;
         }
+        public async Task<Product> DeleteProductById(int productId)
+        {
+            var deletedProduct = await _context.Products.FirstOrDefaultAsync(p=> p.ProductId == productId);
+            if(deletedProduct == null)
+            {
+                return null;
+            }
+            _context.Products.Remove(deletedProduct);
+            await _context.SaveChangesAsync();
+            return deletedProduct;
+        }
     }
 }

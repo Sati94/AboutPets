@@ -9,5 +9,6 @@ namespace WebShopAPI.Service.ProductServiceMap
         Task<Product> CreatePorductAsync(ProductDto product);
         Task<Product> UpdateProduct(int productId, ProductDto product);
         Task<ProductDto> GetProductById(int productId);
+        Task<Product> DeleteProductById(int productId);
     }
 }
