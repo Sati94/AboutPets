@@ -11,6 +11,7 @@ namespace WebShopAPI.Service.ProductServiceMap
         Task<Product> UpdateProduct(int productId, ProductDto product);
         Task<ProductDto> GetProductById(int productId);
         Task<Product> DeleteProductById(int productId);
-        Task<List<Product>> GetProductsByCategory(int category);
+        Task<IEnumerable<Product>> GetProductsByCategory(int category);
+        Task<IEnumerable<Product>> GetProductsBySubCategory(int subCategory);
     }
 }

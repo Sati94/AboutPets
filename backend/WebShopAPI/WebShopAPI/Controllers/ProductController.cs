@@ -58,11 +58,21 @@ namespace WebShopAPI.Controllers
             }
             return Ok(product);
         }
-        [HttpGet("/products/{category}")]
+        [HttpGet("/products/{category}"),Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategoryAsync(int category)
         {
             var products = await _productService.GetProductsByCategory(category);
             if(!products.Any())
+            {
+                return NotFound("This product doesn't exist!");
+            }
+            return Ok(products);
+        }
+        [HttpGet("/products/categories/{subcategory}"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubCategoryAsync(int subcategory)
+        {
+            var products = await _productService.GetProductsBySubCategory(subcategory);
+            if (!products.Any())
             {
                 return NotFound("This product doesn't exist!");
             }

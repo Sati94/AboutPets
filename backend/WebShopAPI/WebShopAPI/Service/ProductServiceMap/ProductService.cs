@@ -84,9 +84,14 @@ namespace WebShopAPI.Service.ProductServiceMap
             await _context.SaveChangesAsync();
             return deletedProduct;
         }
-        public async Task<List<Product>> GetProductsByCategory(int category)
+        public async Task<IEnumerable<Product>> GetProductsByCategory(int category)
         {
             var products = await _context.Products.Where(p => (int)p.Category == (int)category).ToListAsync();
+            return products;
+        }
+        public async Task<IEnumerable<Product>> GetProductsBySubCategory(int subCategory)
+        {
+            var products = await _context.Products.Where(p=>(int)p.SubCategory == (int)subCategory).ToListAsync();
             return products;
         }
     }
