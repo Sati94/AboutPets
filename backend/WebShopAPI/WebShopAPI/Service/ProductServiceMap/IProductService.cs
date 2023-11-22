@@ -1,4 +1,5 @@
 ﻿using WebShopAPI.Model;
+using WebShopAPI.Model.CategoryClasses;
 using WebShopAPI.Model.DTOS;
 
 namespace WebShopAPI.Service.ProductServiceMap
@@ -10,5 +11,6 @@ namespace WebShopAPI.Service.ProductServiceMap
         Task<Product> UpdateProduct(int productId, ProductDto product);
         Task<ProductDto> GetProductById(int productId);
         Task<Product> DeleteProductById(int productId);
+        Task<List<Product>> GetProductsByCategory(int category);
     }
 }

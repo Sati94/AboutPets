@@ -58,6 +58,16 @@ namespace WebShopAPI.Controllers
             }
             return Ok(product);
         }
+        [HttpGet("/products/{category}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategoryAsync(int category)
+        {
+            var products = await _productService.GetProductsByCategory(category);
+            if(!products.Any())
+            {
+                return NotFound("This product doesn't exist!");
+            }
+            return Ok(products);
+        }
 
     }
 }
