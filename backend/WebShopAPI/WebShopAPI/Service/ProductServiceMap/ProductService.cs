@@ -34,5 +34,24 @@ namespace WebShopAPI.Service.ProductServiceMap
             await _context.SaveChangesAsync();
             return newProduct;
         }
+        public async Task<Product> UpdateProduct(int productId, ProductDto product)
+        {
+            var productToUpdate = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+            if (productToUpdate == null)
+            {
+                return null;
+            }
+            productToUpdate.ProductName = product.ProductName;
+            productToUpdate.Description = product.Description;
+            productToUpdate.Price = product.Price;
+            productToUpdate.Stock = product.Stock;
+            productToUpdate.Discount = product.Discount;
+            productToUpdate.Category = product.Category;
+            productToUpdate.SubCategory = product.SubCategory;
+            productToUpdate.ImageBase64 = product.ImageBase64;
+            _context.Products.Update(productToUpdate);
+            await _context.SaveChangesAsync();
+            return productToUpdate;
+        }
     }
 }

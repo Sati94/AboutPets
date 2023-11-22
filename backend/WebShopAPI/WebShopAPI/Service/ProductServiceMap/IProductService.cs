@@ -7,5 +7,6 @@ namespace WebShopAPI.Service.ProductServiceMap
     {
         Task<IEnumerable<Product?>> GetAllProducAsync(); 
         Task<Product> CreatePorductAsync(ProductDto product);
+        Task<Product> UpdateProduct(int productId, ProductDto product);
     }
 }

@@ -28,6 +28,16 @@ namespace WebShopAPI.Controllers
             var products = await _productService.GetAllProducAsync();
             return Ok(products);
         }
+        [HttpPut("/product/update/{productId}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<Product>> UpdateProductAsync(int productId, ProductDto product)
+        {
+            var result = await _productService.UpdateProduct(productId, product);
+            if(result == null)
+            {
+                return NotFound("This product doesn't exsist!");
+            }
+            return Ok(result);  
+        }
 
     }
 }
