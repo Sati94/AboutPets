@@ -14,7 +14,7 @@ using WebShopAPI.Model.CategoryClasses;
 
 namespace WebShopApiTest
 {
-   
+
     [TestFixture]
     public class ProductServiceTest
     {
@@ -56,7 +56,7 @@ namespace WebShopApiTest
         [Test]
         public async Task UpdateProductAsync_ShouldUpdateProduct()
         {
-            int productId = 1; 
+            int productId = 1;
             var productDto = new ProductDto
             {
                 ProductName = "UpdatedProductName",
@@ -64,10 +64,10 @@ namespace WebShopApiTest
                 Price = 300,
                 Stock = 20,
                 Discount = 5,
-                Category = Category.Dog, 
-                SubCategory = SubCategory.Games, 
+                Category = Category.Dog,
+                SubCategory = SubCategory.Games,
                 ImageBase64 = "updatedImageBase64"
-                
+
             };
 
             // Konfiguráljuk a mock ProductService-t
@@ -86,9 +86,49 @@ namespace WebShopApiTest
                                   // Add other properties as needed
                               });
 
-         
+
             var result = await _productController.UpdateProductAsync(productId, productDto);
-            Assert.NotNull(result); 
+            Assert.NotNull(result);
+        }
+        [Test]
+        public async Task CreateProductAsync_ShouldCreateProduct()
+        {
+            // Arrange
+            var productDto = new ProductDto
+            {
+                ProductName = "ProductName",
+                Description = "Description",
+                Price = 200,
+                Stock = 10,
+                Discount = 0,
+                Category = Category.Dog,
+                SubCategory = SubCategory.WetFood,
+                ImageBase64 = "0538"
+                // Add other properties as needed
+            };
+            var expectedProduct = CreateExpectedProduct(productDto);
+
+            _productServiceMock.Setup(service => service.CreatePorductAsync(productDto)).ReturnsAsync(expectedProduct);
+
+            // Act
+            var result = await _productController.CreateProduct(productDto);
+
+            // Assert
+            Assert.NotNull(result);
+        }
+        private Product CreateExpectedProduct(ProductDto productDto)
+        {
+            return new Product
+            {
+                ProductName = productDto.ProductName,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                Stock = productDto.Stock,
+                Discount = productDto.Discount,
+                Category = productDto.Category,
+                SubCategory = productDto.SubCategory,
+                ImageBase64 = productDto.ImageBase64
+            };
         }
     }
     
