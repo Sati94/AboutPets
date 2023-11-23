@@ -19,6 +19,7 @@ namespace WebShopApiTest
     public class ProductServiceTest
     {
         private Mock<IProductService> _productServiceMock;
+        private Mock<WebShopContext> _contextMock;
         private ProductController _productController;
 
         [SetUp]
@@ -26,6 +27,7 @@ namespace WebShopApiTest
         {
             _productServiceMock = new Mock<IProductService>();
             _productController = new ProductController(_productServiceMock.Object);
+            _contextMock = new Mock<WebShopContext>();
         }
 
         [Test]
@@ -130,6 +132,21 @@ namespace WebShopApiTest
                 ImageBase64 = productDto.ImageBase64
             };
         }
+        [Test]
+        public async Task GetProductsByCategory_ShouldReturnProductsForCategory()
+        {
+            // Arrange
+            Category category = Category.Dog; // Az adott kategória, amire tesztelünk
+            List<Product> testData = new List<Product>
+        {
+            new Product { ProductId = 1, Category = Category.Dog },
+            new Product { ProductId = 2, Category = Category.Dog },
+            new Product { ProductId = 3, Category = Category.Cat } // Más kategória
+        };
+
+            var result = await _productController.GetProductByCategoryAsync(category);
+            Assert.IsNotNull(result);
+            
+        }
     }
-    
 }
