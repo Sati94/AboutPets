@@ -12,7 +12,7 @@ namespace WebShopAPI.Model.UserModels
         public decimal Bonus { get; set; }
 
         public string UserId { get; set; }
-        [JsonIgnore]
+         [JsonIgnore]
         public User User { get; set; }
     }
 }

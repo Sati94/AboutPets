@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Text;
 using WebShopAPI.Data;
 using WebShopAPI.Service.ProductServiceMap;
+using WebShopAPI.Service.UserServiceMap;
 
 var builder = WebApplication.CreateBuilder(args);
 AddAuthentication();
@@ -19,6 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddDbContext<WebShopContext>();
 
@@ -77,7 +79,7 @@ void AddAuthentication()
 void AddIdentity()
 {
     builder.Services
-    .AddIdentityCore<IdentityUser>(options =>
+    .AddIdentity<User, IdentityRole>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
         options.User.RequireUniqueEmail = true;
@@ -89,6 +91,7 @@ void AddIdentity()
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<WebShopContext>();
+
 }
 void ConfigureSwagger()
 {
@@ -136,12 +139,20 @@ void AddRoles()
 }
 async Task CreateAdminRole(RoleManager<IdentityRole> roleManager)
 {
-    await roleManager.CreateAsync(new IdentityRole("Admin")); //The role string should better be stored as a constant or a value in appsettings
+   var adminRoleExists =  await roleManager.RoleExistsAsync("Admin");
+    if (!adminRoleExists) 
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
 }
 
 async Task CreateUserRole(RoleManager<IdentityRole> roleManager)
 {
-    await roleManager.CreateAsync(new IdentityRole("User")); //The role string should better be stored as a constant or a value in appsettings
+     var userRoleExists = await roleManager.RoleExistsAsync("User");
+    if (!userRoleExists)
+    {
+        await roleManager.CreateAsync(new IdentityRole("User"));
+    }
 }
 void AddAdmin()
 {
@@ -152,17 +163,24 @@ void AddAdmin()
 async Task CreateAdminIfNotExists()
 {
     using var scope = app.Services.CreateScope();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var adminInDb = await userManager.FindByEmailAsync("admin@admin.com");
     if (adminInDb == null)
     {
-        var admin = new IdentityUser { UserName = "admin", Email = "admin@admin.com" };
+        var admin = new User { UserName = "admin1", Email = "admin@admin.com" };
         var adminCreated = await userManager.CreateAsync(admin, "admin1234");
 
         if (adminCreated.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "Admin");
-        
+            Console.WriteLine($"Admin created: {admin.Id}, {admin.UserName}, {admin.Email}");
+        }
+        else
+        {
+            foreach (var error in adminCreated.Errors)
+            {
+                Console.WriteLine($"Error: {error.Code}, {error.Description}");
+            }
         }
     }
 
