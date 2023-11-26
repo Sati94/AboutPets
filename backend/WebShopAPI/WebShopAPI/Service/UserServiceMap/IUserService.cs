@@ -9,5 +9,6 @@ namespace WebShopAPI.Service.UserServiceMap
     {
         Task<IEnumerable<IdentityUser>> GetAllUserAsync();
         Task<IdentityUser> UpdateUser(string userId, UserDto user);
+        Task<IdentityUser> GetUserById(string userId);
     }
 }

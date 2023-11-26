@@ -47,5 +47,14 @@ namespace WebShopAPI.Service.UserServiceMap
                 return null;
             }
         }
+        public async Task<IdentityUser> GetUserById(string userid)
+        {
+            var user = await _userManager.FindByIdAsync(userid);
+            if(user == null)
+            {
+                return null;
+            }
+            return user;
+        }
     }
 }

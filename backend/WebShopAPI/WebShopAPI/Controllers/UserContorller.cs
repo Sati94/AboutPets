@@ -29,7 +29,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(useres);
         }
-        [HttpPut("/user/update/{userId}")]
+        [HttpPut("/user/update/{userId}"), Authorize(Roles = "Admin, Us;er")]
         public async Task<ActionResult<User>> UpdateUserAsync(string userId, UserDto user)
         {
             var result = await _userService.UpdateUser(userId, user);
@@ -38,6 +38,16 @@ namespace WebShopAPI.Controllers
                 return NotFound("This user dosn't exist!");
             }
             return Ok(result);  
+        }
+        [HttpGet("/user/{userid}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<User>> GetUserByIdAsync(string userid)
+        {
+            var result = await _userService.GetUserById(userid);
+            if(result == null)
+            {
+                return NotFound("This user dosn't exist!");
+            }
+            return Ok(result);
         }
     }
 }
