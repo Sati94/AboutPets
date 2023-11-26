@@ -49,5 +49,15 @@ namespace WebShopAPI.Controllers
             }
             return Ok(result);
         }
+        [HttpGet("/user/name/{username}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<User>> GetUserByNameAsync(string username)
+        {
+            var result = await _userService.GetUserByName(username);
+            if(result == null)
+            {
+                return NotFound("This user dosn't exist!");
+            }
+            return Ok(result);
+        }
     }
 }
