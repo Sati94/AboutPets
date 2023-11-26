@@ -1,9 +1,13 @@
 ﻿using WebShopAPI.Model.UserModels;
+using Microsoft.AspNetCore.Identity;
+using WebShopAPI.Model.DTOS;
+
 
 namespace WebShopAPI.Service.UserServiceMap
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllUserAsync();
+        Task<IEnumerable<IdentityUser>> GetAllUserAsync();
+        Task<IdentityUser> UpdateUser(string userId, UserDto user);
     }
 }

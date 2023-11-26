@@ -9,6 +9,7 @@ using System.Text;
 using WebShopAPI.Data;
 using WebShopAPI.Service.ProductServiceMap;
 using WebShopAPI.Service.UserServiceMap;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 AddAuthentication();
@@ -79,7 +80,7 @@ void AddAuthentication()
 void AddIdentity()
 {
     builder.Services
-    .AddIdentity<User, IdentityRole>(options =>
+    .AddIdentityCore<IdentityUser>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
         options.User.RequireUniqueEmail = true;
@@ -163,25 +164,28 @@ void AddAdmin()
 async Task CreateAdminIfNotExists()
 {
     using var scope = app.Services.CreateScope();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     var adminInDb = await userManager.FindByEmailAsync("admin@admin.com");
     if (adminInDb == null)
     {
-        var admin = new User { UserName = "admin1", Email = "admin@admin.com" };
+        var admin = new IdentityUser { UserName = "admin", Email = "admin@admin.com" };
         var adminCreated = await userManager.CreateAsync(admin, "admin1234");
 
         if (adminCreated.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "Admin");
             Console.WriteLine($"Admin created: {admin.Id}, {admin.UserName}, {admin.Email}");
-        }
-        else
-        {
-            foreach (var error in adminCreated.Errors)
+            var customUser = new User
             {
-                Console.WriteLine($"Error: {error.Code}, {error.Description}");
-            }
+                UserName = admin.UserName,
+                Email = admin.Email,
+                IdentityUserId = admin.Id
+            };
+            using var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+            dbContext.Useres.Add(customUser);
+            await dbContext.SaveChangesAsync();
         }
+      
     }
 
 

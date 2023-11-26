@@ -6,10 +6,10 @@ namespace WebShopAPI.Service.Authentication
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly WebShopContext _dataContext;
-        public AuthService(UserManager<User> userManager, ITokenService tokenService, WebShopContext dataContext)
+        public AuthService(UserManager<IdentityUser> userManager, ITokenService tokenService, WebShopContext dataContext)
         {
             _userManager = userManager;
             _tokenService = tokenService;
@@ -17,7 +17,7 @@ namespace WebShopAPI.Service.Authentication
         }
         public async Task<AuthResult> RegisterAsync(string email, string username, string password, string role)
         {
-            var identityuser = new User { UserName = username, Email = email };
+            var identityuser = new IdentityUser { UserName = username, Email = email };
 
             var result = await _userManager.CreateAsync(identityuser, password);
 
@@ -27,7 +27,7 @@ namespace WebShopAPI.Service.Authentication
             }
             await _userManager.AddToRoleAsync(identityuser, role);
 
-            _dataContext.Users.Add(new User { UserName = username, Email = email, Id = identityuser.Id });
+            _dataContext.Useres.Add(new User { UserName = username, Email = email, IdentityUserId = identityuser.Id });
 
             await _dataContext.SaveChangesAsync();
             return new AuthResult(true, identityuser.Id, email, username, "");

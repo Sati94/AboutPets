@@ -15,7 +15,7 @@ namespace WebShopAPI.Controllers
             _authService = authService;
             _webShopcontext = webShopcontext;
         }
-        [HttpPost("Register")]
+        [HttpPost("/Register")]
         public async Task<ActionResult<RegistrationResponse>> Register([FromBody]RegistrationRequest registrationRequest)
         {
             if (!ModelState.IsValid)
@@ -38,7 +38,7 @@ namespace WebShopAPI.Controllers
                 ModelState.AddModelError(error.Key, error.Value);
             }
         }
-        [HttpPost("Login")]
+        [HttpPost("/Login")]
         public async Task<ActionResult<AuthResponse>> Authenticate([FromBody] AuthRequest request)
         {
             if (!ModelState.IsValid)
@@ -51,7 +51,7 @@ namespace WebShopAPI.Controllers
                 AddErrors(result);
                 return BadRequest(ModelState);
             }
-            return Ok(new AuthResponse(result.UserId, result.Email, result.UserName, result.Token));
+            return Ok(new AuthResponse(result.IdentityUserId, result.Email, result.UserName, result.Token));
         }
     }
 

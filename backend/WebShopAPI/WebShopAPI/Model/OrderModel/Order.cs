@@ -12,10 +12,11 @@ namespace WebShopAPI.Model.OrderModel
         public decimal TotalPrice { get; set; }
         public OrderStatuses OrderStatuses { get; set; }
 
+        public string UserId { get; set; }
         [JsonIgnore]
         public List<OrderItem> OrderItems { get; set; }
 
-        public string UserId { get; set; }
+        
         public User User { get; set; }
     }
 }

@@ -4,16 +4,21 @@ using WebShopAPI.Model.OrderModel;
 
 namespace WebShopAPI.Model.UserModels
 {
-    public class User : IdentityUser
+    public class User 
     { 
-        public string UserId { get; set; }
-        public List<OrderItem> OrderItems { get; set; }
-        public List<Order> Orders { get; set; }
+        public string Id { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string IdentityUserId { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; }
+        public ICollection<Order> Orders { get; set; }
         public UserProfile Profile { get; set; }
+        [JsonIgnore]
+        public IdentityUser IdentityUser { get; set; }
         
         public User()
         {
-            UserId = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
     }
     

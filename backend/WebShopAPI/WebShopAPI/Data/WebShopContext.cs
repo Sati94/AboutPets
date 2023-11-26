@@ -8,11 +8,12 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebShopAPI.Data
 {
-    public class WebShopContext : IdentityDbContext<User>
+    public class WebShopContext : IdentityDbContext<IdentityUser, IdentityRole, string>
     {
         public WebShopContext(DbContextOptions<WebShopContext> options) : base(options)
         {
         }
+        public DbSet<User> Useres { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -32,10 +33,14 @@ namespace WebShopAPI.Data
                 .WithOne(p => p.User)
                 .HasForeignKey<UserProfile>(p => p.UserId);
 
-    
+            modelBuilder.Entity<User>()
+               .HasOne(u => u.IdentityUser)
+               .WithMany()
+               .HasForeignKey(p => p.IdentityUserId)
+               .IsRequired(false);
         
 
-           modelBuilder.Entity<OrderItem>()
+            modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.User)
                 .WithMany(u => u.OrderItems)
                 .HasForeignKey(oi => oi.UserId)
