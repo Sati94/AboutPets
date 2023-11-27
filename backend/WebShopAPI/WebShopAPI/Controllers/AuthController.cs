@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Contracts;
 using WebShopAPI.Data;
 using WebShopAPI.Model.UserModels;

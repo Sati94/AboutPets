@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Data;
 using WebShopAPI.Model.UserModels;
+using WebShopAPI.Model.DTOS;
 
 namespace WebShopAPI.Service.UserProfileMap
 {
@@ -15,6 +16,22 @@ namespace WebShopAPI.Service.UserProfileMap
         public async Task<UserProfile> GetUserProfileAsync(string userId)
         {
             return await _context.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+        }
+
+        public async Task<UserProfile> UpdateUserProfile(string userId , UserProfileDto userProfile)
+        {
+            var existingProfile = await _context.UserProfiles.FirstOrDefaultAsync(p=> p.UserId == userId);
+            if (existingProfile == null)
+            {
+                throw new InvalidOperationException("UserProfile not found");
+            }
+            existingProfile.FirstName = userProfile.FirstName;
+            existingProfile.LastName = userProfile.LastName;
+            existingProfile.PhoneNumber = userProfile.PhoneNumber;
+            existingProfile.Address = userProfile.Address;
+
+            await _context.SaveChangesAsync();
+            return existingProfile;
         }
     }
 }

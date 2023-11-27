@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Model.UserModels;
 using WebShopAPI.Service.UserProfileMap;
 using WebShopAPI.Service.UserServiceMap;
+using WebShopAPI.Model.DTOS;
 
 namespace WebShopAPI.Controllers
 {
@@ -27,6 +28,19 @@ namespace WebShopAPI.Controllers
                 return NotFound("This Profile: {userid} not found!");
             }
             return Ok(userProfile);
+        }
+        [HttpPut("/update/user/profile/{userId}"), Authorize(Roles = "User, Admin")]
+        public async Task<ActionResult<UserProfile>> UpdateUserProfileAsync(string userId,[FromBody] UserProfileDto userProfile)
+        {
+            try
+            {
+                await _userProfileService.UpdateUserProfile(userId,userProfile);
+                return Ok("UserProfile updated successfully!");
+            }
+            catch(InvalidOperationException ex) 
+            {
+                return NotFound(ex.Message);
+            }
         } 
         
     }
