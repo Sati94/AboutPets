@@ -39,10 +39,10 @@ namespace WebShopAPI.Controllers
             }
             return Ok(result);  
         }
-        [HttpGet("/user/{userid}"), Authorize(Roles = "Admin")]
-        public async Task<ActionResult<User>> GetUserByIdAsync(string userid)
+        [HttpGet("/user/{userId}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<User>> GetUserByIdAsync(string userId)
         {
-            var result = await _userService.GetUserById(userid);
+            var result = await _userService.GetUserById(userId);
             if(result == null)
             {
                 return NotFound("This user dosn't exist!");
@@ -54,6 +54,16 @@ namespace WebShopAPI.Controllers
         {
             var result = await _userService.GetUserByName(username);
             if(result == null)
+            {
+                return NotFound("This user dosn't exist!");
+            }
+            return Ok(result);
+        }
+        [HttpDelete("/user/delete/{userId}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<User>> DeleteUserByIdAsync(string userId)
+        {
+            var result = await _userService.DeleteUserById(userId);
+            if( result == null)
             {
                 return NotFound("This user dosn't exist!");
             }

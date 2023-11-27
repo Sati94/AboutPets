@@ -65,5 +65,21 @@ namespace WebShopAPI.Service.UserServiceMap
             }
             return user;
         }
+        public async Task<IdentityUser> DeleteUserById(string userId)
+        {
+            var userToDelete = await _userManager.FindByIdAsync(userId);
+            var contextUserToDelete = await _context.Useres.FirstOrDefaultAsync(user => user.IdentityUserId == userId);
+
+            if(userToDelete == null)
+            {
+                return null;
+            }
+            await _userManager.DeleteAsync(userToDelete);
+            _context.Useres.Remove(contextUserToDelete);
+            _context.SaveChanges();
+
+            return userToDelete;
+
+        }
     }
 }

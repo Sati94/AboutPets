@@ -11,5 +11,6 @@ namespace WebShopAPI.Service.UserServiceMap
         Task<IdentityUser> UpdateUser(string userId, UserDto user);
         Task<IdentityUser> GetUserById(string userId);
         Task<IdentityUser> GetUserByName(string userName);
+        Task<IdentityUser> DeleteUserById(string userId);
     }
 }
