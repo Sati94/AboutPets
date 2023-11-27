@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Contracts;
 using WebShopAPI.Data;
+using WebShopAPI.Model.UserModels;
 using WebShopAPI.Service.Authentication;
 
 namespace WebShopAPI.Controllers
@@ -9,11 +11,13 @@ namespace WebShopAPI.Controllers
     {
         private readonly IAuthService _authService;
         private readonly WebShopContext _webShopcontext;
+        
 
         public AuthController(IAuthService authService, WebShopContext webShopcontext)
         {
             _authService = authService;
             _webShopcontext = webShopcontext;
+            
         }
         [HttpPost("/Register")]
         public async Task<ActionResult<RegistrationResponse>> Register([FromBody]RegistrationRequest registrationRequest)
@@ -29,6 +33,24 @@ namespace WebShopAPI.Controllers
                 AddErrors(result);
                 return BadRequest(ModelState);
             }
+            var resultemail = result.Email;
+            var user =  _webShopcontext.Useres.FirstOrDefault(u => u.Email == resultemail);
+            if(user != null)
+            {
+               var userProfile = new UserProfile
+               {
+                    FirstName = string.Empty,
+                    LastName = string.Empty,
+                    PhoneNumber = string.Empty,
+                    Address = string.Empty,
+                    Bonus = decimal.Zero,
+                    UserId = user.Id,
+
+               };
+               _webShopcontext.UserProfiles.Add(userProfile);
+               await _webShopcontext.SaveChangesAsync();
+            }
+            
             return CreatedAtAction(nameof(Register), new RegistrationResponse(result.Email, result.UserName));
         }
         private void AddErrors(AuthResult result)
