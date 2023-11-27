@@ -4,6 +4,7 @@ using WebShopAPI.Model.UserModels;
 using WebShopAPI.Service.UserProfileMap;
 using WebShopAPI.Service.UserServiceMap;
 using WebShopAPI.Model.DTOS;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebShopAPI.Controllers
 {
@@ -41,7 +42,20 @@ namespace WebShopAPI.Controllers
             {
                 return NotFound(ex.Message);
             }
-        } 
+        }
+        [HttpPut("admin/update/profile/{userId}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<UserProfile>> UpdateAdminUserProfile(string userId, [FromBody] AdminUserProfileDto userProfile)
+        {
+            try
+            {
+                await _userProfileService.UpdateAdminUserProfileAsync(userId, userProfile);
+                return Ok("AdminUserProfile updated successfully");
+            }
+            catch(InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
         
     }
 }

@@ -33,5 +33,22 @@ namespace WebShopAPI.Service.UserProfileMap
             await _context.SaveChangesAsync();
             return existingProfile;
         }
+        public async Task<UserProfile> UpdateAdminUserProfileAsync(string userId, AdminUserProfileDto updatedProfile)
+        {
+            var existingProfile = await _context.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (existingProfile == null)
+            {
+                throw new InvalidOperationException("UserProfile not found");
+            }
+            existingProfile.FirstName = updatedProfile.FirstName;
+            existingProfile.LastName = updatedProfile.LastName;
+            existingProfile.PhoneNumber = updatedProfile.PhoneNumber;
+            existingProfile.Address = updatedProfile.Address;
+            existingProfile.Bonus = updatedProfile.Bonus;
+
+            await _context.SaveChangesAsync();
+            return existingProfile;
+        }
     }
+    
 }

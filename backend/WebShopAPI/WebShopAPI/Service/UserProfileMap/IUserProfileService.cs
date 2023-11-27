@@ -7,5 +7,6 @@ namespace WebShopAPI.Service.UserProfileMap
     {
         Task<UserProfile> GetUserProfileAsync(string userId);
         Task<UserProfile> UpdateUserProfile(string userId,UserProfileDto profile);
+        Task<UserProfile> UpdateAdminUserProfileAsync(string userId, AdminUserProfileDto updatedProfile);
     }
 }
