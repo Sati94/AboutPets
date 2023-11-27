@@ -14,5 +14,6 @@ namespace WebShopAPI.Service.ProductServiceMap
         Task<IEnumerable<Product>> GetProductsByCategory(int category);
         Task<IEnumerable<Product>> GetProductsBySubCategory(int subCategory);
         Task<IEnumerable<Product>> GetProductsBySubAndMainCategory(int subCategory, int category);
+        
     }
 }

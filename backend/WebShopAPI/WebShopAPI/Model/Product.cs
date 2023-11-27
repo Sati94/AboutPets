@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text.Json.Serialization;
+using WebShopAPI.Data;
 using WebShopAPI.Model.CategoryClasses;
+using WebShopAPI.Service.ProductServiceMap;
 
 namespace WebShopAPI.Model
 {
+    
     public class Product
     {
         public int ProductId { get; set; }
@@ -18,5 +21,16 @@ namespace WebShopAPI.Model
 
         [JsonIgnore]
         public List<OrderItem> OrderItems { get; set; }
+        [JsonIgnore]
+        public decimal DiscountedPrice
+        {
+            get
+            {
+                var discountService = new DiscountCalculator();
+                return discountService.CalculateDiscountedPrice(this);
+            }
+        }
+        
+       
     }
 }
