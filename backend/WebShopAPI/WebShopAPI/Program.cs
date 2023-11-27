@@ -11,6 +11,7 @@ using WebShopAPI.Service.ProductServiceMap;
 using WebShopAPI.Service.UserServiceMap;
 using Microsoft.Extensions.DependencyInjection;
 using WebShopAPI.Service.UserProfileMap;
+using WebShopAPI.Service.OrderItemServiceMap;
 
 var builder = WebApplication.CreateBuilder(args);
 AddAuthentication();
@@ -24,6 +25,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddDbContext<WebShopContext>();
 

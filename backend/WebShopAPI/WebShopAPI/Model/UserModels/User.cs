@@ -10,8 +10,8 @@ namespace WebShopAPI.Model.UserModels
         public string UserName { get; set; }
         public string Email { get; set; }
         public string IdentityUserId { get; set; }
-        public ICollection<OrderItem> OrderItems { get; set; }
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
         public UserProfile Profile { get; set; }
         [JsonIgnore]
         public IdentityUser IdentityUser { get; set; }

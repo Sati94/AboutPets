@@ -14,7 +14,7 @@ namespace WebShopAPI.Model.OrderModel
 
         public string UserId { get; set; }
         [JsonIgnore]
-        public List<OrderItem> OrderItems { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
         
         public User User { get; set; }

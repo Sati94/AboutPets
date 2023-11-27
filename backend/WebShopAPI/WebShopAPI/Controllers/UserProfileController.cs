@@ -12,12 +12,11 @@ namespace WebShopAPI.Controllers
     [Route("[controller]")]
     public class UserProfileController : ControllerBase
     {
-        private readonly IUserService _userService;
+       
         private readonly IUserProfileService _userProfileService;
 
-        public UserProfileController(IUserService userService, IUserProfileService userProfileService)
+        public UserProfileController(IUserProfileService userProfileService)
         {
-            _userService = userService;
             _userProfileService = userProfileService;
         }
         [HttpGet("user/profile/{userId}"), Authorize(Roles = "Admin,User")]
