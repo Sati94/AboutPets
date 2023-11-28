@@ -29,6 +29,19 @@ namespace WebShopAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("/ordelist/order/{orderId}"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<Order>> GetOrderById(int orderId) 
+        {
+            try
+            {
+                var order = await _orderService.GetOrderByIdAsync(orderId);
+                return Ok(order);
+            }
+            catch(ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
         
     }
 }

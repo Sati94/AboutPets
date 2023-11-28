@@ -11,10 +11,15 @@ namespace WebShopAPI.Service.OrderServiceMap
         {
             _context = context;
         }
-     public async Task<IEnumerable<Order>> GetAllOrderAsync()
+        public async Task<IEnumerable<Order>> GetAllOrderAsync()
         {
             var orderList = await _context.Orders.ToListAsync();
             return orderList;
+        }
+        public async Task<Order> GetOrderByIdAsync(int orderId)
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync(o=> o.OrderId == orderId);
+            return order;
         }
     }
 }
