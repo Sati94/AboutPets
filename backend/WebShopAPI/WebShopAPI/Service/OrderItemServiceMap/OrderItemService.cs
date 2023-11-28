@@ -94,5 +94,48 @@ namespace WebShopAPI.Service.OrderItemServiceMap
             return null;
                
         }
+        public async Task<OrderItem> SetOrderItemQuantity(string userId, int orderitemId, int newquantity)
+        {
+            var user = await _context.Useres
+                .Include(u => u.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .Include(u => u.Orders)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user != null)
+            {
+                var orderItem = user.OrderItems.FirstOrDefault(oi => oi.OrderItemId == orderitemId);
+                if(orderItem != null)
+                {
+                    var oldQuantity = orderItem.Quantity;
+                    var difference = newquantity - oldQuantity;
+                    orderItem.Quantity = newquantity;
+                    
+                    if (orderItem.Product != null)
+                    {
+                        
+                        orderItem.Price = orderItem.Product.Price * newquantity;
+                        if( difference > 0)
+                        {
+                            orderItem.Product.Stock -= difference;
+                            
+                        }
+                        else if(difference < 0 )
+                        {
+                            orderItem.Product.Stock += Math.Abs(difference);
+                           
+                        }
+                        decimal newTotalPrice = user.Orders.SelectMany(o => o.OrderItems).Sum(oi => oi.Price);
+                        var orderToUpdate = user.Orders.FirstOrDefault(o => o.OrderItems.Any(oi=> oi.OrderItemId == orderitemId));
+                        if(orderToUpdate != null)
+                        {
+                            orderToUpdate.TotalPrice = newTotalPrice;
+                        }
+                        await _context.SaveChangesAsync();
+                        return orderItem;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }

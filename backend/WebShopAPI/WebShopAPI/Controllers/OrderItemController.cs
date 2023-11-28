@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Service.OrderItemServiceMap;
 using WebShopAPI.Model;
 using WebShopAPI.Data;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace WebShopAPI.Controllers
 {
@@ -46,6 +48,28 @@ namespace WebShopAPI.Controllers
             {
                 return BadRequest(ex.Message);
             };
+        }
+        [HttpPut("/orderitem/updateQuantity"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<OrderItem>> SetOrderItemQuantityAsync(string userId, int orderItemId, int newQuantity)
+        {
+            try
+            {
+                var updateItem = await _orderItemService.SetOrderItemQuantity(userId, orderItemId, newQuantity);
+                if(updateItem != null)
+                {
+                    var jsonOptions = new JsonSerializerOptions
+                    {
+                        ReferenceHandler = ReferenceHandler.Preserve,
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    };
+                    return Ok(JsonSerializer.Serialize(updateItem, jsonOptions));
+                }
+                return NotFound($"OrderItem with id {orderItemId} not found for user {userId}");
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(ex.Message );
+            }
         }
     }
 }
