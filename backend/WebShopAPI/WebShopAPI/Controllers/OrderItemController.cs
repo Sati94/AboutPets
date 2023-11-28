@@ -20,11 +20,11 @@ namespace WebShopAPI.Controllers
         }
 
         [HttpPost("/add"), Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult<OrderItem>> AddOrderItemToUserAsync(string userId, int productId, int quantity)
+        public async Task<ActionResult<OrderItem>> AddOrderItemToUserAsync(string userId, int productId, int quantity, int orderid)
         {
             try
             {
-                await _orderItemService.AddOrderItemToUser(userId, productId, quantity);
+                await _orderItemService.AddOrderItemToUser(userId, productId, quantity, orderid);
                 return Ok("OrderItem added to user and database");
             }
             catch(ArgumentException ex) 
@@ -33,6 +33,19 @@ namespace WebShopAPI.Controllers
             }
 
 
+        }
+        [HttpDelete("/orderitem/remove"), Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult<OrderItem>> RemoveOrderItemFromUserAndOrderAsync(string userid,int orderItemId)
+        {
+            try
+            {
+                await _orderItemService.DeleteOrderItem(userid, orderItemId);
+                return Ok("OrderItem removed !");
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            };
         }
     }
 }
