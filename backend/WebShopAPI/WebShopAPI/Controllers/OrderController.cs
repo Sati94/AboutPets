@@ -42,6 +42,19 @@ namespace WebShopAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
+        [HttpGet("/order/{userId}"), Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult<Order>> GetOrderByUserId(string userId)
+        {
+            try
+            {
+                var order = await _orderService.GetOrderByUserId(userId);
+                return Ok(order);
+            }
+            catch(ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
         
     }
 }

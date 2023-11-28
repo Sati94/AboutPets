@@ -21,5 +21,10 @@ namespace WebShopAPI.Service.OrderServiceMap
             var order = await _context.Orders.FirstOrDefaultAsync(o=> o.OrderId == orderId);
             return order;
         }
+        public async Task<Order> GetOrderByUserId(string userId)
+        {
+            var order = _context.Orders.FirstOrDefault(o=> o.UserId == userId);
+            return order;
+        }
     }
 }

@@ -6,5 +6,6 @@ namespace WebShopAPI.Service.OrderServiceMap
     {
         Task<IEnumerable<Order>> GetAllOrderAsync();
         Task<Order> GetOrderByIdAsync(int orderId);
+        Task<Order> GetOrderByUserId(string userId);
     }
 }
