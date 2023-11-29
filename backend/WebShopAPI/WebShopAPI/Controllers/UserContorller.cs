@@ -13,8 +13,6 @@ namespace WebShopAPI.Controllers
     {
         private readonly IUserService _userService;
       
-       
-        
         public UserContorller(IUserService userService)
         {
             _userService = userService;
@@ -29,7 +27,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(useres);
         }
-        [HttpPut("/user/update/{userId}"), Authorize(Roles = "Admin, Us;er")]
+        [HttpPut("/user/update/{userId}"), Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<User>> UpdateUserAsync(string userId, UserDto user)
         {
             var result = await _userService.UpdateUser(userId, user);

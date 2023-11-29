@@ -4,6 +4,7 @@ using NUnit.Framework;
 using WebShopAPI.Service.OrderServiceMap;
 using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.OrderModel.OrderStatus;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace WebShopAPI.Controllers
 {
@@ -80,6 +81,19 @@ namespace WebShopAPI.Controllers
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);  
+            }
+        }
+        [HttpPut("/{orderId}/apply-cupon"), Authorize(Roles = "User")]
+        public async Task<ActionResult<bool>> UpdateBonusInOrderById(int orderId, string userId)
+        {
+            try
+            {
+                var result = await _orderService.UpdateOrderTotlaPriceWithBonus(orderId, userId);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
         

@@ -10,5 +10,6 @@ namespace WebShopAPI.Service.OrderServiceMap
         Task<Order> GetOrderByUserId(string userId);
         Task<Order> DeleteOrderById (int orderId);
         Task<bool> UpdateOrderStatus(int orderId, OrderStatuses newStatus);
+        Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId );
     }
 }

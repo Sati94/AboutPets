@@ -66,5 +66,32 @@ namespace WebShopAPI.Service.OrderServiceMap
             }
             return false;
         }
+        public async Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
+            if (order == null) 
+            {
+                return false;
+            }
+            var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(up => up.UserId == userId);
+            if (userProfile != null)
+            {
+                var cupon = userProfile.Bonus;
+                order.TotalPrice = order.TotalPrice * cupon / 100;
+                userProfile.Bonus -= cupon;
+                _context.UserProfiles.Update(userProfile);
+                
+
+                await _context.SaveChangesAsync();
+                return true;
+
+
+            }
+            return false;
+
+        }
     }
 }
+
