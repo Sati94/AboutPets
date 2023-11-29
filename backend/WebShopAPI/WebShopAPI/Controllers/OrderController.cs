@@ -55,6 +55,19 @@ namespace WebShopAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
+        [HttpDelete("/order/delete/{orderId}"), Authorize(Roles ="Admin,User")]
+        public async Task<ActionResult<Order>> DeleteOrderByIdAsync(int orderId)
+        {
+            try
+            {
+                var order = await _orderService.DeleteOrderById(orderId);
+                return Ok(order);
+            }
+            catch(ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
         
     }
 }
