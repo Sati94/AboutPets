@@ -15,8 +15,11 @@ namespace WebShopAPI.Service.OrderItemServiceMap
         }
         public async Task<OrderItem> AddOrderItemToUser(string userId, int productId, int quantity, int orderid)
         {
-            var user = await _context.Useres.FirstOrDefaultAsync(u => u.Id == userId);
-            if(user == null)
+            var user = await _context.Useres
+             .Include(u => u.Orders)
+             .ThenInclude(o => o.OrderItems)
+              .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
             {
                 throw new ArgumentException("User not found");
             }
@@ -26,7 +29,11 @@ namespace WebShopAPI.Service.OrderItemServiceMap
             {
                 throw new ArgumentException("Product not found");
             }
-            var order = user.Orders.FirstOrDefault(o => o.OrderId == orderid);
+            Order order = null;
+            if(orderid != 0)
+            {
+                order = user.Orders.FirstOrDefault(o => o.OrderId == orderid);
+            }
             if (order == null)
             {
                 order = new Order
