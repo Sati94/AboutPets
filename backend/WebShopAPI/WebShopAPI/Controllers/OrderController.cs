@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using WebShopAPI.Service.OrderServiceMap;
 using WebShopAPI.Model.OrderModel;
+using WebShopAPI.Model.OrderModel.OrderStatus;
 
 namespace WebShopAPI.Controllers
 {
@@ -66,6 +67,19 @@ namespace WebShopAPI.Controllers
             catch(ArgumentException ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+        [HttpPut("/order/update/{orderId}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<bool>> UpdateStatusByOrderId(int orderId, OrderStatuses orderstatus)
+        {
+            try
+            {
+                var order = await _orderService.UpdateOrderStatus(orderId, orderstatus);
+                return Ok(order);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);  
             }
         }
         

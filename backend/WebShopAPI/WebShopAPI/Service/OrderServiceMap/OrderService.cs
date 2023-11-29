@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Data;
 using WebShopAPI.Model.OrderModel;
+using WebShopAPI.Model.OrderModel.OrderStatus;
 
 namespace WebShopAPI.Service.OrderServiceMap
 {
@@ -53,6 +54,17 @@ namespace WebShopAPI.Service.OrderServiceMap
             }
 
                 return order;   
+        }
+        public async Task<bool> UpdateOrderStatus(int orderId, OrderStatuses newStatus)
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if (order != null)
+            {
+                order.OrderStatuses = newStatus;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }
