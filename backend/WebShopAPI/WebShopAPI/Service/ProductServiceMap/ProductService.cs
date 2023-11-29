@@ -49,6 +49,9 @@ namespace WebShopAPI.Service.ProductServiceMap
             productToUpdate.Category = product.Category;
             productToUpdate.SubCategory = product.SubCategory;
             productToUpdate.ImageBase64 = product.ImageBase64;
+
+            var discountService = new DiscountCalculator();
+            productToUpdate.Price = discountService.CalculateDiscountedPrice(productToUpdate);
             _context.Products.Update(productToUpdate);
             await _context.SaveChangesAsync();
             return productToUpdate;
