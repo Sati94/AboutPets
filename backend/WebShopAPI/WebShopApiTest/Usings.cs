@@ -20,3 +20,8 @@ global using WebShopAPI.Controllers;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.Testing;
 global using WebShopAPI.Model.CategoryClasses;
+global using JsonSerializer = System.Text.Json.JsonSerializer;
+global using System.Net.Http.Headers;
+global using System.Text;
+global using System.Text.Json;
+global using Newtonsoft.Json;
