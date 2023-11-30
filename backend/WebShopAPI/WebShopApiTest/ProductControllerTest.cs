@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using WebShopAPI.Data;
 using Microsoft.EntityFrameworkCore.InMemory;
 using System.Net;
+using WebShopAPI.Model;
 
 namespace WebShopApiTest
 {
@@ -129,6 +130,18 @@ namespace WebShopApiTest
 
             // Check the response content for a specific message.
             Assert.AreEqual("This product doesn't exsist!", responseContent);
+        }
+        [Test]
+        public async Task Find_Product_ById_RetrurnTrue()
+        {
+            int productId = 4;
+            var product = _webShopContext.Products.FirstOrDefault(p => p.ProductId == productId);
+            
+            var response = await _httpClient.GetAsync($"/product/{productId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.NotNull(responseContent);
+            Assert.AreEqual(product.ProductId, productId);
         }
     }
 }
