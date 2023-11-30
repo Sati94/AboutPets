@@ -69,7 +69,7 @@ namespace WebShopApiTest
         {
             ProductDto productDto = new ProductDto
             {
-                ProductName = "Kutya Kaja",
+                ProductName = "Test",
                 Description = "finom kutya kaja",
                 Price = 50,
                 Stock = 50,
@@ -142,6 +142,40 @@ namespace WebShopApiTest
 
             Assert.NotNull(responseContent);
             Assert.AreEqual(product.ProductId, productId);
+        }
+        [Test]
+        public async Task Update_Product_Returns_OkResult()
+        {
+            int productId = 4;
+            ProductDto updateProduct = new ProductDto
+            {
+                ProductName = "Finom Kaja",
+                Description = "Nagy kutyáknak",
+                Price = 50,
+                Stock = 50,
+                Discount = 0,
+                Category = Category.Dog,
+                SubCategory = SubCategory.DryFood,
+                ImageBase64 = "valami"
+            };
+            var content  = new StringContent(JsonConvert.SerializeObject(new
+            {
+                productName = updateProduct.ProductName,
+                description = updateProduct.Description,
+                price = updateProduct.Price,
+                stock = updateProduct.Stock,
+                discount = updateProduct.Discount,
+                category = (int)updateProduct.Category,
+                subCategory = updateProduct.SubCategory,
+                imageBase64 = updateProduct.ImageBase64,
+                
+            }), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync($"/product/update/{productId}", content);
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var updatedProduct = JsonConvert.DeserializeObject<Product>(responseContent);
+            Assert.AreEqual("Finom Kaja",updatedProduct.ProductName);
+
         }
     }
 }
