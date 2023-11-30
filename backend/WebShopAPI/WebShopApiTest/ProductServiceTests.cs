@@ -1,16 +1,3 @@
-using NUnit.Framework;
-using Moq;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using WebShopAPI.Data;
-using WebShopAPI.Model.DTOS;
-using WebShopAPI.Model;
-using WebShopAPI.Service.ProductServiceMap;
-using WebShopAPI.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using WebShopAPI.Model.CategoryClasses;
 
 namespace WebShopApiTest
 {
