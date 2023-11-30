@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using WebShopAPI.Data;
 using Microsoft.EntityFrameworkCore.InMemory;
+using System.Net;
 
 namespace WebShopApiTest
 {
@@ -114,6 +115,20 @@ namespace WebShopApiTest
             Assert.AreEqual(productDto.Category, createdProduct.Category);
             Assert.AreEqual(productDto.SubCategory, createdProduct.SubCategory);
             Assert.AreEqual(productDto.ImageBase64, createdProduct.ImageBase64);
+        }
+        [Test]
+        public async Task Delete_Product_NonExistingProduct_ReturnsNotFound()
+        {
+            int productId = 100;
+
+            var response = await _httpClient.DeleteAsync($"/product/delete/{productId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            // Check if the response status code indicates a non-success status (e.g., 404 Not Found).
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+
+            // Check the response content for a specific message.
+            Assert.AreEqual("This product doesn't exsist!", responseContent);
         }
     }
 }
