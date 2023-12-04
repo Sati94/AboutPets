@@ -34,8 +34,8 @@ namespace WebShopAPI.Controllers
         {
             try
             {
-                await _userProfileService.UpdateUserProfile(userId,userProfile);
-                return Ok("UserProfile updated successfully!");
+                var profile = await _userProfileService.UpdateUserProfile(userId,userProfile);
+                return Ok(profile);
             }
             catch(InvalidOperationException ex) 
             {

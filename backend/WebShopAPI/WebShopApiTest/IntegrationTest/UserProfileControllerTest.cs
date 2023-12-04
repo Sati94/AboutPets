@@ -7,7 +7,7 @@ using WebShopAPI.Model.UserModels;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class UserProfileTest : WebApplicationFactory<Program>
+    public class UserProfileControllerTest : WebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
         private IAuthService _authService;
@@ -63,6 +63,42 @@ namespace WebShopApiTest.IntegrationTest
             var responseContent = await response.Content.ReadAsStringAsync();
             Assert.NotNull(responseContent);
             Assert.AreEqual(userProfile.UserId, userId);
+        }
+        [Test]
+        public async Task Update_UserProfile_ByAdmin_Return_True()
+        {
+            string userId = "ddee6c24-af15-4052-bb97-42ed4bf8a134";
+            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
+           AdminUserProfileDto updater = new AdminUserProfileDto
+            {
+                FirstName ="Nagy",
+                LastName = "Béla",
+                PhoneNumber = "123456789",
+                Address = "Nagy Street 25",
+                Bonus = 0.1m
+           };
+            
+            var content = new StringContent(JsonConvert.SerializeObject(new
+            {
+                firstname = updater.FirstName,
+                lastname = updater.LastName,
+                phonenumber = updater.PhoneNumber,
+                address = updater.Address,
+                bonus = updater.Bonus
+            }), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"/update/user/profile/{userId}", content);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+
+            var updatedProfile = JsonConvert.DeserializeObject<UserProfile>(responseContent);
+
+            Assert.AreEqual(updater.FirstName, updatedProfile.FirstName);
+            Assert.AreEqual(updater.LastName, updatedProfile.LastName);
+            Assert.AreEqual(updater.PhoneNumber, updatedProfile.PhoneNumber);
+            Assert.AreEqual(updater.Address, updatedProfile.Address);
+            Assert.AreEqual(updater.Bonus, updatedProfile.Bonus);
         }
     }
 }

@@ -25,6 +25,7 @@ namespace WebShopAPI.Service.UserProfileMap
             {
                 throw new InvalidOperationException("UserProfile not found");
             }
+           
             existingProfile.FirstName = userProfile.FirstName;
             existingProfile.LastName = userProfile.LastName;
             existingProfile.PhoneNumber = userProfile.PhoneNumber;
@@ -40,6 +41,7 @@ namespace WebShopAPI.Service.UserProfileMap
             {
                 throw new InvalidOperationException("UserProfile not found");
             }
+          
             existingProfile.FirstName = updatedProfile.FirstName;
             existingProfile.LastName = updatedProfile.LastName;
             existingProfile.PhoneNumber = updatedProfile.PhoneNumber;
