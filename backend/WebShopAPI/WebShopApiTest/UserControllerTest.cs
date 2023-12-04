@@ -63,6 +63,18 @@ namespace WebShopApiTest
             Assert.NotNull(content);
             Assert.IsNotEmpty(content);
         }
+        [Test]
+        public async Task Find_User_ById_RetrurnTrue()
+        {
+            string userId = "02abd951-63df-432d-a573-ba8d649c33bc";
+             var user = _webShopContext.Useres.FirstOrDefault(u => u.IdentityUserId == userId);
+
+            var response = await _httpClient.GetAsync($"/user/{userId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.NotNull(responseContent);
+            Assert.AreEqual(user.IdentityUserId, userId);
+        }
     }
 }
 
