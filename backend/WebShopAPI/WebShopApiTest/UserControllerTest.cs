@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using WebShopAPI.Model.UserModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebShopApiTest
 {
@@ -101,6 +102,30 @@ namespace WebShopApiTest
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
 
             Assert.AreEqual("This user dosn't exist!", responseContent);
+        }
+        [Test]
+        public async Task Update_UserById_Return_True()
+        {
+            string userId = "67daf906-b58b-4e7c-91c3-f30ea58d834a";
+            var user = _webShopContext.Useres.FirstOrDefault(u=> u.IdentityUserId==userId);
+            UserDto newUser = new UserDto
+            {
+                Username = "newUser",
+                Email = "newUser@newUser.com"
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(new
+            {
+               username = newUser.Username,
+               email = newUser.Email
+
+            }), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync($"/user/update/{userId}", content);
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var updatedUser = JsonConvert.DeserializeObject<User>(responseContent);
+            Assert.AreEqual("newUser", updatedUser.UserName);
+
+
         }
     }
 }
