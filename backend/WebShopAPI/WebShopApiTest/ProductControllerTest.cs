@@ -177,5 +177,16 @@ namespace WebShopApiTest
             Assert.AreEqual("Finom Kaja",updatedProduct.ProductName);
 
         }
+        [Test]
+        public async Task Find_ProductByCategroy_Retrun_NotNull()
+        {
+            var category = Category.Dog;
+
+            var response = await _httpClient.GetAsync($"/products/category/{category}");
+            response.EnsureSuccessStatusCode();
+            var respnseContent = await response.Content.ReadAsStringAsync();
+            Assert.IsNotNull(respnseContent);
+        }
+
     }
 }
