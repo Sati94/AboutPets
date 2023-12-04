@@ -75,6 +75,18 @@ namespace WebShopApiTest
             Assert.NotNull(responseContent);
             Assert.AreEqual(user.IdentityUserId, userId);
         }
+        public async Task Find_User_ByUserName_RetrurnTrue()
+        {
+            string userName = "admin";
+            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == userName);
+
+            var response = await _httpClient.GetAsync($"/user/name/{userName}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.NotNull(responseContent);
+            Assert.AreEqual(user.UserName, userName);
+        }
+
     }
 }
 
