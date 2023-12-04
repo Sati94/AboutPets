@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.InMemory;
 using System.Net;
 using WebShopAPI.Model;
 
-namespace WebShopApiTest
+namespace WebShopApiTest.IntegrationTest
 {
     public class ProductControllerTest : WebApplicationFactory<Program>
     {
@@ -36,10 +36,10 @@ namespace WebShopApiTest
             var desContent = JsonSerializer.Deserialize<AuthResponse>(content, options);
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            
+
         }
-        [OneTimeTearDown] 
-        public void TearDown() 
+        [OneTimeTearDown]
+        public void TearDown()
         {
             CleanUpDate();
             _httpClient.Dispose();
@@ -54,7 +54,7 @@ namespace WebShopApiTest
 
             _webShopContext.Products.RemoveRange(productsToDelete);
             _webShopContext.SaveChanges();
-        } 
+        }
         [Test]
         public async Task Return_AllProduct_Endpoint()
         {
@@ -90,7 +90,7 @@ namespace WebShopApiTest
                 ImageBase64 = productDto.ImageBase64
 
             };
-            
+
             var content = new StringContent(JsonConvert.SerializeObject(new
             {
                 productName = product.ProductName,
@@ -102,7 +102,7 @@ namespace WebShopApiTest
                 subCategory = (int)product.SubCategory,
                 imageBase64 = product.ImageBase64
             }), Encoding.UTF8, "application/json");
-            
+
             var respose = await _httpClient.PostAsync("/create/product", content);
             respose.EnsureSuccessStatusCode();
             var responseContent = await respose.Content.ReadAsStringAsync();
@@ -136,7 +136,7 @@ namespace WebShopApiTest
         {
             int productId = 4;
             var product = _webShopContext.Products.FirstOrDefault(p => p.ProductId == productId);
-            
+
             var response = await _httpClient.GetAsync($"/product/{productId}");
             var responseContent = await response.Content.ReadAsStringAsync();
 
@@ -158,7 +158,7 @@ namespace WebShopApiTest
                 SubCategory = SubCategory.DryFood,
                 ImageBase64 = "valami"
             };
-            var content  = new StringContent(JsonConvert.SerializeObject(new
+            var content = new StringContent(JsonConvert.SerializeObject(new
             {
                 productName = updateProduct.ProductName,
                 description = updateProduct.Description,
@@ -168,13 +168,13 @@ namespace WebShopApiTest
                 category = (int)updateProduct.Category,
                 subCategory = updateProduct.SubCategory,
                 imageBase64 = updateProduct.ImageBase64,
-                
+
             }), Encoding.UTF8, "application/json");
             var response = await _httpClient.PutAsync($"/product/update/{productId}", content);
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var updatedProduct = JsonConvert.DeserializeObject<Product>(responseContent);
-            Assert.AreEqual("Finom Kaja",updatedProduct.ProductName);
+            Assert.AreEqual("Finom Kaja", updatedProduct.ProductName);
 
         }
         [Test]

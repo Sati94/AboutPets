@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using WebShopAPI.Model.UserModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace WebShopApiTest
+namespace WebShopApiTest.IntegrationTest
 {
     public class UserControllerTest : WebApplicationFactory<Program>
     {
@@ -70,7 +70,7 @@ namespace WebShopApiTest
         public async Task Find_User_ById_RetrurnTrue()
         {
             string userId = "02abd951-63df-432d-a573-ba8d649c33bc";
-             var user = _webShopContext.Useres.FirstOrDefault(u => u.IdentityUserId == userId);
+            var user = _webShopContext.Useres.FirstOrDefault(u => u.IdentityUserId == userId);
 
             var response = await _httpClient.GetAsync($"/user/{userId}");
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -91,10 +91,10 @@ namespace WebShopApiTest
             Assert.AreEqual(user.UserName, userName);
         }
         [Test]
-        public async Task  Delete_User_NonExistingUser_ReturnsNotFound()
+        public async Task Delete_User_NonExistingUser_ReturnsNotFound()
         {
             var userId = "ddee6c24";
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.Id== userId);
+            var user = _webShopContext.Useres.FirstOrDefault(u => u.Id == userId);
 
             var response = await _httpClient.DeleteAsync("user/delete/{userId}");
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -107,7 +107,7 @@ namespace WebShopApiTest
         public async Task Update_UserById_Return_True()
         {
             string userId = "67daf906-b58b-4e7c-91c3-f30ea58d834a";
-            var user = _webShopContext.Useres.FirstOrDefault(u=> u.IdentityUserId==userId);
+            var user = _webShopContext.Useres.FirstOrDefault(u => u.IdentityUserId == userId);
             UserDto newUser = new UserDto
             {
                 Username = "newUser",
@@ -115,8 +115,8 @@ namespace WebShopApiTest
             };
             var content = new StringContent(JsonConvert.SerializeObject(new
             {
-               username = newUser.Username,
-               email = newUser.Email
+                username = newUser.Username,
+                email = newUser.Email
 
             }), Encoding.UTF8, "application/json");
             var response = await _httpClient.PutAsync($"/user/update/{userId}", content);
