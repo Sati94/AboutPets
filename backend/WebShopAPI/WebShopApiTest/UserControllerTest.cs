@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using WebShopAPI.Model.UserModels;
 
 namespace WebShopApiTest
 {
@@ -75,6 +77,7 @@ namespace WebShopApiTest
             Assert.NotNull(responseContent);
             Assert.AreEqual(user.IdentityUserId, userId);
         }
+        [Test]
         public async Task Find_User_ByUserName_RetrurnTrue()
         {
             string userName = "admin";
@@ -86,7 +89,19 @@ namespace WebShopApiTest
             Assert.NotNull(responseContent);
             Assert.AreEqual(user.UserName, userName);
         }
+        [Test]
+        public async Task  Delete_User_NonExistingUser_ReturnsNotFound()
+        {
+            var userId = "ddee6c24";
+            var user = _webShopContext.Useres.FirstOrDefault(u => u.Id== userId);
 
+            var response = await _httpClient.DeleteAsync("user/delete/{userId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+
+            Assert.AreEqual("This user dosn't exist!", responseContent);
+        }
     }
 }
 
