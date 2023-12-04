@@ -187,6 +187,16 @@ namespace WebShopApiTest
             var respnseContent = await response.Content.ReadAsStringAsync();
             Assert.IsNotNull(respnseContent);
         }
+        [Test]
+        public async Task Find_ProductBySubCategory_Retrun_NotNull()
+        {
+            var subCategory = SubCategory.DryFood;
+
+            var response = await _httpClient.GetAsync($"/products/category/subCategory/{subCategory}");
+            response.EnsureSuccessStatusCode();
+            var respnseContent = await response.Content.ReadAsStringAsync();
+            Assert.IsNotNull(respnseContent);
+        }
 
     }
 }

@@ -70,7 +70,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(products);
         }
-        [HttpGet("/products/category/subCategory{subCategory}"), Authorize(Roles = "Admin, User")]
+        [HttpGet("/products/category/subCategory/{subCategory}"), Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubCategoryAsync(SubCategory subCategory)
         {
             var products = await _productService.GetProductsBySubCategory((int)subCategory);
