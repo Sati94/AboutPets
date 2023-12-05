@@ -27,6 +27,7 @@ namespace WebShopApiTest.IntegrationTest
             .UseSqlServer(connection)
                 .Options;
             _webShopContext = new WebShopContext(dbConnection);
+         
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -192,6 +193,9 @@ namespace WebShopApiTest.IntegrationTest
             // Ensure that the Product still exists in the context
             var productInContext = _webShopContext.Products.Find(product.ProductId);
             Assert.IsNotNull(productInContext);
+        
+
+            
         }
     }
     
