@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -69,7 +71,7 @@ namespace WebShopApiTest.IntegrationTest
         {
             // Arrange
             var userId = "Test";
-            var productId = 1; 
+            var productId = 1;
             var quantity = 10;
             var orderid = 1;
             var user = await _webShopContext.Useres.FirstOrDefaultAsync(u => u.Id == userId);
@@ -84,9 +86,9 @@ namespace WebShopApiTest.IntegrationTest
             if (product == null)
             {
                 // Létrehozunk egy új felhasználót, vagy más módon inicializáljuk
-                
-                product = new Product {  Description = "Valami", ProductName = "Test", Price = 10, Category = Category.Cat, SubCategory = SubCategory.WetFood, Discount = 0, Stock = 10, ImageBase64 = "valami" };
-               
+
+                product = new Product { Description = "Valami", ProductName = "Test", Price = 10, Category = Category.Cat, SubCategory = SubCategory.WetFood, Discount = 0, Stock = 10, ImageBase64 = "valami" };
+
                 _webShopContext.Products.Add(product);
                 await _webShopContext.SaveChangesAsync();
                 productId = product.ProductId;
@@ -95,7 +97,7 @@ namespace WebShopApiTest.IntegrationTest
             if (order == null)
             {
                 // Létrehozunk egy új felhasználót, vagy más módon inicializáljuk
-               order = new Order { OrderDate = DateTime.MinValue, OrderStatuses = OrderStatuses.Cancelled, UserId = userId };
+                order = new Order { OrderDate = DateTime.MinValue, OrderStatuses = OrderStatuses.Cancelled, UserId = userId };
                 _webShopContext.Orders.Add(order);
                 await _webShopContext.SaveChangesAsync();
             }
@@ -111,35 +113,86 @@ namespace WebShopApiTest.IntegrationTest
                 Product = product,
                 Order = order,
                 User = user,
-          
+
             };
-           
+
             var response = await _httpClient.PostAsync($"/add?userId={userId}&productId={productId}&quantity={quantity}&orderid={orderid}", null);
 
             // Assert
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
-         
+
             var options = new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.Preserve,
-          
+
             };
-         
-           
+
+
             var returnedOrderItem = JsonSerializer.Deserialize<OrderItem>(responseContent, options);
             Console.WriteLine(responseContent);
             Console.WriteLine(JsonSerializer.Serialize(returnedOrderItem, options));
             // Itt várható, hogy a válasz tartalmazza az OrderItem adatait
             var createdOrderItem = await _webShopContext.OrderItems.FirstOrDefaultAsync(oi => oi.UserId == orderItem.UserId);
 
-           
+
             Assert.IsNotNull(returnedOrderItem);
             Assert.IsNotNull(createdOrderItem);
 
 
 
         }
+        [Test]
+        public async Task Delete_OrderItem_NonExistingProduct_ReturnsNotFound()
+        {
+            var userId = "TestUser";
 
+            // Add test data to the in-memory database
+            var user = new User { Id = userId, UserName = "TestUser", Email = "test@test.com" };
+
+            var order = new Order { OrderDate = DateTime.MinValue, OrderStatuses = OrderStatuses.Cancelled, UserId = userId };
+            var orderid = order.OrderId;
+
+            var product = new Product { Description = "Valami", ProductName = "Test", Price = 10, Category = Category.Cat, SubCategory = SubCategory.WetFood, Discount = 0, Stock = 10, ImageBase64 = "valami" };
+
+            // Add the product to the context and save changes
+            _webShopContext.Products.Add(product);
+            await _webShopContext.SaveChangesAsync();
+
+            // Now create the order item using the product ID
+            var orderItem = new OrderItem { UserId = userId, Quantity = 1, Price = 0, OrderId = orderid, ProductId = product.ProductId };
+
+            user.OrderItems.Add(orderItem);
+            order.OrderItems.Add(orderItem);
+
+            _webShopContext.Useres.Add(user);
+            _webShopContext.Orders.Add(order);
+            _webShopContext.OrderItems.Add(orderItem);
+            await _webShopContext.SaveChangesAsync();
+
+            var orderItemId = orderItem.OrderItemId;
+
+            var orderItemService = new OrderItemService(_webShopContext);
+
+            // Act
+            var result = await orderItemService.DeleteOrderItem(userId, orderItemId);
+
+            Assert.IsFalse(user.OrderItems.Contains(orderItem));
+            Assert.IsFalse(order.OrderItems.Contains(orderItem));
+
+            // If the order had only this item, ensure that the order is removed
+            if (order.OrderItems.Count == 0)
+            {
+                Assert.IsNull(_webShopContext.Orders.Find(order.OrderId));
+            }
+
+            // Ensure that the OrderItem is removed from the context
+            Assert.IsNull(_webShopContext.OrderItems.Find(orderItemId));
+
+            // Ensure that the Product still exists in the context
+            var productInContext = _webShopContext.Products.Find(product.ProductId);
+            Assert.IsNotNull(productInContext);
+        }
     }
+    
 }
