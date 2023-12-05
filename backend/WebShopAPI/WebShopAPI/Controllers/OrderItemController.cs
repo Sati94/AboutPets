@@ -13,12 +13,14 @@ namespace WebShopAPI.Controllers
     public class OrderItemController : ControllerBase
     {
         private readonly IOrderItemService _orderItemService;
-       
+        private readonly ILogger<OrderItemController> _logger;
 
-        public OrderItemController(IOrderItemService orderItemService)
+
+
+        public OrderItemController(IOrderItemService orderItemService, ILogger<OrderItemController> logger)
         {
             _orderItemService = orderItemService;
-          
+            _logger = logger;   
         }
 
         [HttpPost("/add"), Authorize(Roles = "Admin,User")]
@@ -26,12 +28,21 @@ namespace WebShopAPI.Controllers
         {
             try
             {
-                await _orderItemService.AddOrderItemToUser(userId, productId, quantity, orderid);
-                return Ok("OrderItem added to user and database");
+                var result = await _orderItemService.AddOrderItemToUser(userId, productId, quantity, orderid);
+               
+                return Ok(result);
+                
             }
             catch(ArgumentException ex) 
             {
+                _logger.LogError(ex, $"Hiba a kódban: {ex.Message}");
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // ILogger beinjektálása a konstruktorban
+                _logger.LogError(ex, $"Egyéb hiba a kódban: {ex.Message}");
+                return StatusCode(500, "Internal Server Error");
             }
 
 
