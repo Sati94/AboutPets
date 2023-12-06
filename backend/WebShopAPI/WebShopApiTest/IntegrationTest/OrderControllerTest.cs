@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using WebShopAPI.Model.OrderModel;
 
 namespace WebShopApiTest.IntegrationTest
 {
@@ -78,6 +79,23 @@ namespace WebShopApiTest.IntegrationTest
                 var responseContent = await response.Content.ReadAsStringAsync();
                 Assert.NotNull(responseContent);
                 Assert.AreEqual(orderId, order.OrderId);
+            }
+        }
+        [Test]
+        public async Task FetOrder_ByUserId_Return_True() 
+        {
+            string userId = "ddee6c24-af15-4052-bb97-42ed4bf8a134";
+            var order = _webShopContext.Orders.FirstOrDefault(o => o.UserId == userId);
+            if (order == null)
+            {
+                Assert.IsNull(order);
+            }
+            else
+            {
+                var response = await _httpClient.GetAsync($"/order/{userId}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Assert.NotNull(responseContent);
+                Assert.AreEqual(userId, order.UserId);
             }
         }
     }
