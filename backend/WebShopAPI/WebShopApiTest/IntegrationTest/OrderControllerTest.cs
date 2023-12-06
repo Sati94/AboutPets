@@ -63,5 +63,22 @@ namespace WebShopApiTest.IntegrationTest
             Assert.IsNotNull(content);
             Assert.IsNotEmpty(content);
         }
+        [Test]
+        public async Task GetOrder_ById_Retrun_True()
+        {
+            int orderId = 11;
+            var order = _webShopContext.Orders.FirstOrDefault(o => o.OrderId == orderId);
+            if(order == null)
+            {
+                Assert.IsNull(order);
+            }
+            else
+            {
+                var response = await _httpClient.GetAsync($"/ordelist/order/{orderId}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Assert.NotNull(responseContent);
+                Assert.AreEqual(orderId, order.OrderId);
+            }
+        }
     }
 }
