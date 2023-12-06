@@ -113,5 +113,29 @@ namespace WebShopApiTest.IntegrationTest
             Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
   
         }
+        [Test]
+        public async Task Update_OrderStatus_ById_Return_True() 
+        {
+            int orderId = 11;
+            var newStatus = OrderStatuses.Shipped;
+            var order =  _webShopContext.Orders.FirstOrDefault(o=> o.OrderId == orderId);
+            if(order != null)
+            {
+                var content = new StringContent(JsonConvert.SerializeObject(new
+                {
+                    orderId = order.OrderId,
+                    orderdate = order.OrderDate,
+                    totalprice = order.TotalPrice,
+                    orderStatuses = newStatus,
+                    userId = order.UserId
+
+                }), Encoding.UTF8, "application/json"); ;
+                var response = await _httpClient.PutAsync($"/order/update/{orderId}", content);
+                response.EnsureSuccessStatusCode();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var isUpdateSuccessful = JsonConvert.DeserializeObject<bool>(responseContent);
+                Assert.IsTrue(isUpdateSuccessful);
+            }
+        }
     }
 }
