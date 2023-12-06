@@ -42,13 +42,13 @@ namespace WebShopAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
-        [HttpPut("admin/update/profile/{userId}"), Authorize(Roles = "Admin")]
+        [HttpPut("/admin/update/profile/{userId}"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserProfile>> UpdateAdminUserProfile(string userId, [FromBody] AdminUserProfileDto userProfile)
         {
             try
             {
-                await _userProfileService.UpdateAdminUserProfileAsync(userId, userProfile);
-                return Ok("AdminUserProfile updated successfully");
+                var updatedProfile = await _userProfileService.UpdateAdminUserProfileAsync(userId, userProfile);
+                return Ok(updatedProfile);
             }
             catch(InvalidOperationException ex)
             {

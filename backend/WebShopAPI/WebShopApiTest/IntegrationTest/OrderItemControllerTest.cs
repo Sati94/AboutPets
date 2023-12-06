@@ -42,6 +42,24 @@ namespace WebShopApiTest.IntegrationTest
             var desContent = JsonSerializer.Deserialize<AuthResponse>(content, options);
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            string userId = Guid.NewGuid().ToString();
+            User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test3" };
+            UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 0.1m, UserId = newUser.Id };
+            newUser.Profile = newUserProfile;
+            Product newProduct = new Product { ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };
+
+            OrderItem newOrderItem = new OrderItem { Product = newProduct, Quantity = 10, Price = newProduct.Price * 10, UserId = newUser.Id };
+            Order newOrder = new Order { OrderDate = DateTime.Now, OrderStatuses = OrderStatuses.Pending, UserId = newUser.Id, TotalPrice = newOrderItem.Price };
+
+            newOrder.OrderItems.Add(newOrderItem);
+            newUser.OrderItems.Add(newOrderItem);
+            newUser.Orders.Add(newOrder);
+            _webShopContext.Useres.Add(newUser);
+            _webShopContext.UserProfiles.Add(newUserProfile);
+            _webShopContext.Products.Add(newProduct);
+            _webShopContext.Orders.Add(newOrder);
+            _webShopContext.OrderItems.Add(newOrderItem);
+            _webShopContext.SaveChanges();
 
         }
         [OneTimeTearDown]
@@ -57,14 +75,16 @@ namespace WebShopApiTest.IntegrationTest
                  .Options;
 
             var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-            var userDelete = _webShopContext.Useres.Where(u => u.Id.Contains("Test")).ToList();
-            var orderToDelete = _webShopContext.Orders.Where(o => o.UserId.Contains("Test")).ToList();
-            var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.UserId == "Test").ToList();
+            var userDelete = _webShopContext.Useres.Where(u => u.UserName.Contains("Test")).ToList();
+            var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+            var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
+            var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
             _webShopContext.Products.RemoveRange(productsToDelete);
             _webShopContext.Useres.RemoveRange(userDelete);
             _webShopContext.Orders.RemoveRange(orderToDelete);
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
+            _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
         }
         [Test]

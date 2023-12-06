@@ -68,7 +68,8 @@ namespace WebShopAPI.Service.OrderServiceMap
         }
         public async Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId)
         {
-            var order = await _context.Orders
+           
+                var order = await _context.Orders
                 .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
             if (order == null) 
@@ -79,9 +80,13 @@ namespace WebShopAPI.Service.OrderServiceMap
             if (userProfile != null)
             {
                 var cupon = userProfile.Bonus;
-                order.TotalPrice = order.TotalPrice * cupon / 100;
+                if(cupon > 0)
+                {
+                order.TotalPrice -= order.TotalPrice * cupon;
                 userProfile.Bonus -= cupon;
                 _context.UserProfiles.Update(userProfile);
+                }
+                
                 
 
                 await _context.SaveChangesAsync();
@@ -90,7 +95,7 @@ namespace WebShopAPI.Service.OrderServiceMap
 
             }
             return false;
-
+          
         }
     }
 }

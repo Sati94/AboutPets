@@ -83,7 +83,7 @@ namespace WebShopAPI.Controllers
                 return BadRequest(ex.Message);  
             }
         }
-        [HttpPut("/{orderId}/apply-cupon"), Authorize(Roles = "User")]
+        [HttpPut("/order/{orderId}/apply-cupon/{userId}"), Authorize(Roles = "User, Admin")]
         public async Task<ActionResult<bool>> UpdateBonusInOrderById(int orderId, string userId)
         {
             try

@@ -36,6 +36,24 @@ namespace WebShopApiTest.IntegrationTest
             var desContent = JsonSerializer.Deserialize<AuthResponse>(content, options);
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            string userId = Guid.NewGuid().ToString();
+            User newUser = new User { Id = userId , Email = "test@test.com", UserName = "Test1" };
+            UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 0.1m, UserId = newUser.Id };
+            newUser.Profile = newUserProfile;
+            Product newProduct = new Product { ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };
+
+            OrderItem newOrderItem = new OrderItem { Product = newProduct, Quantity = 10, Price = newProduct.Price * 10, UserId = newUser.Id };
+            Order newOrder = new Order { OrderDate = DateTime.Now, OrderStatuses = OrderStatuses.Pending, UserId = newUser.Id, TotalPrice = newOrderItem.Price };
+
+            newOrder.OrderItems.Add(newOrderItem);
+            newUser.OrderItems.Add(newOrderItem);
+            newUser.Orders.Add(newOrder);
+            _webShopContext.Useres.Add(newUser);
+            _webShopContext.UserProfiles.Add(newUserProfile);
+            _webShopContext.Products.Add(newProduct);
+            _webShopContext.Orders.Add(newOrder);
+            _webShopContext.OrderItems.Add(newOrderItem);
+            _webShopContext.SaveChanges();
 
         }
         [OneTimeTearDown]
@@ -51,8 +69,16 @@ namespace WebShopApiTest.IntegrationTest
                  .Options;
 
             var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+            var userDelete = _webShopContext.Useres.Where(u => u.UserName.Contains("Test")).ToList();
+            var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+            var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
+            var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
             _webShopContext.Products.RemoveRange(productsToDelete);
+            _webShopContext.Useres.RemoveRange(userDelete);
+            _webShopContext.Orders.RemoveRange(orderToDelete);
+            _webShopContext.OrderItems.RemoveRange(orderItemDelete);
+            _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
         }
         [Test]
@@ -69,7 +95,7 @@ namespace WebShopApiTest.IntegrationTest
         {
             ProductDto productDto = new ProductDto
             {
-                ProductName = "Test",
+                ProductName = "Testek",
                 Description = "finom kutya kaja",
                 Price = 50,
                 Stock = 50,
@@ -132,24 +158,32 @@ namespace WebShopApiTest.IntegrationTest
             Assert.AreEqual("This product doesn't exsist!", responseContent);
         }
         [Test]
-        public async Task Find_Product_ById_RetrurnTrue()
+        public async Task Find_Product_ById_RetrurnFalse()
         {
-            int productId = 4;
+            var allProducts = _webShopContext.Products.OrderByDescending(p => p.ProductId).ToList();
+            var lastProduct = allProducts.FirstOrDefault();
+           
+            int productId = lastProduct.ProductId;
             var product = _webShopContext.Products.FirstOrDefault(p => p.ProductId == productId);
-
             var response = await _httpClient.GetAsync($"/product/{productId}");
             var responseContent = await response.Content.ReadAsStringAsync();
-
-            Assert.NotNull(responseContent);
+            Assert.IsNotNull(response);
             Assert.AreEqual(product.ProductId, productId);
+          
         }
+        
         [Test]
         public async Task Update_Product_Returns_OkResult()
         {
-            int productId = 4;
+            var allProducts = _webShopContext.Products.OrderByDescending(p => p.ProductId).ToList();
+            var lastProduct = allProducts.FirstOrDefault();
+
+
+            int productId = lastProduct.ProductId;
+           
             ProductDto updateProduct = new ProductDto
             {
-                ProductName = "Finom Kaja",
+                ProductName = "Testek",
                 Description = "Nagy kutyáknak",
                 Price = 50,
                 Stock = 50,
@@ -174,7 +208,14 @@ namespace WebShopApiTest.IntegrationTest
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var updatedProduct = JsonConvert.DeserializeObject<Product>(responseContent);
-            Assert.AreEqual("Finom Kaja", updatedProduct.ProductName);
+            Assert.AreEqual("Testek", updatedProduct.ProductName);
+            Assert.AreEqual("Nagy kutyáknak", updatedProduct.Description);
+            Assert.AreEqual(50, updatedProduct.Stock);
+            Assert.AreEqual(0, updatedProduct.Discount);
+            Assert.AreEqual(Category.Dog, updatedProduct.Category);
+            Assert.AreEqual(SubCategory.DryFood, updatedProduct.SubCategory);
+            Assert.AreEqual("valami", updatedProduct.ImageBase64);
+
 
         }
         [Test]
