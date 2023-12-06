@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Azure;
+using NUnit.Framework.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
 
 namespace WebShopApiTest.IntegrationTest
@@ -82,7 +86,7 @@ namespace WebShopApiTest.IntegrationTest
             }
         }
         [Test]
-        public async Task FetOrder_ByUserId_Return_True() 
+        public async Task GetOrder_ByUserId_Return_True() 
         {
             string userId = "ddee6c24-af15-4052-bb97-42ed4bf8a134";
             var order = _webShopContext.Orders.FirstOrDefault(o => o.UserId == userId);
@@ -97,6 +101,17 @@ namespace WebShopApiTest.IntegrationTest
                 Assert.NotNull(responseContent);
                 Assert.AreEqual(userId, order.UserId);
             }
+        }
+        [Test]
+        public async Task Delete_OrderById_Return_NotFound()
+        {
+            int orderId = 100;
+            
+            var response = await _httpClient.DeleteAsync($"/order/delete/{orderId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
+  
         }
     }
 }
