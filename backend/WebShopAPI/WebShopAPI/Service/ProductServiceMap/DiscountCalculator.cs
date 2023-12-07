@@ -6,7 +6,7 @@ namespace WebShopAPI.Service.ProductServiceMap
     {
         public decimal CalculateDiscountedPrice(Product product)
         {
-            return product.Discount > 0 ? product.Price - (product.Price * product.Discount / 100) : product.Price;
+            return product.Discount > 0 ? product.Price - (product.Price * product.Discount) : product.Price;
         }
     }
 }
