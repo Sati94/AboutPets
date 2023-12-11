@@ -1,0 +1,50 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title2 {
+    font-size: 50px;
+}
+
+.subtitle {
+    font-size: 30px;
+}
+
+.form a {
+    text-decoration: none;
+    color: #2d81f4;
+    transition: 0.25s;
+}
+
+a:hover {
+    color: #85b3f3;
+}
+
+.link-account {
+    margin-top: 50px;
+    font-size: 20px;
+}
+
+.submit {
+    width: 300px;
+    outline: 0;
+    border: 0;
+    background: none;
+    border: 1px solid #d9d9d9;
+    padding: 8px 0px;
+    margin-bottom: 30px;
+    color: #fff;
+    text-transform: uppercase;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.submit:hover {
+    border: 1px solid #2d81f4;
+    background-color: #263951;
+    color: #2d81f4;
+    cursor: pointer;
+}
