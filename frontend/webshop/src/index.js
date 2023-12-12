@@ -56,7 +56,7 @@ const App = () => {
           element: <Registering />
         },
         {
-          path: "/products/avaiable",
+          path: "/",
           element: <HomePage />
         }
 

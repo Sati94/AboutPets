@@ -23,7 +23,7 @@ namespace WebShopAPI.Controllers
             var newProduct = await _productService.CreatePorductAsync(product);
             return Ok(newProduct);
         }
-        [HttpGet("/product/available"), Authorize(Roles = "Admin,User")]
+        [HttpGet("/product/available")]
         public async Task<ActionResult<IEnumerable<Product>>> AllProductAsync()
         {
             var products = await _productService.GetAllProductAsync();

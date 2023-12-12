@@ -6,6 +6,7 @@ import API_BASE_URL from "../../config";
 import Nav from "../../Components/Navigation/Nav";
 import Header from "../../Components/Header/HeaderForm";
 import Login from "../LoginPage/Login";
+import Dashboard from "../../Components/Dashboard/Dashboard";
 
 
 const HomePage = ({ userId }) => {
@@ -39,7 +40,7 @@ const HomePage = ({ userId }) => {
                                 <div>Loading fetching data...</div>
                             ) : (
                                 <>
-
+                                    <Dashboard allPRoducts={products} isLoggedIn={isLoggedIn} />
                                     <footer className="service-section-footer">
                                         <p>
                                             Services are paid according to the current state of the

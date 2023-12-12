@@ -93,7 +93,7 @@ const LoggingForm = ({ isHandleRegister, onLogin }) => {
                 } else {
                     // User is not an admin
                     Cookies.set("Role", "User");
-                    navigate("/product/avaiable");
+                    navigate("/");
                 }
                 onLogin();
             })

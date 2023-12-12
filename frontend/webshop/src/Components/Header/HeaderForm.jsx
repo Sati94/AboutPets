@@ -29,7 +29,7 @@ const Header = ({ isLoggedIn, userName, onLogout }) => {
 
                         <Link to="/profile">My Profile </Link>
 
-                        <Link to="/shopCard"> Card</Link>
+                        <Link to="/shopCard">Card</Link>
 
                     </div>
                 </div>
