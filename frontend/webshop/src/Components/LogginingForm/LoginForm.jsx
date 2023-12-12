@@ -54,7 +54,7 @@ const LoggingForm = ({ isHandleRegister, onLogin }) => {
         fetch(`${API_BASE_URL}/Login`, {
             method: "POST",
             headers: {
-                "ContentType": "application/json",
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 email: saveUserEmail,
@@ -72,6 +72,7 @@ const LoggingForm = ({ isHandleRegister, onLogin }) => {
             })
             .then((data) => {
                 const { id, email, username, token } = data;
+                console.log(data);
                 Cookies.set("userId", id, { expires: expirationTime });
                 Cookies.set("userEmail", email, { expires: expirationTime });
                 Cookies.set("userUserName", username, { expires: expirationTime });
