@@ -1,6 +1,7 @@
 import { useParams, useLocation } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
 import React, { useState } from "react";
+import logo from '../../Images/logo.png'
 
 const Header = ({ isLoggedIn, userName, onLogout }) => {
     const [isMobileNavVisible, setIsMobileNavVisible] = useState(false);
@@ -13,7 +14,7 @@ const Header = ({ isLoggedIn, userName, onLogout }) => {
                 <div className="app-header-logo">
                     <div className="logo">
                         <span className="logo-icon">
-                            <img src="https://assets.codepen.io/285131/almeria-logo.svg" />
+                            <img src={logo} alt="Logo" />
                         </span>
                         <h1 className="logo-title">
                             <span>About</span>
@@ -26,12 +27,10 @@ const Header = ({ isLoggedIn, userName, onLogout }) => {
                     <div className="tabs">
                         <Link to="/product/avaiable">Products</Link>
 
-                        <Link to="/">Trending Products</Link>
+                        <Link to="/profile">My Profile </Link>
 
-                        <Link to="/marketplace/you/account">Account</Link>
+                        <Link to="/shopCard"> Card</Link>
 
-                        <Link to="/">Business</Link>
-                        <Link to="/">System</Link>
                     </div>
                 </div>
 
@@ -74,19 +73,11 @@ const Header = ({ isLoggedIn, userName, onLogout }) => {
                         <div className="app-header-mobile">
                             <div className="">
                                 <div className="tabs">
-                                    <Link to="/product/create" onClick={toggleMobileNav}>
-                                        Add Products
-                                    </Link>
+                                    <Link to="/product/avaiable">Products</Link>
 
-                                    <Link to="/marketplace" onClick={toggleMobileNav}>
-                                        Marketplace
-                                    </Link>
-                                    <Link to="/" onClick={toggleMobileNav}>
-                                        Trending Products
-                                    </Link>
-                                    <Link to="/marketplace/you/account" onClick={toggleMobileNav}>
-                                        Account
-                                    </Link>
+                                    <Link to="/profile">My Profile </Link>
+
+                                    <Link to="/shopCard"> Card</Link>
                                     {isLoggedIn ? (
                                         <>
                                             <li>Hello, {userName}!</li>
@@ -98,7 +89,7 @@ const Header = ({ isLoggedIn, userName, onLogout }) => {
                                         </>
                                     ) : (
                                         <>
-                                            <Link to="/">Login</Link>
+                                            <Link to="/login">Login</Link>
 
                                             <Link to="/register">Register</Link>
                                         </>

@@ -1,12 +1,12 @@
-/*import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./Home.css";
-import API_BASE_URL from "../config";
+import API_BASE_URL from "../../config";
 
-import Nav from "../Components/Navigation/Nav";
-import Header from "../Components/Header/Header";
-import Login from "./Login/Login";
-import EditProductModal from "../Components/EditModal/EditModal";
+import Nav from "../../Components/Navigation/Nav";
+import Header from "../../Components/Header/HeaderForm";
+import Login from "../LoginPage/Login";
+
 
 const HomePage = ({ userId }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(userId ? true : false);
@@ -16,7 +16,7 @@ const HomePage = ({ userId }) => {
     useEffect(() => {
         async function fetchProducts() {
             try {
-                const response = await fetch(`${API_BASE_URL}/products/available`);
+                const response = await fetch(`${API_BASE_URL}/product/available`);
                 const data = await response.json();
                 setProducts(data);
                 setLoading(false);
@@ -55,4 +55,4 @@ const HomePage = ({ userId }) => {
         </>
     );
 };
-export default HomePage;*/
+export default HomePage;

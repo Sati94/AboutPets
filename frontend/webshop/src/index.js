@@ -12,6 +12,7 @@ import "./index.css";
 import Login from './Pages/LoginPage/Login';
 import Registering from './Pages/Register/RegisterPage';
 import Header from './Components/Header/HeaderForm';
+import HomePage from './Pages/HomePage/Home';
 
 
 const App = () => {
@@ -54,6 +55,10 @@ const App = () => {
           path: "/register",
           element: <Registering />
         },
+        {
+          path: "/products/avaiable",
+          element: <HomePage />
+        }
 
       ],
     },
