@@ -17,11 +17,11 @@ namespace WebShopApiTest.IntegrationTest
         {
             string connection = "Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;";
             Environment.SetEnvironmentVariable("CONNECTION_STRING", connection);
-            var dbConnection = new DbContextOptionsBuilder<WebShopContext>()
-            .UseSqlServer(connection)
-                .Options;
-            _webShopContext = new WebShopContext(dbConnection);
-            var options = new JsonSerializerOptions
+            var options = new DbContextOptionsBuilder<WebShopContext>()
+                  .UseInMemoryDatabase(databaseName: "TestDatabase")
+                  .Options;
+            _webShopContext = new WebShopContext(options);
+            var option = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
@@ -32,7 +32,7 @@ namespace WebShopApiTest.IntegrationTest
             jsonStringContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var response = _httpClient.PostAsync("/Login", jsonStringContent).Result;
             var content = response.Content.ReadAsStringAsync().Result;
-            var desContent = JsonSerializer.Deserialize<AuthResponse>(content, options);
+            var desContent = JsonSerializer.Deserialize<AuthResponse>(content, option);
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             string userId = Guid.NewGuid().ToString();
@@ -63,9 +63,7 @@ namespace WebShopApiTest.IntegrationTest
         }
         private void CleanUpDate()
         {
-            var options = new DbContextOptionsBuilder<WebShopContext>()
-                 .UseInMemoryDatabase(databaseName: "TestDatabase")
-                 .Options;
+            
 
             var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
             var userDelete = _webShopContext.Useres.Where(u => u.UserName.Contains("Test")).ToList();

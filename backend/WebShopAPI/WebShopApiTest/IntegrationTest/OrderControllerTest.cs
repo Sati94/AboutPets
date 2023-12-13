@@ -12,32 +12,37 @@ using WebShopAPI.Model.OrderModel;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class OrderControllerTest : WebApplicationFactory<Program>
+    public class OrderControllerTest 
     {
         private  HttpClient _httpClient;
         private  WebShopContext _webShopContext;
         private IAuthService _authService;
+ 
         [SetUp]
         public  void Setup()
         {
+            var factory = new CustomWebApplicationFactory<Program>();
+            _httpClient = factory.CreateClient();
+
             string connection = "Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;";
             Environment.SetEnvironmentVariable("CONNECTION_STRING", connection);
-            var dbConnection = new DbContextOptionsBuilder<WebShopContext>()
-            .UseSqlServer(connection)
-                .Options;
-            _webShopContext = new WebShopContext(dbConnection);
-            var options = new JsonSerializerOptions
+            var options = new DbContextOptionsBuilder<WebShopContext>()
+                  .UseInMemoryDatabase(databaseName: "TestDatabase")
+                  .Options;
+            _webShopContext = new WebShopContext(options);
+            var option = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
-            _httpClient = CreateClient();
+            Console.WriteLine(_webShopContext);
+           
             AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
             string jsonString = JsonSerializer.Serialize(authRequest);
             StringContent jsonStringContent = new StringContent(jsonString);
             jsonStringContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var response = _httpClient.PostAsync("/Login", jsonStringContent).Result;
             var content = response.Content.ReadAsStringAsync().Result;
-            var desContent = JsonSerializer.Deserialize<AuthResponse>(content, options);
+            var desContent = JsonSerializer.Deserialize<AuthResponse>(content, option);
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             string userId = Guid.NewGuid().ToString();
@@ -68,22 +73,23 @@ namespace WebShopApiTest.IntegrationTest
         }
         private void CleanUpDate()
         {
-            var options = new DbContextOptionsBuilder<WebShopContext>()
-                 .UseInMemoryDatabase(databaseName: "TestDatabase")
-                 .Options;
+            if(_webShopContext != null)
+            {
+                var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+                var userDelete = _webShopContext.Useres.Where(u => u.UserName.Contains("Test")).ToList();
+                var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+                var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
+                var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
-            var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-            var userDelete = _webShopContext.Useres.Where(u => u.UserName.Contains("Test")).ToList();
-            var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-            var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
-            var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
-
-            _webShopContext.Products.RemoveRange(productsToDelete);
-            _webShopContext.Useres.RemoveRange(userDelete);
-            _webShopContext.Orders.RemoveRange(orderToDelete);
-            _webShopContext.OrderItems.RemoveRange(orderItemDelete);
-            _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
-            _webShopContext.SaveChanges();
+                _webShopContext.Products.RemoveRange(productsToDelete);
+                _webShopContext.Useres.RemoveRange(userDelete);
+                _webShopContext.Orders.RemoveRange(orderToDelete);
+                _webShopContext.OrderItems.RemoveRange(orderItemDelete);
+                _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.SaveChanges();
+            }
+            Console.WriteLine("nincs adatbázis");
+           
         }
         [Test]
         public async Task GetAll_Order_Return_NotNull()
