@@ -20,10 +20,10 @@ namespace WebShopApiTest.IntegrationTest
         {
             string connection = "Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;";
             Environment.SetEnvironmentVariable("CONNECTION_STRING", connection);
-            var options = new DbContextOptionsBuilder<WebShopContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
-                .Options;
-            _webShopContext = new WebShopContext(options);
+            var dbConnection = new DbContextOptionsBuilder<WebShopContext>()
+              .UseSqlServer(connection)
+                  .Options;
+            _webShopContext = new WebShopContext(dbConnection);
             var option = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -93,19 +93,20 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Find_User_ById_RetrurnTrue()
         {
-            string userId = "02abd951-63df-432d-a573-ba8d649c33bc";
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.IdentityUserId == userId);
 
+            
+            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test4");
+            var userId = user.Id;
             var response = await _httpClient.GetAsync($"/user/{userId}");
             var responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.NotNull(responseContent);
-            Assert.AreEqual(user.IdentityUserId, userId);
+            Assert.AreEqual(user.Id, userId);
         }
         [Test]
         public async Task Find_User_ByUserName_RetrurnTrue()
         {
-            string userName = "admin";
+            string userName = "Test4";
             var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == userName);
 
             var response = await _httpClient.GetAsync($"/user/name/{userName}");

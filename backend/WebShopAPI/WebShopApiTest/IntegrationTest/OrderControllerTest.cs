@@ -1,41 +1,32 @@
-﻿using Azure;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using WebShopAPI.Model;
-using WebShopAPI.Model.OrderModel;
+
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class OrderControllerTest 
-    {
-        private  HttpClient _httpClient;
-        private  WebShopContext _webShopContext;
-        private IAuthService _authService;
- 
-        [SetUp]
-        public  void Setup()
-        {
-            var factory = new CustomWebApplicationFactory<Program>();
-            _httpClient = factory.CreateClient();
 
+    public class OrderControllerTest : WebApplicationFactory<Program>
+    {
+    
+         private HttpClient _httpClient;
+        private IAuthService _authService;
+        private WebShopContext _webShopContext;
+        [SetUp]
+        public void Setup()
+        {
             string connection = "Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;";
             Environment.SetEnvironmentVariable("CONNECTION_STRING", connection);
-            var options = new DbContextOptionsBuilder<WebShopContext>()
-                  .UseInMemoryDatabase(databaseName: "TestDatabase")
-                  .Options;
-            _webShopContext = new WebShopContext(options);
+            
+            var dbConnection = new DbContextOptionsBuilder<WebShopContext>()
+            .UseSqlServer(connection)
+                .Options;
+            _webShopContext = new WebShopContext(dbConnection);
             var option = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
-            Console.WriteLine(_webShopContext);
-           
+            _httpClient = CreateClient();
             AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
             string jsonString = JsonSerializer.Serialize(authRequest);
             StringContent jsonStringContent = new StringContent(jsonString);
@@ -46,11 +37,11 @@ namespace WebShopApiTest.IntegrationTest
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             string userId = Guid.NewGuid().ToString();
-            User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test2" };
-            UserProfile newUserProfile = new UserProfile {  FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 0.1m, UserId = newUser.Id};  
+            User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test4" };
+            UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 0.1m, UserId = newUser.Id };
             newUser.Profile = newUserProfile;
-            Product newProduct = new Product {  ProductName = "Test",Description = "Test des" , Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood,Discount = 0, ImageBase64 = "Test"};
-           
+            Product newProduct = new Product { ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };
+
             OrderItem newOrderItem = new OrderItem { Product = newProduct, Quantity = 10, Price = newProduct.Price * 10, UserId = newUser.Id };
             Order newOrder = new Order { OrderDate = DateTime.Now, OrderStatuses = OrderStatuses.Pending, UserId = newUser.Id, TotalPrice = newOrderItem.Price };
 
@@ -60,16 +51,21 @@ namespace WebShopApiTest.IntegrationTest
             _webShopContext.Useres.Add(newUser);
             _webShopContext.UserProfiles.Add(newUserProfile);
             _webShopContext.Products.Add(newProduct);
-            _webShopContext.Orders.Add(newOrder); 
+            _webShopContext.Orders.Add(newOrder);
             _webShopContext.OrderItems.Add(newOrderItem);
             _webShopContext.SaveChanges();
 
         }
-        [OneTimeTearDown]
+
+        [TearDown]
         public void TearDown()
         {
-            CleanUpDate();
-            _httpClient.Dispose();
+            
+                CleanUpDate();
+                _httpClient.Dispose();
+                
+            
+
         }
         private void CleanUpDate()
         {
@@ -173,7 +169,7 @@ namespace WebShopApiTest.IntegrationTest
         public async Task UpdateOrderTotlaPriceWithBonus_ShouldReturnTrue()
         {
           
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test2");
+            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test4");
             string userId = user.Id;
             var allOrder = _webShopContext.Orders.OrderByDescending(o => o.OrderId).ToList();
             var order = allOrder.FirstOrDefault();

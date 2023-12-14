@@ -23,10 +23,10 @@ namespace WebShopApiTest.IntegrationTest
         {
             string connection = "Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;";
             Environment.SetEnvironmentVariable("CONNECTION_STRING", connection);
-            var options = new DbContextOptionsBuilder<WebShopContext>()
-                 .UseInMemoryDatabase(databaseName: "TestDatabase")
-                 .Options;
-            _webShopContext = new WebShopContext(options);
+            var dbConnection = new DbContextOptionsBuilder<WebShopContext>()
+            .UseSqlServer(connection)
+                .Options;
+            _webShopContext = new WebShopContext(dbConnection);
 
             var option = new JsonSerializerOptions
             {
