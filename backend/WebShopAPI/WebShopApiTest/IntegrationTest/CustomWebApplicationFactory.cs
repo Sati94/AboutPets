@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -15,7 +16,7 @@ namespace WebShopApiTest.IntegrationTest
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(services =>
+            builder.ConfigureTestServices(services =>
             {
                 var sp = services.BuildServiceProvider();
 
@@ -26,7 +27,7 @@ namespace WebShopApiTest.IntegrationTest
                     var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory<TProgram>>>();
 
                     // Ensure the database is created.
-                    appDb.Database.EnsureCreated();
+                    
 
                     try
                     {
@@ -34,6 +35,7 @@ namespace WebShopApiTest.IntegrationTest
                         var options = new DbContextOptionsBuilder<WebShopContext>()
                             .UseInMemoryDatabase("InMemoryWebShopContext")
                             .Options;
+                       appDb.Database.EnsureCreated();
 
                         SeedData.PopulateTestData(options);
                     }
