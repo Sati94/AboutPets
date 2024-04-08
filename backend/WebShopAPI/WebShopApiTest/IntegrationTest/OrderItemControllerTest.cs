@@ -16,22 +16,22 @@ namespace WebShopApiTest.IntegrationTest
     public class OrderItemControllerTest : WebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
-        private IAuthService _authService;
         private WebShopContext _webShopContext;
         [SetUp]
         public void Setup()
         {
-            string connection = "Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;";
-            Environment.SetEnvironmentVariable("CONNECTION_STRING", connection);
-            var dbConnection = new DbContextOptionsBuilder<WebShopContext>()
-            .UseSqlServer(connection)
-                .Options;
-            _webShopContext = new WebShopContext(dbConnection);
+            var options = new DbContextOptionsBuilder<WebShopContext>()
+                 .UseInMemoryDatabase(databaseName: "InMemoryWebShopContext")
+                 .Options;
+
+            _webShopContext = new WebShopContext(options);
+            SeedData.PopulateTestData(options);
 
             var option = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+
             _httpClient = CreateClient();
             AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
             string jsonString = JsonSerializer.Serialize(authRequest);
@@ -42,24 +42,6 @@ namespace WebShopApiTest.IntegrationTest
             var desContent = JsonSerializer.Deserialize<AuthResponse>(content, option);
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            string userId = Guid.NewGuid().ToString();
-            User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test3" };
-            UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 0.1m, UserId = newUser.Id };
-            newUser.Profile = newUserProfile;
-            Product newProduct = new Product { ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };
-
-            OrderItem newOrderItem = new OrderItem { Product = newProduct, Quantity = 10, Price = newProduct.Price * 10, UserId = newUser.Id };
-            Order newOrder = new Order { OrderDate = DateTime.Now, OrderStatuses = OrderStatuses.Pending, UserId = newUser.Id, TotalPrice = newOrderItem.Price };
-
-            newOrder.OrderItems.Add(newOrderItem);
-            newUser.OrderItems.Add(newOrderItem);
-            newUser.Orders.Add(newOrder);
-            _webShopContext.Useres.Add(newUser);
-            _webShopContext.UserProfiles.Add(newUserProfile);
-            _webShopContext.Products.Add(newProduct);
-            _webShopContext.Orders.Add(newOrder);
-            _webShopContext.OrderItems.Add(newOrderItem);
-            _webShopContext.SaveChanges();
 
         }
         [OneTimeTearDown]
@@ -88,46 +70,23 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task AddOrderItemToUserAsync_ReturnsOkWithOrderItem()
         {
-            // Arrange
-            var userId = "Test";
-            var productId = 1;
-            var quantity = 10;
-            var orderid = 1;
-            var user = await _webShopContext.Useres.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null)
-            {
-                // Létrehozunk egy új felhasználót, vagy más módon inicializáljuk
-                user = new User { Id = userId, UserName = "TestUser", Email = "test@test.com" };
-                _webShopContext.Useres.Add(user);
-                await _webShopContext.SaveChangesAsync();
-            }
-            var product = await _webShopContext.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-            if (product == null)
-            {
-                // Létrehozunk egy új felhasználót, vagy más módon inicializáljuk
-
-                product = new Product { Description = "Valami", ProductName = "Test", Price = 10, Category = Category.Cat, SubCategory = SubCategory.WetFood, Discount = 0, Stock = 10, ImageBase64 = "valami" };
-
-                _webShopContext.Products.Add(product);
-                await _webShopContext.SaveChangesAsync();
-                productId = product.ProductId;
-            }
-            var order = await _webShopContext.Orders.FirstOrDefaultAsync(o => o.OrderId == orderid);
-            if (order == null)
-            {
-                // Létrehozunk egy új felhasználót, vagy más módon inicializáljuk
-                order = new Order { OrderDate = DateTime.MinValue, OrderStatuses = OrderStatuses.Cancelled, UserId = userId };
-                _webShopContext.Orders.Add(order);
-                await _webShopContext.SaveChangesAsync();
-            }
-
-            // Előre létrehozott OrderItem
+            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var userId = user.Id;
+   
+            var product = await _webShopContext.Products.FirstOrDefaultAsync();
+            var productId = product.ProductId;
+            
+           
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
+            var quantity = 1;
+          
             var orderItem = new OrderItem
             {
                 ProductId = productId,
                 Quantity = quantity,
                 Price = product.Price * quantity,
-                OrderId = orderid,
+                OrderId = orderId,
                 UserId = userId,
                 Product = product,
                 Order = order,
@@ -135,8 +94,7 @@ namespace WebShopApiTest.IntegrationTest
 
             };
 
-            var response = await _httpClient.PostAsync($"/add?userId={userId}&productId={productId}&quantity={quantity}&orderid={orderid}", null);
-
+            var response = await _httpClient.PostAsync($"/add?userId={userId}&productId={productId}&quantity={quantity}&orderid={orderId}", null);
             // Assert
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -147,18 +105,14 @@ namespace WebShopApiTest.IntegrationTest
 
             };
 
-
             var returnedOrderItem = JsonSerializer.Deserialize<OrderItem>(responseContent, options);
             Console.WriteLine(responseContent);
             Console.WriteLine(JsonSerializer.Serialize(returnedOrderItem, options));
-            // Itt várható, hogy a válasz tartalmazza az OrderItem adatait
+            
             var createdOrderItem = await _webShopContext.OrderItems.FirstOrDefaultAsync(oi => oi.UserId == orderItem.UserId);
-
 
             Assert.IsNotNull(returnedOrderItem);
             Assert.IsNotNull(createdOrderItem);
-
-
 
         }
         [Test]

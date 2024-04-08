@@ -11,21 +11,22 @@ namespace WebShopApiTest.IntegrationTest
     public class ProductControllerTest : WebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
-        private IAuthService _authService;
         private WebShopContext _webShopContext;
         [SetUp]
         public void Setup()
         {
-            string connection = "Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;";
-            Environment.SetEnvironmentVariable("CONNECTION_STRING", connection);
-            var dbConnection = new DbContextOptionsBuilder<WebShopContext>()
-             .UseSqlServer(connection)
+            var options = new DbContextOptionsBuilder<WebShopContext>()
+                 .UseInMemoryDatabase(databaseName: "InMemoryWebShopContext")
                  .Options;
-            _webShopContext = new WebShopContext(dbConnection);
+
+            _webShopContext = new WebShopContext(options);
+            SeedData.PopulateTestData(options);
+
             var option = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+
             _httpClient = CreateClient();
             AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
             string jsonString = JsonSerializer.Serialize(authRequest);
@@ -36,24 +37,7 @@ namespace WebShopApiTest.IntegrationTest
             var desContent = JsonSerializer.Deserialize<AuthResponse>(content, option);
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            string userId = Guid.NewGuid().ToString();
-            User newUser = new User { Id = userId , Email = "test@test.com", UserName = "Test1" };
-            UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 0.1m, UserId = newUser.Id };
-            newUser.Profile = newUserProfile;
-            Product newProduct = new Product { ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };
 
-            OrderItem newOrderItem = new OrderItem { Product = newProduct, Quantity = 10, Price = newProduct.Price * 10, UserId = newUser.Id };
-            Order newOrder = new Order { OrderDate = DateTime.Now, OrderStatuses = OrderStatuses.Pending, UserId = newUser.Id, TotalPrice = newOrderItem.Price };
-
-            newOrder.OrderItems.Add(newOrderItem);
-            newUser.OrderItems.Add(newOrderItem);
-            newUser.Orders.Add(newOrder);
-            _webShopContext.Useres.Add(newUser);
-            _webShopContext.UserProfiles.Add(newUserProfile);
-            _webShopContext.Products.Add(newProduct);
-            _webShopContext.Orders.Add(newOrder);
-            _webShopContext.OrderItems.Add(newOrderItem);
-            _webShopContext.SaveChanges();
 
         }
         [OneTimeTearDown]

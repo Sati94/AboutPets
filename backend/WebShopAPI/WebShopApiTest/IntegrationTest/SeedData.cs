@@ -16,10 +16,12 @@ namespace WebShopApiTest.IntegrationTest
             using (var dbContext = new WebShopContext(dbContextOptions))
             {
                 string userId = Guid.NewGuid().ToString();
+                string identityUserId = Guid.NewGuid().ToString();
+               
 
-                User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test2" };
+                User newUser = new User { Id = userId,  Email = "test@test.com", UserName = "Test", IdentityUserId = identityUserId};
 
-                UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 0.1m, UserId = newUser.Id };
+                UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 1, UserId = newUser.Id };
                 newUser.Profile = newUserProfile;
 
                 Product newProduct = new Product { ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };

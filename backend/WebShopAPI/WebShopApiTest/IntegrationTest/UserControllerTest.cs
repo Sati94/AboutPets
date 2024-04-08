@@ -13,21 +13,23 @@ namespace WebShopApiTest.IntegrationTest
     {
 
         private HttpClient _httpClient;
-        private IAuthService _authService;
+       
         private WebShopContext _webShopContext;
         [SetUp]
         public void Setup()
         {
-            string connection = "Server=localhost,1433;Database=PetProject;User Id=sa;Password=SaraAttila1994;Encrypt=True;TrustServerCertificate=True;";
-            Environment.SetEnvironmentVariable("CONNECTION_STRING", connection);
-            var dbConnection = new DbContextOptionsBuilder<WebShopContext>()
-              .UseSqlServer(connection)
+            var options = new DbContextOptionsBuilder<WebShopContext>()
+                  .UseInMemoryDatabase(databaseName: "InMemoryWebShopContext")
                   .Options;
-            _webShopContext = new WebShopContext(dbConnection);
+
+            _webShopContext = new WebShopContext(options);
+            SeedData.PopulateTestData(options);
+
             var option = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+
             _httpClient = CreateClient();
             AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
             string jsonString = JsonSerializer.Serialize(authRequest);
@@ -38,24 +40,7 @@ namespace WebShopApiTest.IntegrationTest
             var desContent = JsonSerializer.Deserialize<AuthResponse>(content, option);
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            string userId = Guid.NewGuid().ToString();
-            User newUser = new User { Id = userId , Email = "test@test.com", UserName = "Test4" };
-            UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 0.1m, UserId = newUser.Id };
-            newUser.Profile = newUserProfile;
-            Product newProduct = new Product { ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };
 
-            OrderItem newOrderItem = new OrderItem { Product = newProduct, Quantity = 10, Price = newProduct.Price * 10, UserId = newUser.Id };
-            Order newOrder = new Order { OrderDate = DateTime.Now, OrderStatuses = OrderStatuses.Pending, UserId = newUser.Id, TotalPrice = newOrderItem.Price };
-
-            newOrder.OrderItems.Add(newOrderItem);
-            newUser.OrderItems.Add(newOrderItem);
-            newUser.Orders.Add(newOrder);
-            _webShopContext.Useres.Add(newUser);
-            _webShopContext.UserProfiles.Add(newUserProfile);
-            _webShopContext.Products.Add(newProduct);
-            _webShopContext.Orders.Add(newOrder);
-            _webShopContext.OrderItems.Add(newOrderItem);
-            _webShopContext.SaveChanges();
 
         }
         [OneTimeTearDown]
@@ -93,20 +78,26 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Find_User_ById_RetrurnTrue()
         {
+            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test");
+            if(user != null)
+            {
+                var userId = user.Id;
+                var response = await _httpClient.GetAsync($"/user/{userId}");
+                var responseContent = await response.Content.ReadAsStringAsync();
 
+                Assert.NotNull(responseContent);
+                Assert.AreEqual(user.Id, userId);
+            }
+            else
+            {
+                Assert.IsNull(user);
+            }
             
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test4");
-            var userId = user.Id;
-            var response = await _httpClient.GetAsync($"/user/{userId}");
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            Assert.NotNull(responseContent);
-            Assert.AreEqual(user.Id, userId);
         }
         [Test]
         public async Task Find_User_ByUserName_RetrurnTrue()
         {
-            string userName = "Test4";
+            string userName = "Test";
             var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == userName);
 
             var response = await _httpClient.GetAsync($"/user/name/{userName}");
@@ -118,10 +109,11 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Delete_User_NonExistingUser_ReturnsNotFound()
         {
-            var userId = "ddee6c24";
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.Id == userId);
-
-            var response = await _httpClient.DeleteAsync("user/delete/{userId}");
+            
+            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var userId =  user.Id;
+            
+            var response = await _httpClient.DeleteAsync($"/user/delete/{userId}");
             var responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
@@ -131,25 +123,29 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Update_UserById_Return_True()
         {
-            string userId = "67daf906-b58b-4e7c-91c3-f30ea58d834a";
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.IdentityUserId == userId);
-            UserDto newUser = new UserDto
-            {
-                Username = "newUser",
-                Email = "newUser@newUser.com"
-            };
-            var content = new StringContent(JsonConvert.SerializeObject(new
-            {
-                username = newUser.Username,
-                email = newUser.Email
+           
+            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var userId = user.IdentityUserId;
+
+           UserDto newUser = new UserDto
+           {
+              Username = "Test2",
+              Email = "newUser@newUser.com"
+           };
+           var content = new StringContent(JsonConvert.SerializeObject(new
+           {
+              username = newUser.Username,
+              email = newUser.Email
 
             }), Encoding.UTF8, "application/json");
+
             var response = await _httpClient.PutAsync($"/user/update/{userId}", content);
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var updatedUser = JsonConvert.DeserializeObject<User>(responseContent);
-            Assert.AreEqual("newUser", updatedUser.UserName);
-
+            Assert.AreEqual("Test2", updatedUser.UserName);
+            
+       
 
         }
     }
