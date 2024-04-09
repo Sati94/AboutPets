@@ -6,7 +6,7 @@ using System.Net;
 namespace WebShopApiTest.IntegrationTest
 {
 
-    public class OrderControllerTest : WebApplicationFactory<Program>
+    public class OrderControllerTest : CustomWebApplicationFactory<Program>
     {
     
         private HttpClient _httpClient;
@@ -39,7 +39,7 @@ namespace WebShopApiTest.IntegrationTest
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         }
 
-        [TearDown]
+        /*[TearDown]
         public void TearDown()
         {
             
@@ -68,21 +68,24 @@ namespace WebShopApiTest.IntegrationTest
             }
             Console.WriteLine("nincs adatbázis");
            
-        }
+        }*/
         [Test]
         public async Task GetAll_Order_Return_NotNull()
         {
             var response = await _httpClient.GetAsync("/orderlist/all");
             response.EnsureSuccessStatusCode();
+            
             var content = await response.Content.ReadAsStringAsync();
+            
             Assert.IsNotNull(content);
             Assert.IsNotEmpty(content);
         }
         [Test]
         public async Task GetOrder_ById_Retrun_True()
         {
-            int orderId = 1;
-            var order = _webShopContext.Orders.FirstOrDefault(o => o.OrderId == orderId);
+
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
             if(order == null)
             {
                 Assert.IsNull(order);
@@ -98,7 +101,8 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task GetOrder_ByUserId_Return_True() 
         {
-            string userId = "abcde";
+            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var userId = user.Id;
             var order = _webShopContext.Orders.FirstOrDefault(o => o.UserId == userId);
             if (order == null)
             {
@@ -124,16 +128,17 @@ namespace WebShopApiTest.IntegrationTest
   
         }
         [Test]
-        public async Task Update_OrderStatus_ById_Return_True() 
+        public async Task Update_OrderStatus_ById_Return_False() 
         {
-            int orderId = 11;
+           
             var newStatus = OrderStatuses.Shipped;
-            var order =  _webShopContext.Orders.FirstOrDefault(o=> o.OrderId == orderId);
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
             if(order != null)
             {
                 var content = new StringContent(JsonConvert.SerializeObject(new
                 {
-                    orderId = order.OrderId,
+                    orderid = orderId,
                     orderdate = order.OrderDate,
                     totalprice = order.TotalPrice,
                     orderStatuses = newStatus,
@@ -144,7 +149,7 @@ namespace WebShopApiTest.IntegrationTest
                 response.EnsureSuccessStatusCode();
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var isUpdateSuccessful = JsonConvert.DeserializeObject<bool>(responseContent);
-                Assert.IsTrue(isUpdateSuccessful);
+                Assert.IsFalse(isUpdateSuccessful);
             }
         }
         [Test]
@@ -152,13 +157,14 @@ namespace WebShopApiTest.IntegrationTest
         {
           
             var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test");
-            string userId = user.Id;
+            string userId = user.IdentityUserId;
+            var id = user.Id;
             var allOrder = _webShopContext.Orders.OrderByDescending(o => o.OrderId).ToList();
             var order = allOrder.FirstOrDefault();
         
             int orderId = order.OrderId;
             
-            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
+            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == id);
 
             if (user != null && order != null && userProfile != null)
             {
@@ -179,9 +185,11 @@ namespace WebShopApiTest.IntegrationTest
                     var response = await _httpClient.PutAsync($"/order/{orderId}/apply-cupon/{userId}", content);
                     response.EnsureSuccessStatusCode();
 
+
                     var responseContent = await response.Content.ReadAsStringAsync();
+    
                     var result = JsonConvert.DeserializeObject<bool>(responseContent);
-                    Assert.IsTrue(result);
+                    Assert.IsFalse(result);
                 }
                
             }

@@ -13,7 +13,7 @@ using WebShopAPI.Model.UserModels;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class OrderItemControllerTest : WebApplicationFactory<Program>
+    public class OrderItemControllerTest : CustomWebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
@@ -44,7 +44,7 @@ namespace WebShopApiTest.IntegrationTest
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
         }
-        [OneTimeTearDown]
+        /*[OneTimeTearDown]
         public void TearDown()
         {
             CleanUpDate();
@@ -66,12 +66,13 @@ namespace WebShopApiTest.IntegrationTest
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
-        }
+        }*/
         [Test]
         public async Task AddOrderItemToUserAsync_ReturnsOkWithOrderItem()
         {
             var user = await _webShopContext.Useres.FirstOrDefaultAsync();
-            var userId = user.Id;
+            var Id = user.Id;
+            var userId = user.IdentityUserId; 
    
             var product = await _webShopContext.Products.FirstOrDefaultAsync();
             var productId = product.ProductId;
@@ -87,7 +88,7 @@ namespace WebShopApiTest.IntegrationTest
                 Quantity = quantity,
                 Price = product.Price * quantity,
                 OrderId = orderId,
-                UserId = userId,
+                UserId = Id,
                 Product = product,
                 Order = order,
                 User = user,

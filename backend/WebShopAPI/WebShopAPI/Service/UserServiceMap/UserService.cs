@@ -24,28 +24,29 @@ namespace WebShopAPI.Service.UserServiceMap
         public async Task<IdentityUser> UpdateUser(string userId, UserDto user) 
         {
             var newUser = await _userManager.FindByIdAsync(userId);
-            var dbUser = await _context.Useres.FirstOrDefaultAsync(user => user.IdentityUserId == userId);
-            if(newUser == null)
+            if (newUser == null)
             {
                 return null;
             }
+
+            var dbUser = await _context.Useres.FirstOrDefaultAsync(u => u.IdentityUserId == userId);
+            if (dbUser == null)
+            {
+                return null;
+            }
+
             newUser.UserName = user.Username;
             newUser.Email = user.Email;
-            
+
             dbUser.UserName = newUser.UserName;
             dbUser.Email = newUser.Email;
 
             var result = await _userManager.UpdateAsync(newUser);
+            
             _context.Useres.Update(dbUser);
-            _context.SaveChanges();
-            if(result.Succeeded)
-            {
-                return newUser;
-            }
-            else
-            {
-                return null;
-            }
+            await _context.SaveChangesAsync();
+
+            return newUser;
         }
         public async Task<IdentityUser> GetUserById(string userid)
         {

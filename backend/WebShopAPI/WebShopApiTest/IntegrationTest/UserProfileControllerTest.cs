@@ -7,10 +7,11 @@ using WebShopAPI.Model.UserModels;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class UserProfileControllerTest : WebApplicationFactory<Program>
+    public class UserProfileControllerTest : CustomWebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
+
         [SetUp]
         public void Setup()
         {
@@ -37,7 +38,7 @@ namespace WebShopApiTest.IntegrationTest
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         }
-        [OneTimeTearDown]
+        /*[OneTimeTearDown]
         public void TearDown()
         {
             CleanUpDate();
@@ -59,11 +60,12 @@ namespace WebShopApiTest.IntegrationTest
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
-        }
+        }*/
         [Test]
         public async Task GetUserProfile_ByUserId_Return_True()
         {
-            string userId = "abcde";
+            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var userId = user.Id;
             var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
             var response = await _httpClient.GetAsync($"/user/profile/{userId}");
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -73,8 +75,10 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Update_UserProfile_ByAdmin_Return_True()
         {
-            string userId = "abcde";
-            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
+            var user = _webShopContext.Useres.FirstOrDefault();
+            var userId = user.IdentityUserId;
+            var Id = user.Id;
+            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == Id);
             AdminUserProfileDto updater = new AdminUserProfileDto
             {
                 FirstName = "Nagy",

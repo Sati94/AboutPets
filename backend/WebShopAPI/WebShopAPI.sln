@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33717.318
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShopAPI", "WebShopAPI\WebShopAPI.csproj", "{8302B59D-10FA-485C-8144-DE4529ADA4F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebShopApiTest", "WebShopApiTest\WebShopApiTest.csproj", "{EF8FF991-D416-4E4C-9064-24A8BAC6BBD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShopApiTest", "WebShopApiTest\WebShopApiTest.csproj", "{EF8FF991-D416-4E4C-9064-24A8BAC6BBD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

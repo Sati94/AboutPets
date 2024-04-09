@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,12 +10,12 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class UserControllerTest : WebApplicationFactory<Program>
+    public class UserControllerTest : CustomWebApplicationFactory<Program>
     {
 
         private HttpClient _httpClient;
-       
         private WebShopContext _webShopContext;
+
         [SetUp]
         public void Setup()
         {
@@ -43,7 +44,7 @@ namespace WebShopApiTest.IntegrationTest
 
 
         }
-        [OneTimeTearDown]
+        /*[OneTimeTearDown]
         public void TearDown()
         {
             CleanUpDate();
@@ -65,7 +66,7 @@ namespace WebShopApiTest.IntegrationTest
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
-        }
+        }*/
         [Test]
         public async Task Return_AllUser_Endpoint()
         {
@@ -79,19 +80,14 @@ namespace WebShopApiTest.IntegrationTest
         public async Task Find_User_ById_RetrurnTrue()
         {
             var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test");
-            if(user != null)
-            {
+           
                 var userId = user.Id;
                 var response = await _httpClient.GetAsync($"/user/{userId}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Assert.NotNull(responseContent);
                 Assert.AreEqual(user.Id, userId);
-            }
-            else
-            {
-                Assert.IsNull(user);
-            }
+            
             
         }
         [Test]
@@ -111,7 +107,7 @@ namespace WebShopApiTest.IntegrationTest
         {
             
             var user = await _webShopContext.Useres.FirstOrDefaultAsync();
-            var userId =  user.Id;
+            var userId =  user.IdentityUserId;
             
             var response = await _httpClient.DeleteAsync($"/user/delete/{userId}");
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -140,6 +136,13 @@ namespace WebShopApiTest.IntegrationTest
             }), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PutAsync($"/user/update/{userId}", content);
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Ha NotFound válasz érkezik, akkor valószínűleg probléma van a teszt környezettel vagy a beállításokkal
+                // Helyette kiírhatunk egy hibaüzenetet, és megállíthatjuk a tesztet
+                Console.WriteLine("A felhasználó frissítése nem sikerült, mert a felhasználó nem található.");
+                Assert.Fail();
+            }
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var updatedUser = JsonConvert.DeserializeObject<User>(responseContent);

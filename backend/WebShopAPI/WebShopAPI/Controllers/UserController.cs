@@ -9,11 +9,11 @@ namespace WebShopAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserContorller : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
       
-        public UserContorller(IUserService userService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }
