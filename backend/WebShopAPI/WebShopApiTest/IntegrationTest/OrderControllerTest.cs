@@ -39,7 +39,7 @@ namespace WebShopApiTest.IntegrationTest
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         }
 
-        /*[TearDown]
+        [TearDown]
         public void TearDown()
         {
             
@@ -68,7 +68,7 @@ namespace WebShopApiTest.IntegrationTest
             }
             Console.WriteLine("nincs adatbázis");
            
-        }*/
+        }
         [Test]
         public async Task GetAll_Order_Return_NotNull()
         {

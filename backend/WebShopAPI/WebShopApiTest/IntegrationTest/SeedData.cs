@@ -18,21 +18,22 @@ namespace WebShopApiTest.IntegrationTest
             {
                 string userId = Guid.NewGuid().ToString();
                 string identityUserId = Guid.NewGuid().ToString();
-               
-                
+
+
                 IdentityUser identityUser = new IdentityUser { Id = identityUserId };
 
-                User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test", IdentityUserId = identityUserId , IdentityUser = identityUser};
-
-                UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 1, UserId = newUser.Id , User = newUser};
+                User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test", IdentityUserId = identityUserId, IdentityUser = identityUser };
+                identityUser.UserName = newUser.UserName;
+                UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 1, UserId = newUser.Id, User = newUser };
                 newUser.Profile = newUserProfile;
 
-                Product newProduct = new Product { ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };
+                Product newProduct = new Product { ProductId = 100, ProductName = "Test", Description = "Test des", Price = 100, Stock = 100, Category = Category.Dog, SubCategory = SubCategory.WetFood, Discount = 0, ImageBase64 = "Test" };
 
                 OrderItem newOrderItem = new OrderItem { Product = newProduct, Quantity = 10, Price = newProduct.Price * 10, UserId = newUser.Id, User = newUser };
 
                 Order newOrder = new Order { OrderDate = DateTime.Now, OrderStatuses = OrderStatuses.Pending, UserId = newUser.Id, TotalPrice = newOrderItem.Price, User = newUser };
-                
+
+
                 newOrder.OrderItems.Add(newOrderItem);
                 newUser.OrderItems.Add(newOrderItem);
                 newUser.Orders.Add(newOrder);

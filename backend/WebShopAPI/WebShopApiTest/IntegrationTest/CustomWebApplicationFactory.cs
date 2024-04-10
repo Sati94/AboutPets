@@ -26,12 +26,10 @@ namespace WebShopApiTest.IntegrationTest
                     var appDb = scopedServices.GetRequiredService<WebShopContext>();
                     var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory<TProgram>>>();
 
-                    // Ensure the database is created.
                     
 
                     try
                     {
-                        // Seed the database with some specific test data.
                         var options = new DbContextOptionsBuilder<WebShopContext>()
                             .UseInMemoryDatabase("InMemoryWebShopContext")
                             .Options;

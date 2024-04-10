@@ -44,7 +44,7 @@ namespace WebShopApiTest.IntegrationTest
 
 
         }
-        /*[OneTimeTearDown]
+        [TearDown]
         public void TearDown()
         {
             CleanUpDate();
@@ -66,7 +66,7 @@ namespace WebShopApiTest.IntegrationTest
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
-        }*/
+        }
         [Test]
         public async Task Return_AllUser_Endpoint()
         {
@@ -121,7 +121,7 @@ namespace WebShopApiTest.IntegrationTest
         {
            
             var user = await _webShopContext.Useres.FirstOrDefaultAsync();
-            var userId = user.IdentityUserId;
+            var userId = user.Id;
 
            UserDto newUser = new UserDto
            {
@@ -136,13 +136,7 @@ namespace WebShopApiTest.IntegrationTest
             }), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PutAsync($"/user/update/{userId}", content);
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                // Ha NotFound válasz érkezik, akkor valószínűleg probléma van a teszt környezettel vagy a beállításokkal
-                // Helyette kiírhatunk egy hibaüzenetet, és megállíthatjuk a tesztet
-                Console.WriteLine("A felhasználó frissítése nem sikerült, mert a felhasználó nem található.");
-                Assert.Fail();
-            }
+           
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var updatedUser = JsonConvert.DeserializeObject<User>(responseContent);

@@ -26,11 +26,14 @@ namespace WebShopApiTest.IntegrationTest
 
             _webShopContext = new WebShopContext(options);
             SeedData.PopulateTestData(options);
+           
 
             var option = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+            var order = _webShopContext.Orders.FirstOrDefault();
+            var user = _webShopContext.Useres.FirstOrDefault();
 
             _httpClient = CreateClient();
             AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
@@ -44,7 +47,7 @@ namespace WebShopApiTest.IntegrationTest
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
         }
-        /*[OneTimeTearDown]
+        [TearDown]
         public void TearDown()
         {
             CleanUpDate();
@@ -66,20 +69,20 @@ namespace WebShopApiTest.IntegrationTest
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
-        }*/
+        }
         [Test]
         public async Task AddOrderItemToUserAsync_ReturnsOkWithOrderItem()
         {
             var user = await _webShopContext.Useres.FirstOrDefaultAsync();
-            var Id = user.Id;
-            var userId = user.IdentityUserId; 
+            var userId = user.Id; 
    
             var product = await _webShopContext.Products.FirstOrDefaultAsync();
             var productId = product.ProductId;
-            
-           
-            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
-            var orderId = order.OrderId;
+
+         
+            var order = user.Orders.FirstOrDefault();
+            var orderItems = order.OrderItems.FirstOrDefault();
+;           var orderId = order.OrderId;
             var quantity = 1;
           
             var orderItem = new OrderItem
@@ -88,27 +91,38 @@ namespace WebShopApiTest.IntegrationTest
                 Quantity = quantity,
                 Price = product.Price * quantity,
                 OrderId = orderId,
-                UserId = Id,
+                UserId = userId,
                 Product = product,
                 Order = order,
                 User = user,
+               
 
             };
+            var content = new StringContent(JsonConvert.SerializeObject(new
+            {
+                productId = orderItem.ProductId,
+                quantity = orderItem.Quantity,
+                price = orderItem.Price,
+                orderId = orderItem.OrderId,
+                userId = orderItem.UserId,
+                product = orderItem.Product,
+                order = orderItem.Order,
+                user = orderItem.User
+               
 
-            var response = await _httpClient.PostAsync($"/add?userId={userId}&productId={productId}&quantity={quantity}&orderid={orderId}", null);
+            }), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"/add?userId={userId}&productId={productId}&quantity={quantity}&orderid={orderId}", content);
             // Assert
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
 
             var options = new JsonSerializerOptions
             {
-                ReferenceHandler = ReferenceHandler.Preserve,
-
+                ReferenceHandler = ReferenceHandler.Preserve
             };
 
             var returnedOrderItem = JsonSerializer.Deserialize<OrderItem>(responseContent, options);
-            Console.WriteLine(responseContent);
-            Console.WriteLine(JsonSerializer.Serialize(returnedOrderItem, options));
             
             var createdOrderItem = await _webShopContext.OrderItems.FirstOrDefaultAsync(oi => oi.UserId == orderItem.UserId);
 
