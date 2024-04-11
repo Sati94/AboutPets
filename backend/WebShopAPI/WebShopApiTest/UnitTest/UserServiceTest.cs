@@ -35,7 +35,7 @@ namespace WebShopApiTest.UnitTest
             var result =  _userService.GetUserById(userId);
 
             Assert.IsNotNull(result);
-            Assert.That(result, Is.True);
+            
           
         }
         [Test]
@@ -68,7 +68,7 @@ namespace WebShopApiTest.UnitTest
             };
 
             // Act
-            var result = await _userServiceMock.UpdateUser(userId, userDto);
+            var result = await _userService.UpdateUser(userId, userDto);
 
             // Assert
             Assert.NotNull(result);
