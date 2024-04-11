@@ -53,17 +53,33 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task GetAllOrder_ShouldReturnIsNotNull()
         {
-            var orders = await _context.Orders.ToListAsync();
-            var order = orders.FirstOrDefault();
-            bool result = orders.Contains(order);
-            Assert.IsNotNull(orders);
-            Assert.IsTrue(result);
+            var result = await _orderService.GetAllOrderAsync();
+           
+            Assert.IsNotNull(result);
+        }
+        [Test]
+        public async Task GetOrderById_ShouldReturnTrue()
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
+            var result = await _orderService.GetOrderByIdAsync(orderId);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(orderId, result.OrderId);
+        }
+        [Test]
+        public async Task GetOrderByUserId_ShioldReturnTrue()
+        {
+            var user = await _context.Useres.FirstOrDefaultAsync();
+            string userId = user.Id;
+            var result = await _orderService.GetOrderByUserId(userId);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(userId, result.UserId);
         }
 
     }
 }
-/*Task<IEnumerable<Order>> GetAllOrderAsync();
-Task<Order> GetOrderByIdAsync(int orderId);
+/*
 Task<Order> GetOrderByUserId(string userId);
 Task<Order> DeleteOrderById(int orderId);
 Task<bool> UpdateOrderStatus(int orderId, OrderStatuses newStatus);
