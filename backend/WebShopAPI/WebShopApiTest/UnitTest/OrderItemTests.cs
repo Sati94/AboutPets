@@ -68,6 +68,22 @@ namespace WebShopApiTest.UnitTest
             Assert.AreEqual(userId, result.UserId);
 
         }
+        [Test]
+        public async Task DeleteOrderItemById_ShouldReturnIsNull()
+        {
+            var user = await _context.Useres.FirstOrDefaultAsync();
+            var userId = user.Id;
+            var orderItems = await _context.OrderItems.FirstOrDefaultAsync();
+            var orderItemsId = orderItems.OrderId;
+
+            var act = await _orderItemService.DeleteOrderItem(userId, orderItemsId);
+
+            var result = await _context.OrderItems.FindAsync(orderItemsId);
+
+            Assert.IsNull(result);
+           
+        }
+
 
     }
 }
