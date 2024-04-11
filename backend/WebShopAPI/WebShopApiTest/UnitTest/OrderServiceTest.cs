@@ -89,10 +89,22 @@ namespace WebShopApiTest.UnitTest
             Assert.IsNull(result);
         }
 
+        [Test]
+        public async Task UpdateOrderStatus_ShouldReturnIsTrue()
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
+            OrderStatuses newStatus = OrderStatuses.Cancelled;
+
+            var result = await _orderService.UpdateOrderStatus(orderId, newStatus);
+
+            Assert.IsTrue(result);
+
+        }
     }
 }
 /*
 
-Task<Order> DeleteOrderById(int orderId);
+
 Task<bool> UpdateOrderStatus(int orderId, OrderStatuses newStatus);
 Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId);*/
