@@ -76,11 +76,23 @@ namespace WebShopApiTest.UnitTest
             Assert.IsNotNull(result);
             Assert.AreEqual(userId, result.UserId);
         }
+        [Test]
+        public async Task DeleteOrderById_ShouldReturnIsNull()
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
+
+            var act = await _orderService.DeleteOrderById(orderId);
+
+            var result = await _context.Orders.FindAsync(orderId);
+
+            Assert.IsNull(result);
+        }
 
     }
 }
 /*
-Task<Order> GetOrderByUserId(string userId);
+
 Task<Order> DeleteOrderById(int orderId);
 Task<bool> UpdateOrderStatus(int orderId, OrderStatuses newStatus);
 Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId);*/
