@@ -44,7 +44,7 @@ namespace WebShopApiTest.UnitTest
             }
 
         }
-        //Task<UserProfile> GetUserProfileAsync(string userId);
+        
         //Task<UserProfile> UpdateUserProfile(string userId, UserProfileDto profile);
         //Task<UserProfile> UpdateAdminUserProfileAsync(string userId, AdminUserProfileDto updatedProfile);
         [Test]
@@ -57,6 +57,35 @@ namespace WebShopApiTest.UnitTest
 
             Assert.IsNotNull(result);
             Assert.AreEqual(userId, result.UserId);
+        }
+        [Test]
+        public async Task UpdateUserProfile_ShouldReturnTrue()
+        {
+            var user = await _context.Useres.FirstOrDefaultAsync();
+            var userId = user.Id;
+
+            var newUserProfile = new UserProfileDto
+            {
+                FirstName = "Test2",
+                LastName = "Test",
+                PhoneNumber = "1234567890",
+                Address = "SomeWhere"
+
+            };
+
+            var userProfile = new UserProfile
+            {
+                FirstName = newUserProfile.FirstName,
+                LastName = newUserProfile.LastName,
+                PhoneNumber = newUserProfile.PhoneNumber,
+                Address = newUserProfile.Address
+
+            };
+            var result = await _userProfileService.UpdateUserProfile(userId, newUserProfile);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(userId, result.UserId);
+
         }
     }
 }
