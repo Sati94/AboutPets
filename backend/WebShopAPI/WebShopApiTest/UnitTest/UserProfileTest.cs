@@ -44,8 +44,6 @@ namespace WebShopApiTest.UnitTest
             }
 
         }
-        
-        //Task<UserProfile> UpdateUserProfile(string userId, UserProfileDto profile);
         //Task<UserProfile> UpdateAdminUserProfileAsync(string userId, AdminUserProfileDto updatedProfile);
         [Test]
         public async Task GetUserProfileById_ShouldReturnIsNotNull()
@@ -59,7 +57,7 @@ namespace WebShopApiTest.UnitTest
             Assert.AreEqual(userId, result.UserId);
         }
         [Test]
-        public async Task UpdateUserProfile_ShouldReturnTrue()
+        public async Task UpdateUserProfile_ShouldReturnNotNull()
         {
             var user = await _context.Useres.FirstOrDefaultAsync();
             var userId = user.Id;
@@ -86,6 +84,38 @@ namespace WebShopApiTest.UnitTest
             Assert.IsNotNull(result);
             Assert.AreEqual(userId, result.UserId);
 
+        }
+        [Test]
+        public async Task UpdatedAdminUserProfile_ShouldReturnNotNull()
+        {
+            var user = await _context.Useres.FirstOrDefaultAsync();
+            var userId = user.Id;
+
+            var newUserProfile = new AdminUserProfileDto
+            {
+                FirstName = "Test2",
+                LastName = "Test",
+                PhoneNumber = "1234567890",
+                Address = "SomeWhere",
+                Bonus = 10
+             
+            };
+
+            var userProfile = new UserProfile
+            {
+                FirstName = newUserProfile.FirstName,
+                LastName = newUserProfile.LastName,
+                PhoneNumber = newUserProfile.PhoneNumber,
+                Address = newUserProfile.Address,
+                Bonus = newUserProfile.Bonus
+                
+
+            };
+            var result = await _userProfileService.UpdateAdminUserProfileAsync(userId, newUserProfile);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(userId, result.UserId);
+            Assert.AreEqual(userProfile.Bonus, result.Bonus);
         }
     }
 }
