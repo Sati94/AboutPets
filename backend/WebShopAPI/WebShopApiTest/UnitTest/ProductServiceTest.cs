@@ -87,7 +87,20 @@ namespace WebShopApiTest.UnitTest
             Assert.NotNull(result);
             Assert.AreEqual(result.ProductName, productDto.ProductName);
         }
-       
+        [Test]
+        public async Task GetProductById_ShouldReturnTrue()
+        {
+            var product = await _context.Products.FirstOrDefaultAsync();
+            var productId = product.ProductId;
+
+            var result = await _productService.GetProductById(productId);
+
+            Assert.NotNull(result);
+            Assert.AreEqual(productId, result.ProductId);
+        }
+        //Task<ProductDto> GetProductById(int productId)
+
+
 
     }
 }
