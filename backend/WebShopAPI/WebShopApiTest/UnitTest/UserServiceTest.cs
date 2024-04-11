@@ -7,7 +7,7 @@ using WebShopApiTest.IntegrationTest;
 namespace WebShopApiTest.UnitTest
 {
 
-    [TestFixture]
+   
     public class UserServiceTest
     {
         private WebShopContext _context;

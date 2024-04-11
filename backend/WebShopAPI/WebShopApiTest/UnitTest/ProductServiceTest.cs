@@ -46,7 +46,6 @@ namespace WebShopApiTest.UnitTest
                
                 _context.SaveChanges();
             }
-            Console.WriteLine("nincs adatbázis");
 
         }
 
