@@ -120,7 +120,16 @@ namespace WebShopApiTest.UnitTest
             Assert.True(result);
 
         }
-        //<IEnumerable<Product>> GetProductsByCategory(int category)
+        [Test]
+        public async Task GetProductsBySubCategory_ShouldReturnTrue()
+        {
+            var productList = await _context.Products.ToListAsync();
 
+            var act = await _productService.GetProductsBySubCategory(3);
+
+            var result = productList.Contains(act.FirstOrDefault());
+            Assert.True(result);
+        }
+        
     }
 }
