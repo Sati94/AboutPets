@@ -83,6 +83,19 @@ namespace WebShopApiTest.UnitTest
             Assert.IsNull(result);
            
         }
+        [Test]
+        public async Task SetOrderItemQuantity_ShouldReturnTrue()
+        {
+            var user = await _context.Useres.FirstOrDefaultAsync();
+            var userId = user.Id;
+            var orderItems = await _context.OrderItems.FirstOrDefaultAsync();
+            var orderItemsId = orderItems.OrderId;
+            var newQuantity = 10;
+            var act = await _orderItemService.SetOrderItemQuantity(userId, newQuantity, orderItemsId);
+            var result = await _context.OrderItems.FindAsync(orderItemsId);
+
+            Assert.AreEqual(result.Quantity, newQuantity);
+        }
 
 
     }
