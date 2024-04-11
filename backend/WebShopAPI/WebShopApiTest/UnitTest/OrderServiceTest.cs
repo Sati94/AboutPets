@@ -101,10 +101,21 @@ namespace WebShopApiTest.UnitTest
             Assert.IsTrue(result);
 
         }
+        [Test]
+        public async Task UpdateOrderTotalPriceWithBonus_ShouldReturnTrue()
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
+            var userId = order.UserId;
+
+            var result = await _orderService.UpdateOrderTotlaPriceWithBonus(orderId, userId);
+
+            Assert.IsTrue(result);
+        }
     }
 }
 /*
 
 
-Task<bool> UpdateOrderStatus(int orderId, OrderStatuses newStatus);
+
 Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId);*/

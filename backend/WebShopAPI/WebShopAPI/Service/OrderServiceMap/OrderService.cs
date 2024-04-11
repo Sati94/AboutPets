@@ -86,8 +86,6 @@ namespace WebShopAPI.Service.OrderServiceMap
                 userProfile.Bonus -= cupon;
                 _context.UserProfiles.Update(userProfile);
                 }
-                
-                
 
                 await _context.SaveChangesAsync();
                 return true;
