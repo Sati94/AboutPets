@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using WebShopAPI.Data;
 using WebShopAPI.Model;
 using WebShopApiTest.IntegrationTest;
 
@@ -21,16 +24,39 @@ namespace WebShopApiTest.UnitTest
                 .Options;
             _context = new WebShopContext(options);
             SeedData.PopulateTestData(options);
-            var productServiceMock = new Mock<IProductService>();
+            
 
             _productService = new ProductService(_context);
         }
+        [TearDown]
+        public void TearDown()
+        {
+
+            CleanUpDate();
+
+        }
+        private void CleanUpDate()
+        {
+            if (_context != null)
+            {
+                var productsToDelete = _context.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+                var productsToDelete2 = _context.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
+
+                _context.Products.RemoveRange(productsToDelete);
+               
+                _context.SaveChanges();
+            }
+            Console.WriteLine("nincs adatbázis");
+
+        }
+
         [Test]
         public async Task GetAllProduct_ShouldReturnNotNull()
         {
             var productList = await _context.Products.ToListAsync();
 
             var result = await _productService.GetAllProductAsync();
+
             Assert.NotNull(result);
             Assert.That(result, Is.EqualTo(productList));
 
@@ -40,6 +66,7 @@ namespace WebShopApiTest.UnitTest
         {
             var product = new ProductDto
             {
+              
                 ProductName = "Test2",
                 Description = "Valami",
                 Price = 1,
@@ -48,9 +75,11 @@ namespace WebShopApiTest.UnitTest
                 Category = Category.Cat,
                 SubCategory = SubCategory.WetFood,
                 ImageBase64 = "jpg"
+                
             };
             var newProduct = new Product
             {
+            
                 ProductName = product.ProductName,
                 Description = product.Description,
                 Price = product.Price,
@@ -59,12 +88,14 @@ namespace WebShopApiTest.UnitTest
                 Category = product.Category,
                 SubCategory = product.SubCategory,
                 ImageBase64 = product.ImageBase64
+              
             };
-            var result = await _productService.CreatePorductAsync(product);
 
+
+            var result = await _productService.CreatePorductAsync(product);               
 
             Assert.NotNull(result);
-            Assert.AreEqual(result.ProductName, newProduct.ProductName);
+            Assert.AreEqual(result.ProductName, product.ProductName);
         }
         [Test]
         public async Task UpdateProduct_ShouldReturnTrue()
@@ -101,7 +132,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task DeleteProductById_ShouldReturnNull()
         {
-            //Task<Product> DeleteProductById(int productId)
+          
             var product = await _context.Products.FirstOrDefaultAsync();
             var productId = product.ProductId;
 
