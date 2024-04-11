@@ -66,5 +66,28 @@ namespace WebShopApiTest.UnitTest
             Assert.NotNull(result);
             Assert.AreEqual(result.ProductName, newProduct.ProductName);
         }
+        [Test]
+        public async Task UpdateProduct_ShouldReturnTrue()
+        {
+            var productDto = new ProductDto
+            {
+                ProductName = "Test2",
+                Description = "Valami",
+                Price = 1,
+                Stock = 10,
+                Discount = 0,
+                Category = Category.Cat,
+                SubCategory = SubCategory.WetFood,
+                ImageBase64 = "jpg"
+            };
+            var product = await _context.Products.FirstOrDefaultAsync();
+            var productId = product.ProductId;
+            var result = await _productService.UpdateProduct(productId, productDto);
+
+            Assert.NotNull(result);
+            Assert.AreEqual(result.ProductName, productDto.ProductName);
+        }
+       
+
     }
 }
