@@ -109,6 +109,18 @@ namespace WebShopApiTest.UnitTest
             var result = await _context.Products.FindAsync(productId);
             Assert.IsNull(result);
         }
+        [Test]
+        public async Task GetProductsByCategory_ShouldReturnTrue()
+        {
+            var productList = await _context.Products.ToListAsync();
+
+            var act = await _productService.GetProductsByCategory(1);
+
+            var result = productList.Contains(act.FirstOrDefault());
+            Assert.True(result);
+
+        }
+        //<IEnumerable<Product>> GetProductsByCategory(int category)
 
     }
 }
