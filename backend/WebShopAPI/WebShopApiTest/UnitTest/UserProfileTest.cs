@@ -44,7 +44,7 @@ namespace WebShopApiTest.UnitTest
             }
 
         }
-        //Task<UserProfile> UpdateAdminUserProfileAsync(string userId, AdminUserProfileDto updatedProfile);
+        
         [Test]
         public async Task GetUserProfileById_ShouldReturnIsNotNull()
         {

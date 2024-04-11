@@ -60,6 +60,7 @@ namespace WebShopAPI.Service.UserServiceMap
         public async Task<IdentityUser> GetUserByName(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
+            
             if(user == null)
             {
                 return null;
