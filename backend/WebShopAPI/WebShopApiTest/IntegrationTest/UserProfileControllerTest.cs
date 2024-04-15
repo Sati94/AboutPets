@@ -38,7 +38,7 @@ namespace WebShopApiTest.IntegrationTest
             var token = desContent.Token;
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         }
-        /*[OneTimeTearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             CleanUpDate();
@@ -60,7 +60,7 @@ namespace WebShopApiTest.IntegrationTest
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
-        }*/
+        }
         [Test]
         public async Task GetUserProfile_ByUserId_Return_True()
         {
@@ -76,9 +76,9 @@ namespace WebShopApiTest.IntegrationTest
         public async Task Update_UserProfile_ByAdmin_Return_True()
         {
             var user = _webShopContext.Useres.FirstOrDefault();
-            var userId = user.IdentityUserId;
-            var Id = user.Id;
-            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == Id);
+            var userId = user.Id;
+            
+            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
             AdminUserProfileDto updater = new AdminUserProfileDto
             {
                 FirstName = "Nagy",

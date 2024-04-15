@@ -157,14 +157,14 @@ namespace WebShopApiTest.IntegrationTest
         {
           
             var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test");
-            string userId = user.IdentityUserId;
-            var id = user.Id;
+            string userId = user.Id;
+            
             var allOrder = _webShopContext.Orders.OrderByDescending(o => o.OrderId).ToList();
             var order = allOrder.FirstOrDefault();
         
             int orderId = order.OrderId;
             
-            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == id);
+            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
 
             if (user != null && order != null && userProfile != null)
             {

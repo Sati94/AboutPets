@@ -22,7 +22,7 @@ namespace WebShopApiTest.IntegrationTest
 
                 IdentityUser identityUser = new IdentityUser { Id = identityUserId };
 
-                User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test", IdentityUserId = identityUserId, IdentityUser = identityUser };
+                User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test" };
                 identityUser.UserName = newUser.UserName;
                 UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 1, UserId = newUser.Id, User = newUser };
                 newUser.Profile = newUserProfile;

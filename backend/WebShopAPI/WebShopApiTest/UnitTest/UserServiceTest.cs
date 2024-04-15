@@ -38,12 +38,19 @@ namespace WebShopApiTest.UnitTest
         {
             if (_context != null)
             {
+                var productsToDelete = _context.Products.Where(p => p.ProductName.Contains("Test")).ToList();
                 var userDelete = _context.Useres.Where(u => u.UserName.Contains("Test")).ToList();
-                var identityUserDelete = _context.Users.Where(u => u.UserName.Contains("Test")).ToList();
+                var orderToDelete = _context.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+                var orderItemDelete = _context.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
+                var userProfileToDelete = _context.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
-
+                _context.Products.RemoveRange(productsToDelete);
                 _context.Useres.RemoveRange(userDelete);
-                _context.Users.RemoveRange(identityUserDelete);
+                _context.Orders.RemoveRange(orderToDelete);
+                _context.OrderItems.RemoveRange(orderItemDelete);
+                _context.UserProfiles.RemoveRange(userProfileToDelete);
+
+                _context.SaveChanges();
 
                 _context.SaveChanges();
             }

@@ -29,7 +29,7 @@ namespace WebShopAPI.Service.UserServiceMap
                 return null;
             }
 
-            var dbUser = await _context.Useres.FirstOrDefaultAsync(u => u.IdentityUserId == userId);
+            var dbUser = await _context.Useres.FirstOrDefaultAsync(u => u.Id == userId);
             if (dbUser == null)
             {
                 return null;
@@ -70,7 +70,7 @@ namespace WebShopAPI.Service.UserServiceMap
         public async Task<IdentityUser> DeleteUserById(string userId)
         {
             var userToDelete = await _userManager.FindByIdAsync(userId);
-            var contextUserToDelete = await _context.Useres.FirstOrDefaultAsync(user => user.IdentityUserId == userId);
+            var contextUserToDelete = await _context.Useres.FirstOrDefaultAsync(user => user.Id == userId);
 
             if(userToDelete == null)
             {

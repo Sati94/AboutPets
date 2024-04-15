@@ -107,7 +107,7 @@ namespace WebShopApiTest.IntegrationTest
         {
             
             var user = await _webShopContext.Useres.FirstOrDefaultAsync();
-            var userId =  user.IdentityUserId;
+            var userId =  user.Id;
             
             var response = await _httpClient.DeleteAsync($"/user/delete/{userId}");
             var responseContent = await response.Content.ReadAsStringAsync();

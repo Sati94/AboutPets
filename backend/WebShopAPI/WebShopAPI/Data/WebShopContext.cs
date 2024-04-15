@@ -48,11 +48,6 @@ namespace WebShopAPI.Data
                 .WithOne(p => p.User)
                 .HasForeignKey<UserProfile>(p => p.UserId);
 
-            modelBuilder.Entity<User>()
-               .HasOne(u => u.IdentityUser)
-               .WithMany()
-               .HasForeignKey(p => p.IdentityUserId)
-               .IsRequired(false);
         
 
             modelBuilder.Entity<OrderItem>()
