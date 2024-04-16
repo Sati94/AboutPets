@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Contracts;
 using WebShopAPI.Data;
 using WebShopAPI.Model.UserModels;
@@ -10,12 +11,14 @@ namespace WebShopAPI.Controllers
     {
         private readonly IAuthService _authService;
         private readonly WebShopContext _webShopcontext;
+        private readonly UserManager<IdentityUser> _userManager;
         
 
-        public AuthController(IAuthService authService, WebShopContext webShopcontext)
+        public AuthController(IAuthService authService, WebShopContext webShopcontext, UserManager<IdentityUser> userManager)
         {
             _authService = authService;
             _webShopcontext = webShopcontext;
+            _userManager = userManager;
             
         }
         [HttpPost("/Register")]
@@ -33,7 +36,7 @@ namespace WebShopAPI.Controllers
                 return BadRequest(ModelState);
             }
             var resultemail = result.Email;
-            var user =  _webShopcontext.Useres.FirstOrDefault(u => u.Email == resultemail);
+            var user = await _userManager.FindByEmailAsync(resultemail);
             if(user != null)
             {
                var userProfile = new UserProfile

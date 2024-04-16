@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.UserModels;
@@ -13,7 +14,7 @@ namespace WebShopAPI.Data
         public WebShopContext(DbContextOptions<WebShopContext> options) : base(options)
         {
         }
-        public DbSet<User> Useres { get; set; }
+        public  DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -29,6 +30,7 @@ namespace WebShopAPI.Data
                     .Build();
 
                 string connectionString = configuration.GetConnectionString("DefaultConnection");
+               
 
                 if (string.IsNullOrEmpty(connectionString))
                 {
@@ -42,6 +44,7 @@ namespace WebShopAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+           
 
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Profile)

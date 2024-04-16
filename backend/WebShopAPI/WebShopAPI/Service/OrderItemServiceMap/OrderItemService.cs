@@ -15,7 +15,7 @@ namespace WebShopAPI.Service.OrderItemServiceMap
         }
         public async Task<OrderItem> AddOrderItemToUser(string userId, int productId, int quantity, int orderid)
         {
-            var user = await _context.Useres
+            var user = await _context.Users
              .Include(u => u.Orders)
              .ThenInclude(o => o.OrderItems)
               .FirstOrDefaultAsync(u => u.Id == userId);
@@ -70,7 +70,7 @@ namespace WebShopAPI.Service.OrderItemServiceMap
         }
         public async Task<OrderItem> DeleteOrderItem(string userId, int orderItemId)
         {
-           var user = await _context.Useres.Include(u => u.OrderItems).FirstOrDefaultAsync(u => u.Id == userId);
+           var user = await _context.Users.Include(u => u.OrderItems).FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user != null)
             {
@@ -103,7 +103,7 @@ namespace WebShopAPI.Service.OrderItemServiceMap
         }
         public async Task<OrderItem> SetOrderItemQuantity(string userId, int orderitemId, int newquantity)
         {
-            var user = await _context.Useres
+            var user = await _context.Users
                 .Include(u => u.OrderItems)
                 .ThenInclude(oi => oi.Product)
                 .Include(u => u.Orders)

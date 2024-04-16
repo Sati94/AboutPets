@@ -35,13 +35,13 @@ namespace WebShopApiTest.UnitTest
             if (_context != null)
             {
                 var productsToDelete = _context.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var userDelete = _context.Useres.Where(u => u.UserName.Contains("Test")).ToList();
+                var userDelete = _context.Users.Where(u => u.UserName.Contains("Test")).ToList();
                 var orderToDelete = _context.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
                 var orderItemDelete = _context.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
                 var userProfileToDelete = _context.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
                 _context.Products.RemoveRange(productsToDelete);
-                _context.Useres.RemoveRange(userDelete);
+                _context.Users.RemoveRange(userDelete);
                 _context.Orders.RemoveRange(orderToDelete);
                 _context.OrderItems.RemoveRange(orderItemDelete);
                 _context.UserProfiles.RemoveRange(userProfileToDelete);
@@ -70,7 +70,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task GetOrderByUserId_ShioldReturnTrue()
         {
-            var user = await _context.Useres.FirstOrDefaultAsync();
+            var user = await _context.Users.FirstOrDefaultAsync();
             string userId = user.Id;
             var result = await _orderService.GetOrderByUserId(userId);
             Assert.IsNotNull(result);

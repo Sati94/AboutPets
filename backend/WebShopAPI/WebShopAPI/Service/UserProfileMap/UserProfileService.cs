@@ -2,12 +2,14 @@
 using WebShopAPI.Data;
 using WebShopAPI.Model.UserModels;
 using WebShopAPI.Model.DTOS;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebShopAPI.Service.UserProfileMap
 {
     public class UserProfileService : IUserProfileService
     {
         private readonly WebShopContext _context;
+      
         public UserProfileService(WebShopContext context)
         {
             _context = context;

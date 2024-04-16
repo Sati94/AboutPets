@@ -12,7 +12,7 @@ using WebShopAPI.Data;
 namespace WebShopAPI.Migrations
 {
     [DbContext(typeof(WebShopContext))]
-    [Migration("20240415133920_InitialCreate")]
+    [Migration("20240416085915_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -376,10 +376,6 @@ namespace WebShopAPI.Migrations
             modelBuilder.Entity("WebShopAPI.Model.UserModels.User", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<string>("IdentityUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("User");
                 });

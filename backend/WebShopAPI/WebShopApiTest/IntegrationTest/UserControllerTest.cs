@@ -55,13 +55,13 @@ namespace WebShopApiTest.IntegrationTest
            
 
             var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-            var userDelete = _webShopContext.Useres.Where(u => u.UserName.Contains("Test")).ToList();
+            var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
             var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
             var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
             var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
             _webShopContext.Products.RemoveRange(productsToDelete);
-            _webShopContext.Useres.RemoveRange(userDelete);
+            _webShopContext.Users.RemoveRange(userDelete);
             _webShopContext.Orders.RemoveRange(orderToDelete);
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
@@ -79,7 +79,7 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Find_User_ById_RetrurnTrue()
         {
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test");
+            var user = _webShopContext.Users.FirstOrDefault(u => u.UserName == "Test");
            
                 var userId = user.Id;
                 var response = await _httpClient.GetAsync($"/user/{userId}");
@@ -94,7 +94,7 @@ namespace WebShopApiTest.IntegrationTest
         public async Task Find_User_ByUserName_RetrurnTrue()
         {
             string userName = "Test";
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == userName);
+            var user = _webShopContext.Users.FirstOrDefault(u => u.UserName == userName);
 
             var response = await _httpClient.GetAsync($"/user/name/{userName}");
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -106,7 +106,7 @@ namespace WebShopApiTest.IntegrationTest
         public async Task Delete_User_NonExistingUser_ReturnsNotFound()
         {
             
-            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId =  user.Id;
             
             var response = await _httpClient.DeleteAsync($"/user/delete/{userId}");
@@ -120,7 +120,7 @@ namespace WebShopApiTest.IntegrationTest
         public async Task Update_UserById_Return_True()
         {
            
-            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
 
            UserDto newUser = new UserDto

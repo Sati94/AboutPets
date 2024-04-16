@@ -20,10 +20,9 @@ namespace WebShopApiTest.IntegrationTest
                 string identityUserId = Guid.NewGuid().ToString();
 
 
-                IdentityUser identityUser = new IdentityUser { Id = identityUserId };
-
-                User newUser = new User { Id = userId, Email = "test@test.com", UserName = "Test" };
-                identityUser.UserName = newUser.UserName;
+                
+                User newUser = new User { Id =userId, Email = "test@test.com", UserName = "Test" };
+               
                 UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 1, UserId = newUser.Id, User = newUser };
                 newUser.Profile = newUserProfile;
 
@@ -38,7 +37,7 @@ namespace WebShopApiTest.IntegrationTest
                 newUser.OrderItems.Add(newOrderItem);
                 newUser.Orders.Add(newOrder);
 
-                dbContext.Useres.Add(newUser);
+                dbContext.Users.Add(newUser);
                 dbContext.UserProfiles.Add(newUserProfile);
                 dbContext.Products.Add(newProduct);
                 dbContext.Orders.Add(newOrder);

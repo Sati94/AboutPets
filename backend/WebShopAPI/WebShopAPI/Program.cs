@@ -187,7 +187,7 @@ async Task CreateAdminIfNotExists()
                 Email = admin.Email,
             };
             using var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
-            dbContext.Useres.Add(customUser);
+            dbContext.Users.Add(customUser);
             await dbContext.SaveChangesAsync();
         }
       

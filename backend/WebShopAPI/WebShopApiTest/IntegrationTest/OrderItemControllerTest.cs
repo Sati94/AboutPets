@@ -33,7 +33,7 @@ namespace WebShopApiTest.IntegrationTest
                 PropertyNameCaseInsensitive = true
             };
             var order = _webShopContext.Orders.FirstOrDefault();
-            var user = _webShopContext.Useres.FirstOrDefault();
+            var user = _webShopContext.Users.FirstOrDefault();
 
             _httpClient = CreateClient();
             AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
@@ -58,13 +58,13 @@ namespace WebShopApiTest.IntegrationTest
            
 
             var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-            var userDelete = _webShopContext.Useres.Where(u => u.UserName.Contains("Test")).ToList();
+            var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
             var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
             var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
             var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
             _webShopContext.Products.RemoveRange(productsToDelete);
-            _webShopContext.Useres.RemoveRange(userDelete);
+            _webShopContext.Users.RemoveRange(userDelete);
             _webShopContext.Orders.RemoveRange(orderToDelete);
             _webShopContext.OrderItems.RemoveRange(orderItemDelete);
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
@@ -73,7 +73,7 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task AddOrderItemToUserAsync_ReturnsOkWithOrderItem()
         {
-            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id; 
    
             var product = await _webShopContext.Products.FirstOrDefaultAsync();
@@ -153,7 +153,7 @@ namespace WebShopApiTest.IntegrationTest
             user.OrderItems.Add(orderItem);
             order.OrderItems.Add(orderItem);
 
-            _webShopContext.Useres.Add(user);
+            _webShopContext.Users.Add(user);
             _webShopContext.Orders.Add(order);
             _webShopContext.OrderItems.Add(orderItem);
             await _webShopContext.SaveChangesAsync();

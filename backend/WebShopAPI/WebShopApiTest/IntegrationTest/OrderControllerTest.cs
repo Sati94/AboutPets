@@ -54,13 +54,13 @@ namespace WebShopApiTest.IntegrationTest
             if(_webShopContext != null)
             {
                 var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var userDelete = _webShopContext.Useres.Where(u => u.UserName.Contains("Test")).ToList();
+                var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
                 var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
                 var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
                 var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
                 _webShopContext.Products.RemoveRange(productsToDelete);
-                _webShopContext.Useres.RemoveRange(userDelete);
+                _webShopContext.Users.RemoveRange(userDelete);
                 _webShopContext.Orders.RemoveRange(orderToDelete);
                 _webShopContext.OrderItems.RemoveRange(orderItemDelete);
                 _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
@@ -101,7 +101,7 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task GetOrder_ByUserId_Return_True() 
         {
-            var user = await _webShopContext.Useres.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
             var order = _webShopContext.Orders.FirstOrDefault(o => o.UserId == userId);
             if (order == null)
@@ -156,7 +156,7 @@ namespace WebShopApiTest.IntegrationTest
         public async Task UpdateOrderTotalPriceWithBonus_ShouldReturnTrue()
         {
           
-            var user = _webShopContext.Useres.FirstOrDefault(u => u.UserName == "Test");
+            var user = _webShopContext.Users.FirstOrDefault(u => u.UserName == "Test");
             string userId = user.Id;
             
             var allOrder = _webShopContext.Orders.OrderByDescending(o => o.OrderId).ToList();

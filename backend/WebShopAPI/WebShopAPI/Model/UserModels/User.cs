@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using WebShopAPI.Model.OrderModel;
 
+
 namespace WebShopAPI.Model.UserModels
 {
     public class User : IdentityUser
@@ -17,6 +18,7 @@ namespace WebShopAPI.Model.UserModels
         public User()
         {
             Id = Guid.NewGuid().ToString();
+          
         }
     }
     
