@@ -15,8 +15,6 @@ namespace WebShopAPI.Model
         public int OrderId { get; set; }
         public Order Order { get; set; }
 
-        public string UserId { get; set; }
-        public User User { get; set; }
         public Product Product { get; set; }
 
     }

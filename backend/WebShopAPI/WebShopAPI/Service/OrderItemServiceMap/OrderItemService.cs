@@ -11,17 +11,16 @@ namespace WebShopAPI.Service.OrderItemServiceMap
     {
         private readonly WebShopContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        public OrderItemService(WebShopContext context)
+        public OrderItemService(WebShopContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
            
         }
-        public async Task<OrderItem> AddOrderItemToUser(string userId, int productId, int quantity, int orderid)
+        public async Task<OrderItem> AddOrderItemToUser(string userId, int productId, int quantity, int orderId)
         {
-            var user = await _context.Users
-             .Include(u => u.Orders)
-             .ThenInclude(o => o.OrderItems)
-              .FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _userManager.FindByIdAsync(userId);
+             
             if (user == null)
             {
                 throw new ArgumentException("User not found");
@@ -33,9 +32,10 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                 throw new ArgumentException("Product not found");
             }
             Order order = null;
-            if(orderid != 0)
+            if (orderId != 0)
             {
-                order = user.Orders.FirstOrDefault(o => o.OrderId == orderid);
+                order = await _context.Orders.FirstOrDefaultAsync(or => or.UserId == userId);
+             
             }
             if (order == null)
             {
@@ -46,8 +46,10 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                     OrderStatuses = OrderStatuses.Pending,
                     UserId = userId,
                 };
-                user.Orders.Add(order);
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
             }
+
 
             var orderItem = new OrderItem
             {
@@ -63,83 +65,95 @@ namespace WebShopAPI.Service.OrderItemServiceMap
             product.Stock = product.Stock - quantity;
            
             order.OrderItems.Add(orderItem);
-            user.OrderItems.Add(orderItem);
             _context.OrderItems.Add(orderItem);
+
             
             await _context.SaveChangesAsync();
             order.TotalPrice = order.OrderItems.Sum(oi => oi.Price);
             await _context.SaveChangesAsync();
             return orderItem;
         }
-        public async Task<OrderItem> DeleteOrderItem(string userId, int orderItemId)
+        public async Task<OrderItem> DeleteOrderItem(int orderId, int orderItemId, string userId)
         {
-           var user = await _context.Users.Include(u => u.OrderItems).FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user != null)
             {
-                var orderItem = user.OrderItems.FirstOrDefault(oi => oi.OrderItemId == orderItemId);
-                if (orderItem != null)
-                {
-                    user.OrderItems.Remove(orderItem);
-
-                }
                 var order = await _context.Orders
-                    .FirstOrDefaultAsync(o => o.UserId == userId);
-                 
+                    .Include(o => o.OrderItems)
+                    .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
+
                 if (order != null)
                 {
+                    var orderItem = order.OrderItems.FirstOrDefault(oi => oi.OrderItemId == orderItemId);
+
+                    if (orderItem != null)
+                    {
+                        
                         order.OrderItems.Remove(orderItem);
-                        if(order.OrderItems.Count == 0) 
+
+                        
+                        order.TotalPrice -= orderItem.Price;
+
+                        if (order.OrderItems.Count == 0)
                         {
                             _context.Orders.Remove(order);
                         }
-                        order.TotalPrice -= orderItem.Price;
+
+                        // OrderItem törlése az adatbázisból
                         _context.OrderItems.Remove(orderItem);
+
+                        // Adatok mentése
                         await _context.SaveChangesAsync();
-                    
-                   return orderItem;
+
+                        return orderItem;
+                    }
                 }
-                 
             }
+
             return null;
-               
+
         }
-        public async Task<OrderItem> SetOrderItemQuantity(string userId, int orderitemId, int newquantity)
+        public async Task<OrderItem> SetOrderItemQuantity(int orderId, int orderItemId, int newquantity)
         {
-            var user = await _context.Users
-                .Include(u => u.OrderItems)
-                .ThenInclude(oi => oi.Product)
-                .Include(u => u.Orders)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-            if (user != null)
+            var order = await _context.Orders.FindAsync(orderId);
+            var userId = order.UserId;
+            if (order != null && userId != null)
             {
-                var orderItem = user.OrderItems.FirstOrDefault(oi => oi.OrderItemId == orderitemId);
-                if(orderItem != null)
+                var orderItem = await _context.OrderItems.FirstOrDefaultAsync(oi => oi.OrderItemId == orderItemId);
+
+
+                if (orderItem != null && order.OrderItems.Contains(orderItem)) 
                 {
                     var oldQuantity = orderItem.Quantity;
                     var difference = newquantity - oldQuantity;
                     orderItem.Quantity = newquantity;
-                    
-                    if (orderItem.Product != null)
+                    var product = await _context.Products.FirstOrDefaultAsync(p => p.OrderItems.Contains(orderItem));
+                    if (product != null)
                     {
+                        orderItem.Price = product.Price * newquantity;
+                        if (difference > 0 )
+                        {
+                            product.Stock -= difference;
+                        }
+                        else if (difference < 0)
+                        {
+                            product.Stock += Math.Abs(difference);
+                        }
                         
-                        orderItem.Price = orderItem.Product.Price * newquantity;
-                        if( difference > 0)
+
+                        var orders = await _context.Orders.FirstOrDefaultAsync(o => o.OrderItems.Any(oi => oi.OrderItemId == orderItemId));
+                        if (orders != null)
                         {
-                            orderItem.Product.Stock -= difference;
-                            
+                            orders.TotalPrice = orders.OrderItems.Sum(oi => oi.Price);
                         }
-                        else if(difference < 0 )
+                        if(newquantity == 0)
                         {
-                            orderItem.Product.Stock += Math.Abs(difference);
-                           
+                            _context.OrderItems.Remove(orderItem);
+                            _context.Orders.Remove(order);
+                            await _context.SaveChangesAsync();
                         }
-                        decimal newTotalPrice = user.Orders.SelectMany(o => o.OrderItems).Sum(oi => oi.Price);
-                        var orderToUpdate = user.Orders.FirstOrDefault(o => o.OrderItems.Any(oi=> oi.OrderItemId == orderitemId));
-                        if(orderToUpdate != null)
-                        {
-                            orderToUpdate.TotalPrice = newTotalPrice;
-                        }
+
                         await _context.SaveChangesAsync();
                         return orderItem;
                     }

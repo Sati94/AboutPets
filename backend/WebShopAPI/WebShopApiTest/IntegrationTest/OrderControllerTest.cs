@@ -56,13 +56,11 @@ namespace WebShopApiTest.IntegrationTest
                 var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
                 var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
                 var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-                var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
                 var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
                 _webShopContext.Products.RemoveRange(productsToDelete);
                 _webShopContext.Users.RemoveRange(userDelete);
                 _webShopContext.Orders.RemoveRange(orderToDelete);
-                _webShopContext.OrderItems.RemoveRange(orderItemDelete);
                 _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
                 _webShopContext.SaveChanges();
             }

@@ -181,14 +181,7 @@ async Task CreateAdminIfNotExists()
         {
             await userManager.AddToRoleAsync(admin, "Admin");
             Console.WriteLine($"Admin created: {admin.Id}, {admin.UserName}, {admin.Email}");
-            var customUser = new User
-            {
-                UserName = admin.UserName,
-                Email = admin.Email,
-            };
-            using var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
-            dbContext.Users.Add(customUser);
-            await dbContext.SaveChangesAsync();
+            
         }
       
     }

@@ -51,13 +51,7 @@ namespace WebShopAPI.Data
                 .WithOne(p => p.User)
                 .HasForeignKey<UserProfile>(p => p.UserId);
 
-        
-
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.User)
-                .WithMany(u => u.OrderItems)
-                .HasForeignKey(oi => oi.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+      
 
             modelBuilder.Entity<Product>()
                 .HasMany(p=> p.OrderItems)

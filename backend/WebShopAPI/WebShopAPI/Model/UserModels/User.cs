@@ -9,17 +9,11 @@ namespace WebShopAPI.Model.UserModels
     { 
        
         [JsonIgnore]
-        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     
         public ICollection<Order> Orders { get; set; } = new List<Order>();
         public UserProfile Profile { get; set; }
 
         
-        public User()
-        {
-            Id = Guid.NewGuid().ToString();
-          
-        }
     }
     
 }

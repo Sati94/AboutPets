@@ -12,7 +12,7 @@ using WebShopAPI.Data;
 namespace WebShopAPI.Migrations
 {
     [DbContext(typeof(WebShopContext))]
-    [Migration("20240416085915_InitialCreate")]
+    [Migration("20240417094502_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -251,17 +251,11 @@ namespace WebShopAPI.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("OrderItemId");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("OrderItems");
                 });
@@ -445,17 +439,9 @@ namespace WebShopAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebShopAPI.Model.UserModels.User", "User")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Order");
 
                     b.Navigation("Product");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebShopAPI.Model.OrderModel.Order", b =>
@@ -492,8 +478,6 @@ namespace WebShopAPI.Migrations
 
             modelBuilder.Entity("WebShopAPI.Model.UserModels.User", b =>
                 {
-                    b.Navigation("OrderItems");
-
                     b.Navigation("Orders");
 
                     b.Navigation("Profile")

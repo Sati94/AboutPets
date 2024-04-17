@@ -48,11 +48,11 @@ namespace WebShopAPI.Controllers
 
         }
         [HttpDelete("/orderitem/remove"), Authorize(Roles = "Admin,User")]
-        public async Task<ActionResult<OrderItem>> RemoveOrderItemFromUserAndOrderAsync(string userid,int orderItemId)
+        public async Task<ActionResult<OrderItem>> RemoveOrderItemFromUserAndOrderAsync(int orderId, int orderItemId, string userId)
         {
             try
             {
-                await _orderItemService.DeleteOrderItem(userid, orderItemId);
+                await _orderItemService.DeleteOrderItem(orderId, orderItemId, userId);
                 return Ok("OrderItem removed !");
             }
             catch(ArgumentException ex)
@@ -61,11 +61,11 @@ namespace WebShopAPI.Controllers
             };
         }
         [HttpPut("/orderitem/updateQuantity"), Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<OrderItem>> SetOrderItemQuantityAsync(string userId, int orderItemId, int newQuantity)
+        public async Task<ActionResult<OrderItem>> SetOrderItemQuantityAsync(int orderId, int orderItemId, int newQuantity)
         {
             try
             {
-                var updateItem = await _orderItemService.SetOrderItemQuantity(userId, orderItemId, newQuantity);
+                var updateItem = await _orderItemService.SetOrderItemQuantity(orderId, orderItemId, newQuantity);
                 if(updateItem != null)
                 {
                     var jsonOptions = new JsonSerializerOptions
@@ -75,7 +75,7 @@ namespace WebShopAPI.Controllers
                     };
                     return Ok(JsonSerializer.Serialize(updateItem, jsonOptions));
                 }
-                return NotFound($"OrderItem with id {orderItemId} not found for user {userId}");
+                return NotFound($"OrderItem with id {orderItemId} not found for order {orderId}");
             }
             catch(ArgumentException ex)
             {
