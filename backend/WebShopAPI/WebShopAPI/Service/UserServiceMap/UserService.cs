@@ -29,9 +29,11 @@ namespace WebShopAPI.Service.UserServiceMap
                 return null;
             }
 
-         
+
+            var newPasswordHash = _userManager.PasswordHasher.HashPassword(newUser, user.Password);
 
             newUser.UserName = user.Username;
+            newUser.PasswordHash = newPasswordHash;
             newUser.Email = user.Email;
 
             

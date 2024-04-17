@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace WebShopApiTest.IntegrationTest
     {
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
+        private UserManager<IdentityUser> _userManager;
 
         [SetUp]
         public void Setup()

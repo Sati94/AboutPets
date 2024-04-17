@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Data;
 using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
@@ -9,9 +10,11 @@ namespace WebShopAPI.Service.OrderItemServiceMap
     public class OrderItemService : IOrderItemService
     {
         private readonly WebShopContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
         public OrderItemService(WebShopContext context)
         {
             _context = context;
+           
         }
         public async Task<OrderItem> AddOrderItemToUser(string userId, int productId, int quantity, int orderid)
         {

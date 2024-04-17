@@ -17,10 +17,8 @@ namespace WebShopApiTest.IntegrationTest
             using (var dbContext = new WebShopContext(dbContextOptions))
             {
                 string userId = Guid.NewGuid().ToString();
-                string identityUserId = Guid.NewGuid().ToString();
 
-
-                
+               
                 User newUser = new User { Id =userId, Email = "test@test.com", UserName = "Test" };
                
                 UserProfile newUserProfile = new UserProfile { FirstName = "Test", LastName = "Test", Address = "Test", PhoneNumber = "Test", Bonus = 1, UserId = newUser.Id, User = newUser };
