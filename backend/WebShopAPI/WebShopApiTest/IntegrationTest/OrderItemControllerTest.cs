@@ -60,18 +60,20 @@ namespace WebShopApiTest.IntegrationTest
         }
         private void CleanUpDate()
         {
-           
+
 
             var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+            var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
             var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
             var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-    
+            var orderItemDelete = _webShopContext.OrderItems;
             var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
             _webShopContext.Products.RemoveRange(productsToDelete);
+            _webShopContext.Products.RemoveRange(productsToDelete2);
             _webShopContext.Users.RemoveRange(userDelete);
             _webShopContext.Orders.RemoveRange(orderToDelete);
-           
+
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
         }

@@ -26,8 +26,8 @@ namespace WebShopAPI.Service.ProductServiceMap
                  Price = product.Price,
                  Stock = product.Stock,
                  Discount = product.Discount,
-                 Category = product.Category,
-                 SubCategory = product.SubCategory,
+                 Category = product.GetCategory(),
+                 SubCategory = product.GetSubCategory(),
                  ImageBase64 = product.ImageBase64
              };
             _context.Products.Add(newProduct);
@@ -46,8 +46,8 @@ namespace WebShopAPI.Service.ProductServiceMap
             productToUpdate.Price = product.Price;
             productToUpdate.Stock = product.Stock;
             productToUpdate.Discount = product.Discount;
-            productToUpdate.Category = product.Category;
-            productToUpdate.SubCategory = product.SubCategory;
+            productToUpdate.Category = product.GetCategory();
+            productToUpdate.SubCategory = product.GetSubCategory();
             productToUpdate.ImageBase64 = product.ImageBase64;
 
             var discountService = new DiscountCalculator();
@@ -68,8 +68,8 @@ namespace WebShopAPI.Service.ProductServiceMap
                     Price = p.Price,
                     Stock = p.Stock,
                     Discount = p.Discount,
-                    Category = p.Category,
-                    SubCategory = p.SubCategory,
+                    CategoryId = (int)p.Category,
+                    SubCategoryId = (int)p.SubCategory,
                     ImageBase64 = p.ImageBase64
                 })
                 .FirstOrDefaultAsync();

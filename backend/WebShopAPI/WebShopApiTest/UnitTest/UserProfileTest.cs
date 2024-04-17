@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebShopAPI.Data;
 using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
 {
     public class UserProfileTest
     {
-        private WebShopContext _context;
+        private WebShopContext _webShopContext;
         private IUserProfileService _userProfileService;
 
         [SetUp]
@@ -18,11 +19,11 @@ namespace WebShopApiTest.UnitTest
             var options = new DbContextOptionsBuilder<WebShopContext>()
                 .UseInMemoryDatabase(databaseName: "TestDataBase")
                 .Options;
-            _context = new WebShopContext(options);
+            _webShopContext = new WebShopContext(options);
             SeedData.PopulateTestData(options);
 
 
-            _userProfileService = new UserProfileService(_context);
+            _userProfileService = new UserProfileService(_webShopContext);
         }
         [TearDown]
         public void TearDown()
@@ -33,21 +34,22 @@ namespace WebShopApiTest.UnitTest
         }
         private void CleanUpDate()
         {
-            if (_context != null)
+            if (_webShopContext != null)
             {
-                var productsToDelete = _context.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var userDelete = _context.Users.Where(u => u.UserName.Contains("Test")).ToList();
-                var orderToDelete = _context.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-                var orderItemDelete = _context.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
-                var userProfileToDelete = _context.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
+                var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+                var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
+                var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
+                var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+                var orderItemDelete = _webShopContext.OrderItems;
+                var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
-                _context.Products.RemoveRange(productsToDelete);
-                _context.Users.RemoveRange(userDelete);
-                _context.Orders.RemoveRange(orderToDelete);
-                _context.OrderItems.RemoveRange(orderItemDelete);
-                _context.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete2);
+                _webShopContext.Users.RemoveRange(userDelete);
+                _webShopContext.Orders.RemoveRange(orderToDelete);
 
-                _context.SaveChanges();
+                _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.SaveChanges();
             }
 
         }
@@ -55,7 +57,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task GetUserProfileById_ShouldReturnIsNotNull()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
 
             var result = await _userProfileService.GetUserProfileAsync(userId);
@@ -66,7 +68,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task UpdateUserProfile_ShouldReturnNotNull()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
 
             var newUserProfile = new UserProfileDto
@@ -95,7 +97,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task UpdatedAdminUserProfile_ShouldReturnNotNull()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
 
             var newUserProfile = new AdminUserProfileDto

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +12,9 @@ namespace WebShopApiTest.UnitTest
 {
     public class OrderItemTests
     {
-        private WebShopContext _context;
+        private WebShopContext _webShopContext;
         private IOrderItemService _orderItemService;
+        private UserManager<IdentityUser> _userManager;
 
         [SetUp]
         public void SetUp()
@@ -19,10 +22,11 @@ namespace WebShopApiTest.UnitTest
             var option = new DbContextOptionsBuilder<WebShopContext>()
                 .UseInMemoryDatabase(databaseName: "TestData")
                 .Options;
-            _context = new WebShopContext(option);
+            _webShopContext = new WebShopContext(option);
+            _userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_webShopContext), null, null, null, null, null, null, null, null);
             SeedData.PopulateTestData(option);
 
-            _orderItemService = new OrderItemService(_context);
+            _orderItemService = new OrderItemService(_webShopContext, _userManager);
         }
         [TearDown]
         public void TearDown()
@@ -33,52 +37,54 @@ namespace WebShopApiTest.UnitTest
         }
         private void CleanUpDate()
         {
-            if (_context != null)
+            if (_webShopContext != null)
             {
-                var productsToDelete = _context.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var userDelete = _context.Users.Where(u => u.UserName.Contains("Test")).ToList();
-                var orderToDelete = _context.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-                var orderItemDelete = _context.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
-                var userProfileToDelete = _context.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
+                var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+                var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
+                var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
+                var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+                var orderItemDelete = _webShopContext.OrderItems;
+                var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
-                _context.Products.RemoveRange(productsToDelete);
-                _context.Users.RemoveRange(userDelete);
-                _context.Orders.RemoveRange(orderToDelete);
-                _context.OrderItems.RemoveRange(orderItemDelete);
-                _context.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete2);
+                _webShopContext.Users.RemoveRange(userDelete);
+                _webShopContext.Orders.RemoveRange(orderToDelete);
 
-                _context.SaveChanges();
+                _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.SaveChanges();
             }
 
         }
         [Test]
         public async Task AddOrderItemToUser_ReturnTrue()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
-            var product = await _context.Products.FirstOrDefaultAsync();
+            var product = await _webShopContext.Products.FirstOrDefaultAsync();
             var productId = product.ProductId;
             var quantity = 1;
-            var order = await _context.Orders.FirstOrDefaultAsync();
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
             var orderId = order.OrderId;
 
             var result = await _orderItemService.AddOrderItemToUser(userId, productId, quantity, orderId);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(userId, result.UserId);
+            Assert.AreEqual(orderId, result.OrderId);
 
         }
         [Test]
         public async Task DeleteOrderItemById_ShouldReturnIsNull()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
-            var orderItems = await _context.OrderItems.FirstOrDefaultAsync();
-            var orderItemsId = orderItems.OrderId;
+            var orderItems = await _webShopContext.OrderItems.FirstOrDefaultAsync();
+            var orderItemId = orderItems.OrderId;
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
+            var act = await _orderItemService.DeleteOrderItem(orderId , orderItemId, userId);
 
-            var act = await _orderItemService.DeleteOrderItem(userId, orderItemsId);
-
-            var result = await _context.OrderItems.FindAsync(orderItemsId);
+            var result = await _webShopContext.OrderItems.FindAsync(orderItemId);
 
             Assert.IsNull(result);
            
@@ -86,13 +92,13 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task SetOrderItemQuantity_ShouldReturnTrue()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
-            var userId = user.Id;
-            var orderItems = await _context.OrderItems.FirstOrDefaultAsync();
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
+            var orderId = order.OrderId;
+            var orderItems = await _webShopContext.OrderItems.FirstOrDefaultAsync();
             var orderItemsId = orderItems.OrderId;
             var newQuantity = 10;
-            var act = await _orderItemService.SetOrderItemQuantity(userId, newQuantity, orderItemsId);
-            var result = await _context.OrderItems.FindAsync(orderItemsId);
+            var act = await _orderItemService.SetOrderItemQuantity(orderId, newQuantity, orderItemsId);
+            var result = await _webShopContext.OrderItems.FindAsync(orderItemsId);
 
             Assert.AreEqual(result.Quantity, newQuantity);
         }

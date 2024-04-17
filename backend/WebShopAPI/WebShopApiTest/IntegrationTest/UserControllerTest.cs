@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace WebShopApiTest.IntegrationTest
 
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
+        private UserManager<IdentityUser> _userManager;
 
         [SetUp]
         public void Setup()
@@ -25,6 +27,7 @@ namespace WebShopApiTest.IntegrationTest
 
             _webShopContext = new WebShopContext(options);
             SeedData.PopulateTestData(options);
+            _userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_webShopContext), null, null, null, null, null, null, null, null);
 
             var option = new JsonSerializerOptions
             {
@@ -52,18 +55,20 @@ namespace WebShopApiTest.IntegrationTest
         }
         private void CleanUpDate()
         {
-           
+
 
             var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+            var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
             var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
             var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-           
+            var orderItemDelete = _webShopContext.OrderItems;
             var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
             _webShopContext.Products.RemoveRange(productsToDelete);
+            _webShopContext.Products.RemoveRange(productsToDelete2);
             _webShopContext.Users.RemoveRange(userDelete);
             _webShopContext.Orders.RemoveRange(orderToDelete);
-          
+
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
         }
@@ -105,9 +110,10 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Delete_User_NonExistingUser_ReturnsNotFound()
         {
-            
-            var user = await _webShopContext.Users.FirstOrDefaultAsync();
-            var userId =  user.Id;
+            var id = "1234";
+            var user = await _userManager.FindByIdAsync(id);
+            var userId = user.Id;
+           
             
             var response = await _httpClient.DeleteAsync($"/user/delete/{userId}");
             var responseContent = await response.Content.ReadAsStringAsync();

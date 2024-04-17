@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebShopAPI.Data;
 using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
 {
     public class OrderServiceTest
     {
-        private WebShopContext _context;
+        private WebShopContext _webShopContext;
         private IOrderService _orderService;
 
         [SetUp]
@@ -18,10 +19,10 @@ namespace WebShopApiTest.UnitTest
             var options = new DbContextOptionsBuilder<WebShopContext>()
                 .UseInMemoryDatabase(databaseName: "TestDataBase")
                 .Options;
-            _context = new WebShopContext(options);
+            _webShopContext = new WebShopContext(options);
             SeedData.PopulateTestData(options);
 
-            _orderService = new OrderService(_context);
+            _orderService = new OrderService(_webShopContext);
         }
         [TearDown]
         public void TearDown()
@@ -32,21 +33,22 @@ namespace WebShopApiTest.UnitTest
         }
         private void CleanUpDate()
         {
-            if (_context != null)
+            if (_webShopContext != null)
             {
-                var productsToDelete = _context.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var userDelete = _context.Users.Where(u => u.UserName.Contains("Test")).ToList();
-                var orderToDelete = _context.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-                var orderItemDelete = _context.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
-                var userProfileToDelete = _context.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
+                var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+                var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
+                var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
+                var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+                var orderItemDelete = _webShopContext.OrderItems;
+                var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
-                _context.Products.RemoveRange(productsToDelete);
-                _context.Users.RemoveRange(userDelete);
-                _context.Orders.RemoveRange(orderToDelete);
-                _context.OrderItems.RemoveRange(orderItemDelete);
-                _context.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete2);
+                _webShopContext.Users.RemoveRange(userDelete);
+                _webShopContext.Orders.RemoveRange(orderToDelete);
 
-                _context.SaveChanges();
+                _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.SaveChanges();
             }
 
         }
@@ -60,7 +62,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task GetOrderById_ShouldReturnTrue()
         {
-            var order = await _context.Orders.FirstOrDefaultAsync();
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
             var orderId = order.OrderId;
             var result = await _orderService.GetOrderByIdAsync(orderId);
 
@@ -70,7 +72,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task GetOrderByUserId_ShioldReturnTrue()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             string userId = user.Id;
             var result = await _orderService.GetOrderByUserId(userId);
             Assert.IsNotNull(result);
@@ -79,12 +81,12 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task DeleteOrderById_ShouldReturnIsNull()
         {
-            var order = await _context.Orders.FirstOrDefaultAsync();
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
             var orderId = order.OrderId;
 
             var act = await _orderService.DeleteOrderById(orderId);
 
-            var result = await _context.Orders.FindAsync(orderId);
+            var result = await _webShopContext.Orders.FindAsync(orderId);
 
             Assert.IsNull(result);
         }
@@ -92,7 +94,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task UpdateOrderStatus_ShouldReturnIsTrue()
         {
-            var order = await _context.Orders.FirstOrDefaultAsync();
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
             var orderId = order.OrderId;
             OrderStatuses newStatus = OrderStatuses.Cancelled;
 
@@ -104,7 +106,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task UpdateOrderTotalPriceWithBonus_ShouldReturnTrue()
         {
-            var order = await _context.Orders.FirstOrDefaultAsync();
+            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
             var orderId = order.OrderId;
             var userId = order.UserId;
 

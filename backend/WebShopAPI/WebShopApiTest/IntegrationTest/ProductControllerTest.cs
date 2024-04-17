@@ -5,6 +5,7 @@ using WebShopAPI.Data;
 using Microsoft.EntityFrameworkCore.InMemory;
 using System.Net;
 using WebShopAPI.Model;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebShopApiTest.IntegrationTest
 {
@@ -54,14 +55,14 @@ namespace WebShopApiTest.IntegrationTest
             var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
             var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
             var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-            var orderItemDelete = _webShopContext.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
+            var orderItemDelete = _webShopContext.OrderItems;
             var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
             _webShopContext.Products.RemoveRange(productsToDelete);
             _webShopContext.Products.RemoveRange(productsToDelete2);
             _webShopContext.Users.RemoveRange(userDelete);
             _webShopContext.Orders.RemoveRange(orderToDelete);
-            _webShopContext.OrderItems.RemoveRange(orderItemDelete);
+           
             _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
             _webShopContext.SaveChanges();
         }
@@ -84,8 +85,8 @@ namespace WebShopApiTest.IntegrationTest
                 Price = 50,
                 Stock = 50,
                 Discount = 0,
-                Category = Category.Dog,
-                SubCategory = SubCategory.DryFood,
+                CategoryId = 1,
+                SubCategoryId = 4,
                 ImageBase64 = "valami"
             };
             Product product = new Product
@@ -95,8 +96,8 @@ namespace WebShopApiTest.IntegrationTest
                 Price = productDto.Price,
                 Stock = productDto.Stock,
                 Discount = productDto.Discount,
-                Category = productDto.Category,
-                SubCategory = productDto.SubCategory,
+                Category = productDto.GetCategory(),
+                SubCategory = productDto.GetSubCategory(),
                 ImageBase64 = productDto.ImageBase64
 
             };
@@ -162,8 +163,8 @@ namespace WebShopApiTest.IntegrationTest
                 Price = 50,
                 Stock = 50,
                 Discount = 0,
-                Category = Category.Dog,
-                SubCategory = SubCategory.DryFood,
+                CategoryId = 1,
+                SubCategoryId = 4,
                 ImageBase64 = "valami"
             };
             var content = new StringContent(JsonConvert.SerializeObject(new
@@ -174,8 +175,8 @@ namespace WebShopApiTest.IntegrationTest
                 price = updateProduct.Price,
                 stock = updateProduct.Stock,
                 discount = updateProduct.Discount,
-                category = (int)updateProduct.Category,
-                subCategory = (int)updateProduct.SubCategory,
+                category = (int)updateProduct.GetCategory(),
+                subCategory = (int)updateProduct.GetSubCategory(),
                 imageBase64 = updateProduct.ImageBase64,
 
             }), Encoding.UTF8, "application/json");

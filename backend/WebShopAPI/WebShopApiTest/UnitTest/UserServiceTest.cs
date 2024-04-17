@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Data;
+using WebShopAPI.Data;
 using WebShopApiTest.IntegrationTest;
 
 
@@ -11,8 +12,9 @@ namespace WebShopApiTest.UnitTest
 
     public class UserServiceTest
     {
-        private WebShopContext _context;
+        private WebShopContext _webShopContext;
         private IUserService _userService;
+        private UserManager<IdentityUser> _userManager;
 
         [SetUp]
         public void Setup()
@@ -20,12 +22,12 @@ namespace WebShopApiTest.UnitTest
             var options = new DbContextOptionsBuilder<WebShopContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
-            _context = new WebShopContext(options);
+            _webShopContext = new WebShopContext(options);
             SeedData.PopulateTestData(options);
 
-            var userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_context), null, null, null, null, null, null, null, null);
+             _userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_webShopContext), null, null, null, null, null, null, null, null);
 
-            _userService = new UserService(_context, userManager);
+            _userService = new UserService(_webShopContext, _userManager);
         }
         [TearDown]
         public void TearDown()
@@ -36,30 +38,29 @@ namespace WebShopApiTest.UnitTest
         }
         private void CleanUpDate()
         {
-            if (_context != null)
+            if (_webShopContext != null)
             {
-                var productsToDelete = _context.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var userDelete = _context.Users.Where(u => u.UserName.Contains("Test")).ToList();
-                var orderToDelete = _context.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-                
-                var userProfileToDelete = _context.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
+                var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+                var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
+                var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
+                var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+                var orderItemDelete = _webShopContext.OrderItems;
+                var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
-                _context.Products.RemoveRange(productsToDelete);
-                _context.Users.RemoveRange(userDelete);
-                _context.Orders.RemoveRange(orderToDelete);
-                
-                _context.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete2);
+                _webShopContext.Users.RemoveRange(userDelete);
+                _webShopContext.Orders.RemoveRange(orderToDelete);
 
-                _context.SaveChanges();
-
-                _context.SaveChanges();
+                _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.SaveChanges();
             }
 
         }
         [Test]
         public async Task GetUserById_ShouldReturnTrue()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
 
             var result = await _userService.GetUserById(userId);
@@ -73,7 +74,7 @@ namespace WebShopApiTest.UnitTest
         public async Task GetUserByName_ShouldReturnUser()
         {
             // Arrange
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _userManager.FindByEmailAsync("test@test.com");
             var userName = user.UserName;
 
             var result = await _userService.GetUserByName(userName);
@@ -84,7 +85,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task UpdateUser_ShouldUpdateUser()
         {
-            var user = await _context.Users.FirstOrDefaultAsync();
+            var user = await _webShopContext.Users.FirstOrDefaultAsync();
             var userId = user.Id;
             var updatedUsername = "UpdatedUserName";
 
@@ -99,7 +100,7 @@ namespace WebShopApiTest.UnitTest
             Assert.IsNotNull(result);
             Assert.AreEqual(updatedUsername, result.UserName);
 
-            var updatedUserInDb = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var updatedUserInDb = await _webShopContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
             Assert.IsNotNull(updatedUserInDb);
             Assert.AreEqual(updatedUsername, updatedUserInDb.UserName);
 

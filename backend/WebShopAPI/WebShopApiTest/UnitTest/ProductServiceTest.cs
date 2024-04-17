@@ -13,7 +13,7 @@ namespace WebShopApiTest.UnitTest
 {
     public class ProductServiceTest
     {
-        private WebShopContext _context;
+        private WebShopContext _webShopContext;
         private IProductService _productService;
 
         [SetUp]
@@ -22,11 +22,11 @@ namespace WebShopApiTest.UnitTest
             var options = new DbContextOptionsBuilder<WebShopContext>()
                 .UseInMemoryDatabase(databaseName: "TestDataBase")
                 .Options;
-            _context = new WebShopContext(options);
+            _webShopContext = new WebShopContext(options);
             SeedData.PopulateTestData(options);
             
 
-            _productService = new ProductService(_context);
+            _productService = new ProductService(_webShopContext);
         }
         [TearDown]
         public void TearDown()
@@ -37,21 +37,22 @@ namespace WebShopApiTest.UnitTest
         }
         private void CleanUpDate()
         {
-            if (_context != null)
+            if (_webShopContext != null)
             {
-                var productsToDelete = _context.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var userDelete = _context.Users.Where(u => u.UserName.Contains("Test")).ToList();
-                var orderToDelete = _context.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-                var orderItemDelete = _context.OrderItems.Where(oi => oi.User.UserName == "Test").ToList();
-                var userProfileToDelete = _context.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
+                var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
+                var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
+                var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
+                var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
+                var orderItemDelete = _webShopContext.OrderItems;
+                var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
 
-                _context.Products.RemoveRange(productsToDelete);
-                _context.Users.RemoveRange(userDelete);
-                _context.Orders.RemoveRange(orderToDelete);
-                _context.OrderItems.RemoveRange(orderItemDelete);
-                _context.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete);
+                _webShopContext.Products.RemoveRange(productsToDelete2);
+                _webShopContext.Users.RemoveRange(userDelete);
+                _webShopContext.Orders.RemoveRange(orderToDelete);
 
-                _context.SaveChanges();
+                _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
+                _webShopContext.SaveChanges();
             }
 
         }
@@ -59,7 +60,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task GetAllProduct_ShouldReturnNotNull()
         {
-            var productList = await _context.Products.ToListAsync();
+            var productList = await _webShopContext.Products.ToListAsync();
 
             var result = await _productService.GetAllProductAsync();
 
@@ -78,8 +79,8 @@ namespace WebShopApiTest.UnitTest
                 Price = 1,
                 Stock = 10,
                 Discount =0,
-                Category = Category.Cat,
-                SubCategory = SubCategory.WetFood,
+                CategoryId = 2,
+                SubCategoryId = 4,
                 ImageBase64 = "jpg"
                 
             };
@@ -91,8 +92,8 @@ namespace WebShopApiTest.UnitTest
                 Price = product.Price,
                 Stock = product.Stock,
                 Discount = product.Discount,
-                Category = product.Category,
-                SubCategory = product.SubCategory,
+                Category = product.GetCategory(),
+                SubCategory = product.GetSubCategory(),
                 ImageBase64 = product.ImageBase64
               
             };
@@ -113,11 +114,11 @@ namespace WebShopApiTest.UnitTest
                 Price = 1,
                 Stock = 10,
                 Discount = 0,
-                Category = Category.Cat,
-                SubCategory = SubCategory.WetFood,
+                CategoryId = 1,
+                SubCategoryId = 4,
                 ImageBase64 = "jpg"
             };
-            var product = await _context.Products.FirstOrDefaultAsync();
+            var product = await _webShopContext.Products.FirstOrDefaultAsync();
             var productId = product.ProductId;
             var result = await _productService.UpdateProduct(productId, productDto);
 
@@ -127,7 +128,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task GetProductById_ShouldReturnTrue()
         {
-            var product = await _context.Products.FirstOrDefaultAsync();
+            var product = await _webShopContext.Products.FirstOrDefaultAsync();
             var productId = product.ProductId;
 
             var result = await _productService.GetProductById(productId);
@@ -139,17 +140,17 @@ namespace WebShopApiTest.UnitTest
         public async Task DeleteProductById_ShouldReturnNull()
         {
           
-            var product = await _context.Products.FirstOrDefaultAsync();
+            var product = await _webShopContext.Products.FirstOrDefaultAsync();
             var productId = product.ProductId;
 
             var act = await _productService.DeleteProductById(productId);
-            var result = await _context.Products.FindAsync(productId);
+            var result = await _webShopContext.Products.FindAsync(productId);
             Assert.IsNull(result);
         }
         [Test]
         public async Task GetProductsByCategory_ShouldReturnTrue()
         {
-            var productList = await _context.Products.ToListAsync();
+            var productList = await _webShopContext.Products.ToListAsync();
 
             var act = await _productService.GetProductsByCategory(1);
 
@@ -160,7 +161,7 @@ namespace WebShopApiTest.UnitTest
         [Test]
         public async Task GetProductsBySubCategory_ShouldReturnTrue()
         {
-            var productList = await _context.Products.ToListAsync();
+            var productList = await _webShopContext.Products.ToListAsync();
 
             var act = await _productService.GetProductsBySubCategory(3);
 

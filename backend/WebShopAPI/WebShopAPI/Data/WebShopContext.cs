@@ -14,7 +14,7 @@ namespace WebShopAPI.Data
         public WebShopContext(DbContextOptions<WebShopContext> options) : base(options)
         {
         }
-        public  DbSet<User> Users { get; set; }
+        public new DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Order> Orders { get; set; }
