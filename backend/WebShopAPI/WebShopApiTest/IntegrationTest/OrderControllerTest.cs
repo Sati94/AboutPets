@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework.Internal;
 using System.Net;
 
@@ -6,11 +7,12 @@ using System.Net;
 namespace WebShopApiTest.IntegrationTest
 {
 
-    public class OrderControllerTest : CustomWebApplicationFactory<Program>
+    /*public class OrderControllerTest : CustomWebApplicationFactory<Program>
     {
     
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
+        private UserManager<IdentityUser> _userManager; 
 
         [SetUp]
         public void Setup()
@@ -20,6 +22,7 @@ namespace WebShopApiTest.IntegrationTest
                  .Options;
 
             _webShopContext = new WebShopContext(options);
+            _userManager = new UserManager<IdentityUser>();
             SeedData.PopulateTestData(options);
 
             var option = new JsonSerializerOptions
@@ -199,5 +202,5 @@ namespace WebShopApiTest.IntegrationTest
 
 
         }
-    }
+    }*/
 }

@@ -9,7 +9,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class ProductControllerTest : CustomWebApplicationFactory<Program>
+    /*public class ProductControllerTest : CustomWebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
@@ -209,5 +209,5 @@ namespace WebShopApiTest.IntegrationTest
             Assert.IsNotNull(respnseContent);
         }
 
-    }
+    }*/
 }

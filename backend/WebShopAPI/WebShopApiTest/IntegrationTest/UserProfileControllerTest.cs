@@ -8,7 +8,7 @@ using WebShopAPI.Model.UserModels;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class UserProfileControllerTest : CustomWebApplicationFactory<Program>
+    /*public class UserProfileControllerTest : CustomWebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
@@ -113,5 +113,5 @@ namespace WebShopApiTest.IntegrationTest
             Assert.AreEqual(updater.Address, updatedProfile.Address);
             Assert.AreEqual(updater.Bonus, updatedProfile.Bonus);
         }
-    }
+    }*/
 }

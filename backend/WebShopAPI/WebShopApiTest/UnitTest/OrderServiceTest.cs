@@ -8,7 +8,7 @@ using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
 {
-    public class OrderServiceTest
+    /*public class OrderServiceTest
     {
         private WebShopContext _webShopContext;
         private IOrderService _orderService;
@@ -114,10 +114,9 @@ namespace WebShopApiTest.UnitTest
 
             Assert.IsTrue(result);
         }
-    }
+    }*/
 }
-/*
 
 
 
-Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId);*/
+

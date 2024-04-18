@@ -12,80 +12,98 @@ namespace WebShopApiTest.IntegrationTest
 {
     public class SeedData
     {
-        
-        
-        public static void PopulateTestData(DbContextOptions<WebShopContext> dbContextOptions )
+        private readonly WebShopContext _dbContext;
+        private readonly UserManager<IdentityUser> _userManager;
+        public SeedData(WebShopContext dbContext, UserManager<IdentityUser> userManager)
         {
-            
+            _dbContext = dbContext;
+            _userManager = userManager;
+        }
 
-            using (var dbContext = new WebShopContext(dbContextOptions))
+        public  async void PopulateTestData(WebShopContext dbContext, UserManager<IdentityUser> userManager)
+        {
+            if (dbContext != null &&  userManager != null)
             {
-                
-
-               
-                User newUser = new User
+                var newUser = new IdentityUser
                 {
-                    Id = "1234",
-                    Email = "test@test.com",
-                    UserName = "Test"
+                    UserName = "Test",
+                    Email = "test@test.com"
                 };
                 
 
+                var userCreated = await userManager.CreateAsync(newUser, "Test123");
 
-                UserProfile newUserProfile = new UserProfile 
+                if (userCreated.Succeeded)
                 {
-                    FirstName = "Test",
-                    LastName = "Test",
-                    Address = "Test",
-                    PhoneNumber = "Test",
-                    Bonus = 1,
-                    UserId = newUser.Id,
-                    User = newUser 
-                };
-                newUser.Profile = newUserProfile;
 
-                Product newProduct = new Product 
+                    UserProfile newUserProfile = new UserProfile
+                    {
+                        FirstName = "Test",
+                        LastName = "Test",
+                        Address = "Test",
+                        PhoneNumber = "Test",
+                        Bonus = 1,
+                        UserId = newUser.Id,
+
+                    };
+
+
+                    Product newProduct = new Product
+                    {
+                        ProductId = 100,
+                        ProductName = "Test",
+                        Description = "Test des",
+                        Price = 100,
+                        Stock = 100,
+                        Discount = 0,
+                        Category = Category.Dog,
+                        SubCategory = SubCategory.WetFood,
+                        ImageBase64 = "Test"
+                    };
+
+                    OrderItem newOrderItem = new OrderItem
+                    {
+                        Product = newProduct,
+                        Quantity = 10,
+                        Price = newProduct.Price * 10
+                    };
+
+                    Order newOrder = new Order
+                    {
+                        OrderDate = DateTime.Now,
+                        OrderStatuses = OrderStatuses.Pending,
+                        UserId = newUser.Id,
+                        TotalPrice = newOrderItem.Price,
+
+                    };
+
+
+                    newOrder.OrderItems.Add(newOrderItem);
+
+
+                    dbContext.UserProfiles.Add(newUserProfile);
+                    dbContext.Products.Add(newProduct);
+                    dbContext.Orders.Add(newOrder);
+                    dbContext.OrderItems.Add(newOrderItem);
+
+                    dbContext.SaveChanges();
+                }
+                else 
                 {
-                    ProductId = 100,
-                    ProductName = "Test",
-                    Description = "Test des",
-                    Price = 100,
-                    Stock = 100,
-                    Discount = 0,
-                    Category = Category.Dog,
-                    SubCategory = SubCategory.WetFood,
-                    ImageBase64 = "Test" 
-                };
-
-                OrderItem newOrderItem = new OrderItem
-                { 
-                    Product = newProduct,
-                    Quantity = 10,
-                    Price = newProduct.Price * 10 
-                };
-
-                Order newOrder = new Order 
-                { 
-                    OrderDate = DateTime.Now,
-                    OrderStatuses = OrderStatuses.Pending,
-                    UserId = newUser.Id,
-                    TotalPrice = newOrderItem.Price,
-                    User = newUser 
-                };
-
-
-                newOrder.OrderItems.Add(newOrderItem);
-                newUser.Orders.Add(newOrder);
-
-                dbContext.Users.Add(newUser);
-                dbContext.UserProfiles.Add(newUserProfile);
-                dbContext.Products.Add(newProduct);
-                dbContext.Orders.Add(newOrder);
-                dbContext.OrderItems.Add(newOrderItem);
-
-                dbContext.SaveChanges();
-
+                    foreach (var error in userCreated.Errors)
+                    {
+                        Console.WriteLine($"Hiba: {error.Description}");
+                    }
+                   
+                }
+         
             }
         }
     }
 }
+
+
+
+
+
+           

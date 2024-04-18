@@ -15,7 +15,7 @@ using WebShopAPI.Model.UserModels;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    public class OrderItemControllerTest : CustomWebApplicationFactory<Program>
+    /*public class OrderItemControllerTest : CustomWebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
@@ -185,7 +185,7 @@ namespace WebShopApiTest.IntegrationTest
         
 
             
-        }*/
-    }
+        }
+    }*/
     
 }

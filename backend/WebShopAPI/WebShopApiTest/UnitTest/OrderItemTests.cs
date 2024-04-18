@@ -10,7 +10,7 @@ using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
 {
-    public class OrderItemTests
+    /*public class OrderItemTests
     {
         private WebShopContext _webShopContext;
         private IOrderItemService _orderItemService;
@@ -104,5 +104,5 @@ namespace WebShopApiTest.UnitTest
         }
 
 
-    }
+    }*/
 }

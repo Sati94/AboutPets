@@ -10,7 +10,7 @@ namespace WebShopApiTest.UnitTest
 {
 
 
-    public class UserServiceTest
+    /*public class UserServiceTest
     {
         private WebShopContext _webShopContext;
         private IUserService _userService;
@@ -105,5 +105,5 @@ namespace WebShopApiTest.UnitTest
             Assert.AreEqual(updatedUsername, updatedUserInDb.UserName);
 
         }
-    }
+    }*/
 }

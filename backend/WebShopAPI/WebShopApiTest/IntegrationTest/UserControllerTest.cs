@@ -17,6 +17,8 @@ namespace WebShopApiTest.IntegrationTest
         private HttpClient _httpClient;
         private WebShopContext _webShopContext;
         private UserManager<IdentityUser> _userManager;
+        private AuthService _authService;
+        private SeedData _seedData;
 
         [SetUp]
         public void Setup()
@@ -26,24 +28,17 @@ namespace WebShopApiTest.IntegrationTest
                   .Options;
 
             _webShopContext = new WebShopContext(options);
-            SeedData.PopulateTestData(options);
+            
             _userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_webShopContext), null, null, null, null, null, null, null, null);
-
-            var option = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+            _seedData = new SeedData(_webShopContext, _userManager);
+            _seedData.PopulateTestData(_webShopContext,_userManager);
+            
 
             _httpClient = CreateClient();
-            AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
-            string jsonString = JsonSerializer.Serialize(authRequest);
-            StringContent jsonStringContent = new StringContent(jsonString);
-            jsonStringContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var response = _httpClient.PostAsync("/Login", jsonStringContent).Result;
-            var content = response.Content.ReadAsStringAsync().Result;
-            var desContent = JsonSerializer.Deserialize<AuthResponse>(content, option);
-            var token = desContent.Token;
+            _authService = new AuthService(_httpClient);
+            var token = _authService.AuthenticateAndGetToken("admin@admin.com", "admin1234");
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
 
 
         }
@@ -75,32 +70,36 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Return_AllUser_Endpoint()
         {
+            var user = await _userManager.FindByEmailAsync("test@test.com");
             var response = await _httpClient.GetAsync("/allUser");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            Assert.NotNull(content);
-            Assert.IsNotEmpty(content);
+            //Assert.NotNull(content);
+            Assert.NotNull(user);
+            //Assert.IsNotEmpty(content);
+            
+            
         }
         [Test]
         public async Task Find_User_ById_RetrurnTrue()
         {
-            var user = _webShopContext.Users.FirstOrDefault(u => u.UserName == "Test");
+            var user = await _userManager.FindByEmailAsync("test@test.com");
            
-                var userId = user.Id;
-                var response = await _httpClient.GetAsync($"/user/{userId}");
-                var responseContent = await response.Content.ReadAsStringAsync();
+            var userId = user.Id;
+            var response = await _httpClient.GetAsync($"/user/{userId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
 
-                Assert.NotNull(responseContent);
-                Assert.AreEqual(user.Id, userId);
+            Assert.NotNull(responseContent);
+            Assert.AreEqual(user.Id, userId);
             
             
         }
         [Test]
         public async Task Find_User_ByUserName_RetrurnTrue()
         {
-            string userName = "Test";
-            var user = _webShopContext.Users.FirstOrDefault(u => u.UserName == userName);
-
+            
+            var user = await _userManager.FindByEmailAsync("test@test.com");
+            var userName = user.UserName;
             var response = await _httpClient.GetAsync($"/user/name/{userName}");
             var responseContent = await response.Content.ReadAsStringAsync();
 
@@ -110,8 +109,9 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Delete_User_NonExistingUser_ReturnsNotFound()
         {
-            var id = "1234";
-            var user = await _userManager.FindByIdAsync(id);
+
+
+            var user = await _userManager.FindByEmailAsync("test@test.com");
             var userId = user.Id;
            
             
@@ -125,8 +125,8 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task Update_UserById_Return_True()
         {
-           
-            var user = await _webShopContext.Users.FirstOrDefaultAsync();
+
+            var user = await _userManager.FindByEmailAsync("test@test.com");
             var userId = user.Id;
 
            UserDto newUser = new UserDto

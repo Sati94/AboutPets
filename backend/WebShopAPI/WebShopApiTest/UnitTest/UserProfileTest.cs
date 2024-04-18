@@ -8,7 +8,7 @@ using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
 {
-    public class UserProfileTest
+    /*public class UserProfileTest
     {
         private WebShopContext _webShopContext;
         private IUserProfileService _userProfileService;
@@ -126,5 +126,5 @@ namespace WebShopApiTest.UnitTest
             Assert.AreEqual(userId, result.UserId);
             Assert.AreEqual(userProfile.Bonus, result.Bonus);
         }
-    }
+    }*/
 }

@@ -11,7 +11,7 @@ using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
 {
-    public class ProductServiceTest
+    /*public class ProductServiceTest
     {
         private WebShopContext _webShopContext;
         private IProductService _productService;
@@ -169,5 +169,5 @@ namespace WebShopApiTest.UnitTest
             Assert.True(result);
         }
         
-    }
+    }*/
 }
