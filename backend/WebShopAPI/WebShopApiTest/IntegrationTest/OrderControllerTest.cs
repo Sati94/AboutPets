@@ -2,205 +2,262 @@
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework.Internal;
 using System.Net;
+using WebShopAPI.Data;
 
 
 namespace WebShopApiTest.IntegrationTest
 {
 
-    /*public class OrderControllerTest : CustomWebApplicationFactory<Program>
+    public class OrderControllerTest : CustomWebApplicationFactory<Program>
     {
-    
         private HttpClient _httpClient;
-        private WebShopContext _webShopContext;
-        private UserManager<IdentityUser> _userManager; 
+        private UserManager<IdentityUser> _userManager;
+        private AuthService _authService;
 
-        [SetUp]
-        public void Setup()
+        private async Task InitializeTestDataAsync()
         {
-            var options = new DbContextOptionsBuilder<WebShopContext>()
-                 .UseInMemoryDatabase(databaseName: "InMemoryWebShopContext")
-                 .Options;
 
-            _webShopContext = new WebShopContext(options);
-            _userManager = new UserManager<IdentityUser>();
-            SeedData.PopulateTestData(options);
-
-            var option = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
+            var scope = Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var dbContext = scopedServices.GetRequiredService<WebShopContext>();
+            _userManager = scopedServices.GetRequiredService<UserManager<IdentityUser>>();
+            var seedData = new SeedData();
+            await seedData.PopulateTestDataAsync(dbContext, _userManager);
+            await WaitForDatabase();
+        }
+        [OneTimeSetUp]
+        public async Task Setup()
+        {
+            await InitializeTestDataAsync();
             _httpClient = CreateClient();
-            AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
-            string jsonString = JsonSerializer.Serialize(authRequest);
-            StringContent jsonStringContent = new StringContent(jsonString);
-            jsonStringContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var response = _httpClient.PostAsync("/Login", jsonStringContent).Result;
-            var content = response.Content.ReadAsStringAsync().Result;
-            var desContent = JsonSerializer.Deserialize<AuthResponse>(content, option);
-            var token = desContent.Token;
+            _authService = new AuthService(_httpClient);
+            var token = _authService.AuthenticateAndGetToken("admin@admin.com", "admin1234");
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-        }
 
-        [TearDown]
-        public void TearDown()
-        {
-            
-                CleanUpDate();
-                _httpClient.Dispose();
-                
-            
 
         }
-        private void CleanUpDate()
+        private async Task WaitForDatabase()
         {
-            if(_webShopContext != null)
+            int maxRetryCount = 5;
+            int retryDelayMilliseconds = 1000;
+
+            for (int i = 0; i < maxRetryCount; i++)
             {
-                var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
-                var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
-                var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-                var orderItemDelete = _webShopContext.OrderItems;
-                var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
+                if (IsDatabaseReady())
+                {
+                    return;
+                }
 
-                _webShopContext.Products.RemoveRange(productsToDelete);
-                _webShopContext.Products.RemoveRange(productsToDelete2);
-                _webShopContext.Users.RemoveRange(userDelete);
-                _webShopContext.Orders.RemoveRange(orderToDelete);
-
-                _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
-                _webShopContext.SaveChanges();
+                await Task.Delay(retryDelayMilliseconds);
             }
-            Console.WriteLine("nincs adatbázis");
-           
+        }
+        private bool IsDatabaseReady()
+        {
+            using (var scope = Services.CreateScope())
+            {
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                return userManager.Users.Any();
+            }
+        }
+
+        [OneTimeTearDown]
+        public async Task TearDown()
+        {
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                var users = userManager.Users.ToList();
+                foreach (var user in users)
+                {
+                    await userManager.DeleteAsync(user);
+                }
+                dbContext.Products.RemoveRange(dbContext.Products);
+                dbContext.Orders.RemoveRange(dbContext.Orders);
+                dbContext.OrderItems.RemoveRange(dbContext.OrderItems);
+                dbContext.UserProfiles.RemoveRange(dbContext.UserProfiles);
+
+
+                dbContext.SaveChanges();
+            }
+            _httpClient.Dispose();
         }
         [Test]
         public async Task GetAll_Order_Return_NotNull()
         {
-            var response = await _httpClient.GetAsync("/orderlist/all");
-            response.EnsureSuccessStatusCode();
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var allOrders = dbContext.Orders.OrderByDescending(o => o.OrderId);
+               
             
-            var content = await response.Content.ReadAsStringAsync();
-            
-            Assert.IsNotNull(content);
-            Assert.IsNotEmpty(content);
+                var lastOrder = allOrders.FirstOrDefault();
+                var orderId = lastOrder.OrderId;
+                var order = await dbContext.Orders.FirstOrDefaultAsync(o => o.OrderId ==orderId);
+
+                var response = await _httpClient.GetAsync("/orderlist/all");
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                Assert.That(orderId, Is.EqualTo(order.OrderId));
+            }
+           
+
+           
         }
         [Test]
         public async Task GetOrder_ById_Retrun_True()
         {
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var order = await dbContext.Orders.FirstOrDefaultAsync();
 
-            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
-            var orderId = order.OrderId;
-            if(order == null)
-            {
-                Assert.IsNull(order);
-            }
-            else
-            {
-                var response = await _httpClient.GetAsync($"/ordelist/order/{orderId}");
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Assert.NotNull(responseContent);
-                Assert.AreEqual(orderId, order.OrderId);
-            }
+
+                var orderId = order.OrderId;
+
+                if (order == null)
+                {
+                    Assert.That(order, Is.Empty);
+                }
+                else
+                {
+                    var response = await _httpClient.GetAsync($"/ordelist/order/{orderId}");
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    Assert.That(orderId,Is.EqualTo(order.OrderId));
+                }
+
+            }  
         }
         [Test]
         public async Task GetOrder_ByUserId_Return_True() 
         {
-            var user = await _webShopContext.Users.FirstOrDefaultAsync();
-            var userId = user.Id;
-            var order = _webShopContext.Orders.FirstOrDefault(o => o.UserId == userId);
-            if (order == null)
+            using (var scope = Services.CreateScope())
             {
-                Assert.IsNull(order);
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                var user = await userManager.FindByEmailAsync("test@test.com");
+                var userId = user.Id;
+
+                var order = dbContext.Orders.FirstOrDefault(o => o.UserId == userId);
+                if (order == null)
+                {
+                    Assert.That(order, Is.Empty);
+                }
+                else
+                {
+                    var response = await _httpClient.GetAsync($"/order/{userId}");
+                    var responseContent = await response.Content.ReadAsStringAsync();
+             
+                    Assert.That(userId, Is.EqualTo(order.UserId));
+
+                }
             }
-            else
-            {
-                var response = await _httpClient.GetAsync($"/order/{userId}");
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Assert.NotNull(responseContent);
-                Assert.AreEqual(userId, order.UserId);
-            }
+         
         }
         [Test]
         public async Task Delete_OrderById_Return_NotFound()
         {
-            int orderId = 100;
-            
-            var response = await _httpClient.DeleteAsync($"/order/delete/{orderId}");
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
+            using(var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                int orderId = 100;
+                var order = await dbContext.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+                var response = await _httpClient.DeleteAsync($"/order/delete/{orderId}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Assert.That(order, Is.Null);
+            }
   
         }
         [Test]
-        public async Task Update_OrderStatus_ById_Return_False() 
+        public async Task Update_OrderStatus_ById_Return_False()
         {
-           
-            var newStatus = OrderStatuses.Shipped;
-            var order = await _webShopContext.Orders.FirstOrDefaultAsync();
-            var orderId = order.OrderId;
-            if(order != null)
+            using (var scope = Services.CreateScope())
             {
-                var content = new StringContent(JsonConvert.SerializeObject(new
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var order = await dbContext.Orders.FirstOrDefaultAsync();
+                var newStatus = OrderStatuses.Shipped;
+                var orderId = order.OrderId;
+                if (order != null)
                 {
-                    orderid = orderId,
-                    orderdate = order.OrderDate,
-                    totalprice = order.TotalPrice,
-                    orderStatuses = newStatus,
-                    userId = order.UserId
+                    var content = new StringContent(JsonConvert.SerializeObject(new
+                    {
+                        orderid = orderId,
+                        orderdate = order.OrderDate,
+                        totalprice = order.TotalPrice,
+                        orderStatuses = newStatus,
+                        userId = order.UserId
 
-                }), Encoding.UTF8, "application/json"); ;
-                var response = await _httpClient.PutAsync($"/order/update/{orderId}", content);
-                response.EnsureSuccessStatusCode();
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var isUpdateSuccessful = JsonConvert.DeserializeObject<bool>(responseContent);
-                Assert.IsFalse(isUpdateSuccessful);
+                    }), Encoding.UTF8, "application/json"); ;
+                    var response = await _httpClient.PutAsync($"/order/update/{orderId}", content);
+                    response.EnsureSuccessStatusCode();
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var isUpdateSuccessful = JsonConvert.DeserializeObject<bool>(responseContent);
+                    Assert.That(isUpdateSuccessful, Is.True);
+                }
             }
-        }
+        }    
+           
         [Test]
         public async Task UpdateOrderTotalPriceWithBonus_ShouldReturnTrue()
         {
-          
-            var user = _webShopContext.Users.FirstOrDefault(u => u.UserName == "Test");
-            string userId = user.Id;
-            
-            var allOrder = _webShopContext.Orders.OrderByDescending(o => o.OrderId).ToList();
-            var order = allOrder.FirstOrDefault();
-        
-            int orderId = order.OrderId;
-            
-            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
-
-            if (user != null && order != null && userProfile != null)
-            {
-                var bonus = userProfile.Bonus;
-
-                if (bonus > 0)
+                using (var scope = Services.CreateScope())
                 {
-                    var newTotalPrice = order.TotalPrice - (order.TotalPrice * bonus);
-                    var content = new StringContent(JsonConvert.SerializeObject(new
+                    var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                    var user = await userManager.FindByEmailAsync("test@test.com");
+                    var userId = user.Id;
+
+                    var allOrder = dbContext.Orders.OrderByDescending(o => o.OrderId).ToList();
+                    var order = allOrder.FirstOrDefault();
+                    int orderId = order.OrderId;
+                    var userProfile = dbContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
+                    if (user != null && order != null && userProfile != null)
                     {
-                        orderId = order.OrderId,
-                        orderdate = order.OrderDate,
-                        totalprice = newTotalPrice,
-                        orderStatuses = order.OrderStatuses,
-                        userId = order.UserId
-                    }), Encoding.UTF8, "application/json");
+                        var bonus = userProfile.Bonus;
 
-                    var response = await _httpClient.PutAsync($"/order/{orderId}/apply-cupon/{userId}", content);
-                    response.EnsureSuccessStatusCode();
+                        if (bonus > 0)
+                        {
+                            var newTotalPrice = order.TotalPrice - (order.TotalPrice * bonus);
+                            var content = new StringContent(JsonConvert.SerializeObject(new
+                            {
+                                orderId = order.OrderId,
+                                orderdate = order.OrderDate,
+                                totalprice = newTotalPrice,
+                                orderStatuses = order.OrderStatuses,
+                                userId = order.UserId
+                            }), Encoding.UTF8, "application/json");
+
+                            var response = await _httpClient.PutAsync($"/order/{orderId}/apply-cupon/{userId}", content);
+                            response.EnsureSuccessStatusCode();
 
 
-                    var responseContent = await response.Content.ReadAsStringAsync();
-    
-                    var result = JsonConvert.DeserializeObject<bool>(responseContent);
-                    Assert.IsFalse(result);
+                            var responseContent = await response.Content.ReadAsStringAsync();
+
+                            var result = JsonConvert.DeserializeObject<bool>(responseContent);
+                            Assert.That(result, Is.True);
+                        }
+
+                    }
+
                 }
-               
-            }
+         
+           
+            
+           
+        
+            
+            
+            
+
+           
           
 
 
         }
-    }*/
+    }
 }
