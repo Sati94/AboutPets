@@ -74,7 +74,7 @@ namespace WebShopApiTest.IntegrationTest
                 var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                 
-                var users = dbContext.Users.ToList();
+                var users = userManager.Users.ToList();
                 foreach (var user in users)
                 {
                     await userManager.DeleteAsync(user);

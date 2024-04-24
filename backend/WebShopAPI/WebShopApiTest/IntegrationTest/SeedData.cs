@@ -44,7 +44,7 @@ namespace WebShopApiTest.IntegrationTest
 
                     Product newProduct = new Product
                     {
-                        ProductId = 100,
+                        ProductId = 1000,
                         ProductName = "Test",
                         Description = "Test des",
                         Price = 100,
