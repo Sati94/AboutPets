@@ -7,9 +7,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebShopAPI.Data;
 
 namespace WebShopApiTest.IntegrationTest
 {
@@ -18,46 +20,26 @@ namespace WebShopApiTest.IntegrationTest
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureTestServices(services =>
-            {
-                var sp = services.BuildServiceProvider();
+           base.ConfigureWebHost(builder);
 
-                using (var scope = sp.CreateScope())
+           builder.ConfigureTestServices(services =>
+           {
+                var dbContextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<WebShopContext>));
+
+                services.Remove(dbContextDescriptor);
+
+                var dbConnectionDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbConnection));
+
+                services.Remove(dbConnectionDescriptor);
+
+             
+                services.AddDbContext<WebShopContext>((container, options) =>
                 {
-                    var scopedServices = scope.ServiceProvider;
-                    var appDb = scopedServices.GetRequiredService<WebShopContext>();
-                    var userManager = scopedServices.GetRequiredService<UserManager<IdentityUser>>();
-                    var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory<TProgram>>>();
+                    options.UseInMemoryDatabase("InMemoryDbForTesting");
+                });
+                builder.UseEnvironment("Development");
 
-                    try
-                    {
-                        var options = new DbContextOptionsBuilder<WebShopContext>()
-                           .UseInMemoryDatabase("InMemoryWebShopContext")
-                           .Options;
-
-                        services.Remove(services.SingleOrDefault(descriptor => descriptor.ServiceType == typeof(DbContextOptions<WebShopContext>)));
-                        
-                        services.TryAddSingleton(options);
-                        if(appDb != null)
-                        {
-                                var seedData = new SeedData(appDb, userManager);
-
-                                seedData.PopulateTestData(appDb, userManager);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Error:{appDb.Products}");
-                        }
-
-                       
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred seeding the " +
-                                            "database with test messages. Error: {ex.Message}");
-                    }
-                }
-            });
+           });
         }
     }
 }

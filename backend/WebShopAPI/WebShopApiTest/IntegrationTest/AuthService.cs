@@ -14,7 +14,7 @@ namespace WebShopApiTest.IntegrationTest
         {
             _httpClient = httpClient;
         }
-        public string AuthenticateAndGetToken(string email, string password) 
+        public  string AuthenticateAndGetToken(string email, string password) 
         {
             var authRequest = new AuthRequest(email, password);
             var jsonString = JsonSerializer.Serialize(authRequest);
@@ -26,7 +26,7 @@ namespace WebShopApiTest.IntegrationTest
             {
                 PropertyNameCaseInsensitive = true
             });
-            return desContent.Token;
+            return  desContent.Token;
         }
     }
 }

@@ -12,15 +12,9 @@ namespace WebShopApiTest.IntegrationTest
 {
     public class SeedData
     {
-        private readonly WebShopContext _dbContext;
-        private readonly UserManager<IdentityUser> _userManager;
-        public SeedData(WebShopContext dbContext, UserManager<IdentityUser> userManager)
-        {
-            _dbContext = dbContext;
-            _userManager = userManager;
-        }
+        
 
-        public  async void PopulateTestData(WebShopContext dbContext, UserManager<IdentityUser> userManager)
+        public  async Task PopulateTestDataAsync(WebShopContext dbContext, UserManager<IdentityUser> userManager)
         {
             if (dbContext != null &&  userManager != null)
             {
@@ -96,8 +90,10 @@ namespace WebShopApiTest.IntegrationTest
                     }
                    
                 }
+               
          
             }
+            
         }
     }
 }

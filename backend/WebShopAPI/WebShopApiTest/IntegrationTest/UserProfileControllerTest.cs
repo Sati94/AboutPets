@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,110 +9,162 @@ using WebShopAPI.Model.UserModels;
 
 namespace WebShopApiTest.IntegrationTest
 {
-    /*public class UserProfileControllerTest : CustomWebApplicationFactory<Program>
+    public class UserProfileControllerTest : CustomWebApplicationFactory<Program>
     {
         private HttpClient _httpClient;
-        private WebShopContext _webShopContext;
         private UserManager<IdentityUser> _userManager;
+        private AuthService _authService;
 
-        [SetUp]
-        public void Setup()
+        private async Task InitializeTestDataAsync()
         {
-            var options = new DbContextOptionsBuilder<WebShopContext>()
-                 .UseInMemoryDatabase(databaseName: "InMemoryWebShopContext")
-                 .Options;
 
-            _webShopContext = new WebShopContext(options);
-            SeedData.PopulateTestData(options);
-
-            var option = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
+            var scope = Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var dbContext = scopedServices.GetRequiredService<WebShopContext>();
+            _userManager = scopedServices.GetRequiredService<UserManager<IdentityUser>>();
+            var seedData = new SeedData();
+            await seedData.PopulateTestDataAsync(dbContext, _userManager);
+            await WaitForDatabase();
+        }
+        [OneTimeSetUp]
+        public async Task Setup()
+        {
+            await InitializeTestDataAsync();
             _httpClient = CreateClient();
-            AuthRequest authRequest = new AuthRequest("admin@admin.com", "admin1234");
-            string jsonString = JsonSerializer.Serialize(authRequest);
-            StringContent jsonStringContent = new StringContent(jsonString);
-            jsonStringContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var response = _httpClient.PostAsync("/Login", jsonStringContent).Result;
-            var content = response.Content.ReadAsStringAsync().Result;
-            var desContent = JsonSerializer.Deserialize<AuthResponse>(content, option);
-            var token = desContent.Token;
+            _authService = new AuthService(_httpClient);
+            var token = _authService.AuthenticateAndGetToken("admin@admin.com", "admin1234");
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
+
         }
+        private async Task WaitForDatabase()
+        {
+            int maxRetryCount = 5;
+            int retryDelayMilliseconds = 1000;
+
+            for (int i = 0; i < maxRetryCount; i++)
+            {
+                if (IsDatabaseReady())
+                {
+                    return;
+                }
+
+                await Task.Delay(retryDelayMilliseconds);
+            }
+        }
+        private bool IsDatabaseReady()
+        {
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                if ( userManager.Users.Any() && dbContext.Products.Any() && dbContext.Orders.Any() && dbContext.OrderItems.Any() && dbContext.UserProfiles.Any())
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
         [OneTimeTearDown]
-        public void TearDown()
+        public async Task TearDown()
         {
-            CleanUpDate();
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                
+                var users = dbContext.Users.ToList();
+                foreach (var user in users)
+                {
+                    await userManager.DeleteAsync(user);
+                }
+                dbContext.Products.RemoveRange(dbContext.Products);
+                dbContext.Orders.RemoveRange(dbContext.Orders);
+                dbContext.OrderItems.RemoveRange(dbContext.OrderItems);
+                dbContext.UserProfiles.RemoveRange(dbContext.UserProfiles);
+
+
+                dbContext.SaveChanges();
+            }
             _httpClient.Dispose();
-        }
-        private void CleanUpDate()
-        {
-
-            var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-            var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
-            var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
-            var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-            var orderItemDelete = _webShopContext.OrderItems;
-            var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
-
-            _webShopContext.Products.RemoveRange(productsToDelete);
-            _webShopContext.Products.RemoveRange(productsToDelete2);
-            _webShopContext.Users.RemoveRange(userDelete);
-            _webShopContext.Orders.RemoveRange(orderToDelete);
-
-            _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
-            _webShopContext.SaveChanges();
         }
         [Test]
         public async Task GetUserProfile_ByUserId_Return_True()
         {
-            var user = await _webShopContext.Users.FirstOrDefaultAsync();
-            var userId = user.Id;
-            var userProfile = await _webShopContext.UserProfiles.FirstOrDefaultAsync(up => up.UserId == userId);
-            var response = await _httpClient.GetAsync($"/user/profile/{userId}");
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Assert.NotNull(responseContent);
-            Assert.AreEqual(userProfile.UserId, userId);
+            
+            using (var scope = Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+                var dbContext = serviceProvider.GetRequiredService<WebShopContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                var user = await _userManager.FindByEmailAsync("test@test.com");
+
+                var userId = user.Id;
+                var userProfile = await dbContext.UserProfiles.FirstOrDefaultAsync(up => up.UserId == userId);
+
+                var response = await _httpClient.GetAsync($"/user/profile/{userId}");
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Assert.That(userId, Is.EqualTo(userProfile.UserId));
+               
+            }
+
         }
+                
+        
         [Test]
         public async Task Update_UserProfile_ByAdmin_Return_True()
         {
-            var user = _webShopContext.Users.FirstOrDefault();
-            var userId = user.Id;
             
-            var userProfile = _webShopContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
-            AdminUserProfileDto updater = new AdminUserProfileDto
+            using (var scope = Services.CreateScope())
             {
-                FirstName = "Nagy",
-                LastName = "Béla",
-                PhoneNumber = "123456789",
-                Address = "Nagy Street 25",
-                Bonus = 0.1m
-            };
-            
-            var content = new StringContent(JsonConvert.SerializeObject(new
-            {
-                firstname = updater.FirstName,
-                lastname = updater.LastName,
-                phonenumber = updater.PhoneNumber,
-                address = updater.Address,
-                bonus = updater.Bonus
-            }), Encoding.UTF8, "application/json");
+                var serviceProvider = scope.ServiceProvider;
+                var dbContext = serviceProvider.GetRequiredService<WebShopContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-            var response = await _httpClient.PutAsync($"/admin/update/profile/{userId}", content);
+                var user = await _userManager.FindByEmailAsync("test@test.com");
 
-            var responseContent = await response.Content.ReadAsStringAsync();
-            response.EnsureSuccessStatusCode();
+                var userId = user.Id;
+                var userProfile = await dbContext.UserProfiles.FirstOrDefaultAsync(up => up.UserId == userId);
+                AdminUserProfileDto updater = new AdminUserProfileDto
+                {
+                    FirstName = "Nagy",
+                    LastName = "Béla",
+                    PhoneNumber = "123456789",
+                    Address = "Nagy Street 25",
+                    Bonus = 0.1m
+                };
 
-            var updatedProfile = JsonConvert.DeserializeObject<UserProfile>(responseContent);
+                var content = new StringContent(JsonConvert.SerializeObject(new
+                {
+                    firstname = updater.FirstName,
+                    lastname = updater.LastName,
+                    phonenumber = updater.PhoneNumber,
+                    address = updater.Address,
+                    bonus = updater.Bonus
+                }), Encoding.UTF8, "application/json");
 
-            Assert.AreEqual(updater.FirstName, updatedProfile.FirstName);
-            Assert.AreEqual(updater.LastName, updatedProfile.LastName);
-            Assert.AreEqual(updater.PhoneNumber, updatedProfile.PhoneNumber);
-            Assert.AreEqual(updater.Address, updatedProfile.Address);
-            Assert.AreEqual(updater.Bonus, updatedProfile.Bonus);
+                var response = await _httpClient.PutAsync($"/admin/update/profile/{userId}", content);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                response.EnsureSuccessStatusCode();
+
+                var updatedProfile = JsonConvert.DeserializeObject<UserProfile>(responseContent);
+
+                Assert.That(updatedProfile.FirstName, Is.EqualTo(updater.FirstName));
+                Assert.That(updatedProfile.LastName, Is.EqualTo(updater.LastName));
+                Assert.That(updatedProfile.PhoneNumber, Is.EqualTo(updater.PhoneNumber));
+                Assert.That(updatedProfile.Address, Is.EqualTo(updater.Address));
+                Assert.That(updatedProfile.Bonus, Is.EqualTo(updater.Bonus));
+
+
+            }
+           
+           
+          
         }
-    }*/
+    }
 }
