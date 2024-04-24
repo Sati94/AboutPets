@@ -120,7 +120,7 @@ namespace WebShopApiTest.IntegrationTest
 
                 if (order == null)
                 {
-                    Assert.That(order, Is.Empty);
+                    Assert.That(order, Is.Null);
                 }
                 else
                 {
@@ -145,7 +145,7 @@ namespace WebShopApiTest.IntegrationTest
                 var order = dbContext.Orders.FirstOrDefault(o => o.UserId == userId);
                 if (order == null)
                 {
-                    Assert.That(order, Is.Empty);
+                    Assert.That(order, Is.Null);
                 }
                 else
                 {

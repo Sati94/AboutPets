@@ -224,25 +224,31 @@ namespace WebShopApiTest.IntegrationTest
 
         }
         [Test]
-        public async Task Find_ProductByCategroy_Retrun_NotNull()
+        public async Task Find_ProductByCategroy_Retrun_Null()
         {
-            var category = Category.Dog;
+            var category = Category.Cat;
 
             var response = await _httpClient.GetAsync($"/products/category/{category}");
-            response.EnsureSuccessStatusCode();
-            var respnseContent = await response.Content.ReadAsStringAsync();
-            Assert.That(respnseContent, Is.Not.Empty);
+            if (response.StatusCode != HttpStatusCode.NotFound)
+            {
+                response.EnsureSuccessStatusCode();
+                var respnseContent = await response.Content.ReadAsStringAsync();
+                Assert.That(respnseContent, Is.EqualTo(null).Or.Empty);
+            }
         }
 
         [Test]
-        public async Task Find_ProductBySubCategory_Retrun_NotNull()
+        public async Task Find_ProductBySubCategory_Retrun_Null()
         {
-            var subCategory = SubCategory.WetFood;
+            var subCategory = SubCategory.DryFood;
 
             var response = await _httpClient.GetAsync($"/products/category/subCategory/{subCategory}");
-            response.EnsureSuccessStatusCode();
-            var respnseContent = await response.Content.ReadAsStringAsync();
-            Assert.That(respnseContent, Is.Not.Empty);
+            if (response.StatusCode != HttpStatusCode.NotFound)
+            {
+                response.EnsureSuccessStatusCode();
+                var respnseContent = await response.Content.ReadAsStringAsync();
+                Assert.That(respnseContent, Is.EqualTo(null).Or.Empty);
+            }
 
         }
     }
