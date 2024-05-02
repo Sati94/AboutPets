@@ -28,21 +28,38 @@ namespace WebShopAPI.Service.UserServiceMap
             {
                 return null;
             }
+            if(user.Password != null)
+            {
+                var newPasswordHash = _userManager.PasswordHasher.HashPassword(newUser, user.Password);
 
+                newUser.UserName = user.Username;
+                newUser.PasswordHash = newPasswordHash;
+                newUser.Email = user.Email;
 
-            var newPasswordHash = _userManager.PasswordHasher.HashPassword(newUser, user.Password);
+                var result = await _userManager.UpdateAsync(newUser);
 
-            newUser.UserName = user.Username;
-            newUser.PasswordHash = newPasswordHash;
-            newUser.Email = user.Email;
+                await _context.SaveChangesAsync();
+
+                return newUser;
+
+            }
+            else
+            {
+                newUser.UserName = user.Username;
+               
+                newUser.Email = user.Email;
+
+                var result = await _userManager.UpdateAsync(newUser);
+
+                await _context.SaveChangesAsync();
+
+                return newUser;
+            }
 
             
 
-            var result = await _userManager.UpdateAsync(newUser);
             
-            await _context.SaveChangesAsync();
 
-            return newUser;
         }
         public async Task<IdentityUser> GetUserById(string userid)
         {

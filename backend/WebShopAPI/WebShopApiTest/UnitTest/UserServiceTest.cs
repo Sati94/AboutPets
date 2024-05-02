@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using WebShopAPI.Data;
 using WebShopApiTest.IntegrationTest;
@@ -10,63 +11,41 @@ namespace WebShopApiTest.UnitTest
 {
 
 
-    /*public class UserServiceTest
+    public class UserServiceTest
     {
-        private WebShopContext _webShopContext;
+        private Mock<WebShopContext> _mockWebShopContext;
         private IUserService _userService;
-        private UserManager<IdentityUser> _userManager;
+        private Mock<UserManager<IdentityUser>> _mockUserManager;
 
         [SetUp]
         public void Setup()
         {
+            var userStore = new Mock<IUserStore<IdentityUser>>();
+            _mockUserManager = new Mock<UserManager<IdentityUser>>(userStore.Object, null, null, null, null, null, null, null, null);
+
             var options = new DbContextOptionsBuilder<WebShopContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
-                .Options;
-            _webShopContext = new WebShopContext(options);
-            SeedData.PopulateTestData(options);
+                         .UseInMemoryDatabase(databaseName: "TestDataBase")
+                         .Options;
 
-             _userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_webShopContext), null, null, null, null, null, null, null, null);
+            _mockWebShopContext = new Mock<WebShopContext>(options);
 
-            _userService = new UserService(_webShopContext, _userManager);
+
+            _userService = new UserService(_mockWebShopContext.Object, _mockUserManager.Object);
         }
-        [TearDown]
-        public void TearDown()
-        {
-
-            CleanUpDate();
-
-        }
-        private void CleanUpDate()
-        {
-            if (_webShopContext != null)
-            {
-                var productsToDelete = _webShopContext.Products.Where(p => p.ProductName.Contains("Test")).ToList();
-                var productsToDelete2 = _webShopContext.Products.Where(p => p.ProductName.Contains("Test2")).ToList();
-                var userDelete = _webShopContext.Users.Where(u => u.UserName.Contains("Test")).ToList();
-                var orderToDelete = _webShopContext.Orders.Where(o => o.User.UserName.Contains("Test")).ToList();
-                var orderItemDelete = _webShopContext.OrderItems;
-                var userProfileToDelete = _webShopContext.UserProfiles.Where(up => up.User.UserName.Contains("Test")).ToList();
-
-                _webShopContext.Products.RemoveRange(productsToDelete);
-                _webShopContext.Products.RemoveRange(productsToDelete2);
-                _webShopContext.Users.RemoveRange(userDelete);
-                _webShopContext.Orders.RemoveRange(orderToDelete);
-
-                _webShopContext.UserProfiles.RemoveRange(userProfileToDelete);
-                _webShopContext.SaveChanges();
-            }
-
-        }
+        
         [Test]
-        public async Task GetUserById_ShouldReturnTrue()
+        public async Task GetUserById_ShouldReturnUsers()
         {
-            var user = await _webShopContext.Users.FirstOrDefaultAsync();
-            var userId = user.Id;
+            var userId = "someUserId";
+            var expectedUser = new IdentityUser { Id = userId, UserName = "testUser" };
 
+            _mockUserManager.Setup(m => m.FindByIdAsync(userId))
+                   .ReturnsAsync(expectedUser);
             var result = await _userService.GetUserById(userId);
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(userId, result.Id);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(userId));
+            Assert.That(result.UserName, Is.EqualTo(expectedUser.UserName));
 
 
         }
@@ -74,36 +53,44 @@ namespace WebShopApiTest.UnitTest
         public async Task GetUserByName_ShouldReturnUser()
         {
             // Arrange
-            var user = await _userManager.FindByEmailAsync("test@test.com");
+            var user = new IdentityUser
+            { 
+                Id = "123456asd",
+                UserName = "test2",
+                Email = "test2@test.com"
+            };
+            _mockUserManager.Setup(u => u.FindByNameAsync("test2")).ReturnsAsync(user);
             var userName = user.UserName;
 
             var result = await _userService.GetUserByName(userName);
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(userName, result.UserName);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.UserName, Is.EqualTo(userName));
         }
         [Test]
         public async Task UpdateUser_ShouldUpdateUser()
         {
-            var user = await _webShopContext.Users.FirstOrDefaultAsync();
-            var userId = user.Id;
-            var updatedUsername = "UpdatedUserName";
-
-            var userDto = new UserDto
+            var user = new IdentityUser
             {
-                Username = updatedUsername,
-                Email = "updated@test.com"
+                Id = "123456asd",
+                UserName = "test",
+                Email = "test@test.com"
             };
 
-            var result = await _userService.UpdateUser(userId, userDto);
+            var updatedUsername = "UpdatedUserName";
+            var updatedEmail = "updated@test.com";
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(updatedUsername, result.UserName);
+            _mockUserManager.Setup(u => u.FindByIdAsync("123456asd")).ReturnsAsync(user);
+            _mockUserManager.Setup(u => u.UpdateAsync(user)).ReturnsAsync(IdentityResult.Success);
 
-            var updatedUserInDb = await _webShopContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            Assert.IsNotNull(updatedUserInDb);
-            Assert.AreEqual(updatedUsername, updatedUserInDb.UserName);
+            // Act
+            var result = await _userService.UpdateUser("123456asd", new UserDto { Username = updatedUsername, Email = updatedEmail, Password = null });
 
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.UserName, Is.EqualTo(updatedUsername));
+            Assert.That(result.Email, Is.EqualTo(updatedEmail));
+            Assert.That(result.PasswordHash, Is.EqualTo(user.PasswordHash)); 
         }
-    }*/
+    }
 }
