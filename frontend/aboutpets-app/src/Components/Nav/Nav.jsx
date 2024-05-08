@@ -22,7 +22,7 @@ const Nav = () => {
         <li onClick={() => { setMenu("shop") }}><Link style={{ textDecoration: 'none' }} to='/'>Shop</Link> {menu === "shop" ? <hr /> : <></>}</li>
         <li onClick={() => { setMenu("dogs") }}><Link style={{ textDecoration: 'none' }} to='/dogs'>Dog</Link>{menu === "dogs" ? <hr /> : <></>}</li>
         <li onClick={() => { setMenu("cats") }}><Link style={{ textDecoration: 'none' }} to='/cats'>Cat</Link>{menu === "cats" ? <hr /> : <></>}</li>
-        <li onClick={() => { setMenu("profiles") }}><Link style={{ textDecoration: 'none' }} to='/profilesId'>My Profile</Link>{menu === "profiles" ? <hr /> : <></>}</li>
+        <li onClick={() => { setMenu("profiles") }}><Link style={{ textDecoration: 'none' }} to='/profileId'>My Profile</Link>{menu === "profiles" ? <hr /> : <></>}</li>
       </ul>
       <div className='nav-login-cart'>
         <Link to='/login' ><button>Login</button></Link>

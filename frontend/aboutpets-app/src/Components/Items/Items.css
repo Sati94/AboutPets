@@ -1,0 +1,58 @@
+* {
+    margin: 10px;
+    padding: 0;
+    font-family: "Istok Web", sans-serif;
+}
+
+
+.item_container {
+
+    position: relative;
+    justify-content: space-between;
+    width: 320px;
+    height: 480px;
+    background: rgb(215, 229, 237);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+
+.item_container.imgBox {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+    z-index: 1;
+}
+
+.item_container .imgBox img {
+    max-width: 100%;
+
+    transition: .5s;
+}
+
+.content_box {
+    position: relative;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 2;
+    flex-grow: 1;
+}
+
+.content_box h3 {
+    font-size: 18px;
+    color: black;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.item:hover {
+    transform: scale(1.05);
+    transition: 0, 6s;
+}
