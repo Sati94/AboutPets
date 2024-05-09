@@ -8,6 +8,8 @@ import Profile from './Pages/Profile';
 import Products from './Pages/Products';
 import Cart from './Pages/Cart';
 import LoginSingup from './Pages/LoginSingup';
+import ProductsDisplay from './Components/ProductsDisplay/ProductsDisplay';
+
 
 function App() {
   return (
@@ -16,10 +18,11 @@ function App() {
         <Nav />
         <Routes>
           <Route path='/' element={<Shop />} />
-          <Route path='/dogs' element={<ShopCategory category="dogs" />} />
-          <Route path='/cats' element={<ShopCategory category="cats" />} />
+          <Route path='/dog' element={<ShopCategory category="dog" />} />
+          <Route path='/cat' element={<ShopCategory category="cat" />} />
+          <Route path='/action' element={<ShopCategory category="action" />} />
           <Route path='/profileId' element={<Profile />} />
-          <Route path='products' element={<Products />} >
+          <Route path='products' element={<ProductsDisplay />} >
             <Route path=':productsId' element={<Products />} />
           </Route>
           <Route path='/cart' element={<Cart />} />

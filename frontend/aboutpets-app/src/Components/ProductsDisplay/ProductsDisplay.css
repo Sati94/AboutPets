@@ -5,10 +5,11 @@
     gap: 10px;
     height: 70vh;
 
-
 }
 
 .data {
+    margin: 50px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
