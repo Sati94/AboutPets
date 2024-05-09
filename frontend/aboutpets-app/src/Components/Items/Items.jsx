@@ -12,35 +12,35 @@ const Items = (props) => {
         color: props.discount ? 'red' : 'black'
     };
     return (
-        <React.Fragment key={props.productId}>
-            <div className='item_container'>
-                <div className='imgBox'>
-                    <img src={props.imageBase64}
-                        alt={props.productName} />
 
-                </div>
-
-
-                <div className="content_box">
-                    <h3>
-                        <span>{props.productName}</span>
-                    </h3>
-                    <hr />
-                    <h4 style={priceStyle}>Price : {newPrice}$</h4>
-                    <hr />
-                    <h5>Stock : {props.stock}db</h5>
-                    <hr />
-                    <h5>{props.category === 1 ? "Dog" : "Cat"}</h5>
-                    <hr />
-                    <h5>{props.subCategory}</h5>
-                    <hr />
-                    {props.discount > 0 && <h4>Discount : {props.discount * 100}%</h4>}
-                    <hr />
-                    <button>View</button>
-                </div>
+        <div className='item_container' key={props.productId}>
+            <div className='imgBox'>
+                <img src={props.imageBase64}
+                    alt={props.productName} />
 
             </div>
-        </React.Fragment>
+
+
+            <div className="content_box">
+                <h3>
+                    <span>{props.productName}</span>
+                </h3>
+                <hr />
+                <h4 style={priceStyle}>Price : {newPrice}$</h4>
+                <hr />
+                <h5>Stock : {props.stock}db</h5>
+                <hr />
+                <h5>{props.category === 1 ? "Dog" : "Cat"}</h5>
+                <hr />
+                <h5>{props.subCategory}</h5>
+                <hr />
+                {props.discount > 0 && <h4>Discount : {props.discount * 100}%</h4>}
+                <hr />
+                <button>View</button>
+            </div>
+
+        </div>
+
 
     )
 }

@@ -1,5 +1,8 @@
 .item_container {
-    margin: 10px;
+    margin-top: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
     position: relative;
     display: grid;
     justify-content: space-around;
@@ -64,7 +67,21 @@
 }
 
 .content_box button {
-    margin: 10px;
+    margin: 5px;
+    padding: 5px 10px;
+    font-size: 20px;
+    background-color: rgb(231, 238, 242);
+    border: 1px solid #171717;
+    border-radius: 75px;
+    cursor: pointer;
+}
+
+.content_box button:hover {
+    background-color: #e0e0e0;
+}
+
+.content_box button:active {
+    background: #f3f3f3;
 }
 
 .item_container:hover {
