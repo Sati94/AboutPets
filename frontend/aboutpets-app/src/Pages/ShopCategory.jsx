@@ -1,4 +1,4 @@
-import React from 'react';
+
 import SubCategory from '../Components/SubCategory/SubCategory';
 import dog from '../Components/Assets/dog.png'
 import cat from '../Components/Assets/cat.png'

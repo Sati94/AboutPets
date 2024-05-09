@@ -1,4 +1,4 @@
-import React from 'react'
+
 import './SubCategory.css'
 import accessories from '../Assets/accessories.png'
 import dryfood from '../Assets/dryfood.png'
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 const SubCategory = ({ category }) => {
     const navigate = useNavigate();
+
     const handleClick = (subCategory) => {
 
         return navigate(`/category/${category}/${subCategory}`);

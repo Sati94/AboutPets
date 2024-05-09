@@ -2,28 +2,32 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import API_BASE_URL from '../config'
 import Items from '../Components/Items/Items'
+import { useParams } from 'react-router-dom'
 
 
-const SubCategoryPage = ({ category, subCategory }) => {
+
+const SubCategoryPage = () => {
 
     const [products, setProducts] = useState([]);
+    const { category, subCategory } = useParams();
     useEffect(() => {
-        if (category && subCategory) {
-            async function fetchProducts() {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/products/${category}/${subCategory}`);
-                    const data = await response.json();
-                    setProducts(data);
 
-                } catch (error) {
-                    console.error("Error fetching products:", error);
-                }
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products/${category}/${subCategory}`);
+                const data = await response.json();
+                setProducts(data);
+
+            } catch (error) {
+                console.error("Error fetching products:", error);
             }
-
-            fetchProducts();
         }
 
+        fetchProducts();
+
+
     }, [category, subCategory]);
+
     return (
         <div className='products'>
 
