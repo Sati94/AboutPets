@@ -7,7 +7,7 @@ import './ProductsDisplay.css'
 
 const ProductsDisplay = ({ onlyDiscounted = false }) => {
 
-    const [products, setProducts] = useState("");
+    const [products, setProducts] = useState([]);
 
     useEffect(() => {
         async function fetchProducts() {
@@ -22,7 +22,9 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
         }
 
         fetchProducts();
-    }, []);
+
+    }, [products]
+    );
 
     const filteredProducts = onlyDiscounted ? products.filter(product => product.discount > 0) : products
 
@@ -31,10 +33,10 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
 
             {filteredProducts.length > 0 ? (
                 <div className="data">
-                    {filteredProducts.map((product, i) => (
+                    {filteredProducts.map((product) => (
                         <Items
-                            key={i}
-                            id={product.productId}
+                            key={product.productId}
+                            productId={product.productId}
                             productName={product.productName}
                             stock={product.stock}
                             price={product.price}

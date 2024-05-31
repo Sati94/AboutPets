@@ -1,8 +1,14 @@
 import React from 'react'
 import './Items.css'
+import { useNavigate } from 'react-router-dom';
 
 
 const Items = (props) => {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(`/products/${props.productId}`)
+    }
     const bonus = props.discount ? props.price * (props.discount / 100) : 0;
 
     const newPrice = Math.ceil(props.price - bonus);
@@ -36,7 +42,7 @@ const Items = (props) => {
                 <hr />
                 {props.discount > 0 && <h4>Discount : {props.discount * 100}%</h4>}
                 <hr />
-                <button>View</button>
+                <button onClick={handleClick}>View</button>
             </div>
 
         </div>

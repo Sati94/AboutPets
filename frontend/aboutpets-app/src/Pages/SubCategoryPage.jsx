@@ -33,10 +33,10 @@ const SubCategoryPage = () => {
 
             {products.length > 0 ? (
                 <div className='data'>
-                    {products.map((product, i) => (
+                    {products.map((product) => (
                         <Items
-                            key={i}
-                            id={product.productId}
+                            key={product.productId}
+                            productId={product.productId}
                             productName={product.productName}
                             stock={product.stock}
                             price={product.price}

@@ -1,0 +1,27 @@
+.productDetails {
+    margin: 10px;
+    display: grid;
+    align-content: space-around;
+    align-items: center;
+    justify-items: center;
+    justify-content: space-around;
+    background-color: rgb(215, 229, 237);
+}
+
+.productDetails button {
+    margin: 5px;
+    padding: 5px 10px;
+    font-size: 20px;
+    background-color: rgb(231, 238, 242);
+    border: 1px solid #171717;
+    border-radius: 75px;
+    cursor: pointer;
+}
+
+.productDetails button:hover {
+    background-color: #e0e0e0;
+}
+
+.productDetails button:active {
+    background: #f3f3f3;
+}
