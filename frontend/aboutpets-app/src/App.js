@@ -25,7 +25,7 @@ function App() {
           <Route path='/' element={<Shop />} />
           <Route path='/dog' element={<ShopCategory category={1} />} />
           <Route path='/cat' element={<ShopCategory category={2} />} />
-          <Route path='/action' element={<ShopCategory category="action" />} />
+          <Route path='/action' element={<ProductsDisplay onlyDiscounted={true} />} />
           <Route path='/profileId' element={<Profile />} />
           <Route path='products' element={<ProductsDisplay />} >
             <Route path=':productsId' element={<Products />} />

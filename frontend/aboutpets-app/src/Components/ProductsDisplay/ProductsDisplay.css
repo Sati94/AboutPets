@@ -1,15 +1,16 @@
 .produtsDisplay {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
     align-items: center;
     gap: 10px;
-    height: 70vh;
+    height: 100vh;
 
 }
 
 .data {
-    margin: 50px;
+    margin: 10px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-self: unset;
 }

@@ -2,8 +2,10 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import API_BASE_URL from "../../config";
 import Items from '../Items/Items';
+import './ProductsDisplay.css'
 
-const ProductsDisplay = () => {
+
+const ProductsDisplay = ({ onlyDiscounted = false }) => {
 
     const [products, setProducts] = useState("");
 
@@ -22,13 +24,14 @@ const ProductsDisplay = () => {
         fetchProducts();
     }, []);
 
+    const filteredProducts = onlyDiscounted ? products.filter(product => product.discount > 0) : products
 
     return (
-        <div className='produtsDisplay'>
+        <div className="produtsDisplay">
 
-            {products.length > 0 ? (
-                <div className='data'>
-                    {products.map((product, i) => (
+            {filteredProducts.length > 0 ? (
+                <div className="data">
+                    {filteredProducts.map((product, i) => (
                         <Items
                             key={i}
                             id={product.productId}

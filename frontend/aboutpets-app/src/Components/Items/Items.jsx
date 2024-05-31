@@ -28,7 +28,7 @@ const Items = (props) => {
                 <hr />
                 <h4 style={priceStyle}>Price : {newPrice}$</h4>
                 <hr />
-                <h5>Stock : {props.stock}db</h5>
+                <h5>Stock : {props.stock}pcs</h5>
                 <hr />
                 <h5>{props.category === 1 ? "Dog" : "Cat"}</h5>
                 <hr />
