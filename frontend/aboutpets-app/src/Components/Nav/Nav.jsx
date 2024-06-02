@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 
 
 
-const Nav = () => {
+const Nav = ({ isLoggedIn, userName, onLogout }) => {
 
   const [menu, setMenu] = useState("shop");
 
@@ -26,11 +26,18 @@ const Nav = () => {
         <li onClick={() => { setMenu("profile") }}><Link style={{ textDecoration: 'none' }} to='/profileId'>My Profile</Link>{menu === "profile" ? <hr /> : <></>}</li>
 
       </ul>
-      <div className='nav-login-cart'>
-        <Link to='/login' ><button>Login</button></Link>
-        <Link to='/cart'><img src={cart_icon} alt='' /></Link>
-        <div className='nav-cart-count'>0</div>
-      </div>
+      {isLoggedIn ? (
+        <div className='nav-login-cart'>
+          <Link to='/login'><button onClick={onLogout}>Logout</button></Link>
+          <Link to='/cart'><img src={cart_icon} alt='' /></Link>
+          <div className='nav-cart-count'>0</div>
+        </div>
+      ) : (
+        <div className='nav-login-cart'>
+          <Link to='/login' ><button>Login</button></Link>
+        </div>
+      )}
+
     </div>
   )
 }
