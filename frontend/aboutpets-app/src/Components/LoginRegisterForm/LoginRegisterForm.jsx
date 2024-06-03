@@ -70,9 +70,9 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
         throw new Error(data.message || "Email or Password is bad!");
       }
 
-      const { id, email, userName, token } = data;
+      const { userId, email, userName, token } = data;
 
-      Cookies.set("userId", id, { expires: expirationTime });
+      Cookies.set("userId", userId, { expires: expirationTime });
       Cookies.set("userEmail", email, { expires: expirationTime });
       Cookies.set("userUserName", userName, { expires: expirationTime });
       Cookies.set("userToken", token, { expires: expirationTime });
@@ -96,6 +96,7 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
         Cookies.set("Role", "User");
         navigate("/");
       }
+      console.log(document.cookie);
       onLogin();
       setError("");
     } catch (error) {

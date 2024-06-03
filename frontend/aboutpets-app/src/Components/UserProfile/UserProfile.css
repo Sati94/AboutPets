@@ -1,0 +1,57 @@
+.profile-container {
+    display: flex;
+    background: rgb(230, 225, 225);
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.profile-container h2 {
+    margin-bottom: 20px;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Ez az új sor középre igazítja az összes elemet */
+    width: 300px;
+}
+
+.profile-form div {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Így az inputok egymás alatt lesznek */
+}
+
+.profile-form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    align-self: flex-start;
+    /* Ez az új sor felettük tartja a label-eket */
+}
+
+.profile-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    /* Így a teljes szélességű inputok kitöltik a konténert */
+}
+
+.profile-form button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.profile-form button:hover {
+    background-color: #45a049;
+}

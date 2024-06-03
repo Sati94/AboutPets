@@ -23,8 +23,9 @@ const App = () => {
   const userName = Cookies.get("userUserName");
   const userToken = Cookies.get("userToken");
   const userEmail = Cookies.get("userEmail");
+  const userRole = Cookies.get("Role");
 
-  const [isLoggedIn, setIsLoggedIn] = useState(userId ? false : true);
+  const [isLoggedIn, setIsLoggedIn] = useState(!userId ? false : true);
 
 
   const handleLogin = () => {
@@ -42,19 +43,20 @@ const App = () => {
   return (
     <div >
       <BrowserRouter>
-        <Nav isLoggedIn={isLoggedIn} userName={userName} onLogout={handleLogout} />
+        <Nav isLoggedIn={isLoggedIn} userName={userName} userId={userId} onLogout={handleLogout} />
         <Routes>
           <Route path='/' element={<Shop />} />
           <Route path='/dog' element={<ShopCategory category={1} />} />
           <Route path='/cat' element={<ShopCategory category={2} />} />
           <Route path='/action' element={<ProductsDisplay onlyDiscounted={true} />} />
-          <Route path='/profileId' element={<Profile />} />
+          <Route path='/profile' element={<Profile />} />
           <Route path='products' element={<ProductsDisplay />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<Login onLogin={handleLogin} />} />
           <Route path='/register' element={<Register />} />
           <Route path='/category/:category/:subCategory' element={<SubCategoryPage />} />
           <Route path='/products/:productId' element={<Product />} />
+
 
         </Routes>
       </BrowserRouter>
