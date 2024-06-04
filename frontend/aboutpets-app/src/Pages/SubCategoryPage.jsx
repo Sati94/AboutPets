@@ -3,13 +3,17 @@ import { useEffect, useState } from 'react'
 import API_BASE_URL from '../config'
 import Items from '../Components/Items/Items'
 import { useParams } from 'react-router-dom'
+import SearchInput from '../Components/SearchInput/SearchInput'
+import '../Components/SearchInput/SearchInput.css'
 
 
 
 const SubCategoryPage = () => {
 
-    const [products, setProducts] = useState([]);
     const { category, subCategory } = useParams();
+    const [products, setProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredProducts, setFilteredProducts] = useState([]);
 
     useEffect(() => {
 
@@ -29,12 +33,32 @@ const SubCategoryPage = () => {
 
     }, [category, subCategory]);
 
+
+    const handleSearch = (term) => {
+        setSearchTerm(term);
+    }
+
+    useEffect(() => {
+        const data = products.filter(product => {
+            const searchLower = searchTerm.toLowerCase();
+
+            return (
+                product.productName.toLowerCase().includes(searchLower)
+            )
+
+        });
+        setFilteredProducts(data);
+
+    }, [searchTerm, products]);
+
     return (
         <div className='products'>
-
+            <div className="search-input-container">
+                <SearchInput onSearch={handleSearch} />
+            </div>
             {products.length > 0 ? (
                 <div className='data'>
-                    {products.map((product) => (
+                    {filteredProducts.map((product) => (
                         <Items
                             key={product.productId}
                             productId={product.productId}

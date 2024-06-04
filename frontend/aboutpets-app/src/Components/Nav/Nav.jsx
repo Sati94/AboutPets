@@ -9,7 +9,8 @@ import { Link } from 'react-router-dom'
 const Nav = ({ isLoggedIn, userName, userId, onLogout }) => {
 
   const [menu, setMenu] = useState("shop");
-  const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn)
+  const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn);
+
   useEffect(() => {
     setIsAuthenticated(isLoggedIn);
 
