@@ -32,10 +32,9 @@ const UserProfile = () => {
     useEffect(() => {
         if (!userId) {
             toast.error('First, you have to Log In!');
-            setTimeout(() => {
-                navigate('/login');
 
-            }, 2000);
+            navigate('/login');
+
             return;
         }
 

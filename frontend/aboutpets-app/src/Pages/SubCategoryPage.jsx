@@ -10,6 +10,7 @@ const SubCategoryPage = () => {
 
     const [products, setProducts] = useState([]);
     const { category, subCategory } = useParams();
+
     useEffect(() => {
 
         async function fetchProducts() {

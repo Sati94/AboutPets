@@ -8,6 +8,7 @@ import './ProductsDisplay.css'
 const ProductsDisplay = ({ onlyDiscounted = false }) => {
 
     const [products, setProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         async function fetchProducts() {
@@ -26,14 +27,26 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
     }, [products]
     );
 
-    const filteredProducts = onlyDiscounted ? products.filter(product => product.discount > 0) : products
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    }
+    const filteredProducts = products.filter(product => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+            product.productName.toLowerCase().includes(searchLower)
+        )
+    });
+
+    const finalProducts = onlyDiscounted ? filteredProducts.filter(product => product.discount > 0) : products
+
 
     return (
-        <div className="produtsDisplay">
 
-            {filteredProducts.length > 0 ? (
+        <div className="produtsDisplay">
+            <input className="input-container" type="text" placeholder="Search" onChange={handleSearch}></input>
+            {products.length > 0 ? (
                 <div className="data">
-                    {filteredProducts.map((product) => (
+                    {finalProducts.map((product) => (
                         <Items
                             key={product.productId}
                             productId={product.productId}
@@ -47,6 +60,7 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
                         />
                     ))}
                 </div>
+
             ) : (
                 <>No Product added yet...</>
             )}
