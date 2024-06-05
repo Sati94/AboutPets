@@ -4,6 +4,10 @@ import API_BASE_URL from "../../config";
 import Items from '../Items/Items';
 import './ProductsDisplay.css'
 import SearchInput from '../SearchInput/SearchInput';
+import { useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+
+
 
 
 const ProductsDisplay = ({ onlyDiscounted = false }) => {
@@ -11,6 +15,13 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.message) {
+            toast.success(location.state.message);
+        }
+    }, [location]);
 
     useEffect(() => {
         async function fetchProducts() {
@@ -77,7 +88,7 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
             ) : (
                 <>No Product added yet...</>
             )}
-
+            <ToastContainer />
         </div>
     )
 }

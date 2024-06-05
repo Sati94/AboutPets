@@ -24,6 +24,7 @@ const App = () => {
   const userToken = Cookies.get("userToken");
   const userEmail = Cookies.get("userEmail");
   const userRole = Cookies.get("Role");
+  const orderId = Cookies.get("orderId");
 
   const [isLoggedIn, setIsLoggedIn] = useState(!userId ? false : true);
 
@@ -39,6 +40,7 @@ const App = () => {
     Cookies.remove("userToken");
     Cookies.remove("userEmail");
     Cookies.remove("Role");
+    Cookies.remove("orderId");
   }
   return (
     <div >

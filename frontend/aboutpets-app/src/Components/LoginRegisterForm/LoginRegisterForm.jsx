@@ -5,6 +5,8 @@ import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import API_BASE_URL from '../../config'
 import { useNavigate, Link } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/ReactToastify.css'
 
 const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
 
@@ -16,6 +18,7 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
   const navigate = useNavigate();
   const currentTime = new Date();
   const expirationTime = new Date(currentTime.getTime() + 30 * 60 * 1000);
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -35,13 +38,17 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
 
       if (res.status === 201) {
         const data = await res.json();
+
         console.log("Registration response:", data);
         setError("");
-        navigate("/");
+        navigate("/", { state: { message: 'Registering was successfully!' } });
+
       } else {
         const errorData = await res.json();
+        toast.error('The User Name or the Email is taken!');
         throw new Error(errorData.message || "The Email or the User Name is bad");
       }
+
     } catch (error) {
       console.error("Registration error:", error.message);
       setError(error.message);
@@ -50,7 +57,7 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Logging in...");
+
     try {
       const res = await fetch(`${API_BASE_URL}/Login`, {
         method: "POST",
@@ -67,6 +74,7 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
       console.log("Response data:", data);
 
       if (!data) {
+        toast.error('Email or Password is bad!');
         throw new Error(data.message || "Email or Password is bad!");
       }
 
@@ -77,7 +85,9 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
       Cookies.set("userUserName", userName, { expires: expirationTime });
       Cookies.set("userToken", token, { expires: expirationTime });
 
+
       setToken(token);
+
       const decodedToken = jwtDecode(token);
 
       if (
@@ -89,21 +99,30 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
         // User is an admin
         console.log("User is an admin.");
         Cookies.set("Role", "Admin");
-        navigate("/admin");
+        navigate("/admin", { state: { message: ('Login was successfully as Admin!') } });
         onLogin();
+
       } else {
         // User is not an admin
+        console.log("User is an user.")
         Cookies.set("Role", "User");
-        navigate("/");
+        navigate("/", { state: { message: "Login was successfull as User!" } });
       }
       console.log(document.cookie);
+
       onLogin();
+      toast.success('Login was successfully!');
+
       setError("");
     } catch (error) {
+      toast.error('Email or Password is bad!');
+
       console.error("Login error:", error.message);
       setError("Invalid Email or Password!");
     }
   };
+
+
 
 
   return (
@@ -176,7 +195,9 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
           </div>
         </>
       )}
+      <ToastContainer />
     </div>
+
   )
 }
 
