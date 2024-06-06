@@ -1,0 +1,59 @@
+.cart-item {
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: rgb(200, 236, 236);
+}
+
+.cart-item .cart-item-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-item .cart-item-image {
+    width: 100px;
+    /* Változtasd a szélességet az igényeid szerint */
+    margin-right: 20px;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
+
+.cart-item button {
+    background-color: #ff3333;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid black;
+    cursor: pointer;
+    font-size: 16px;
+
+}
+
+.cart-item button:hover {
+    background-color: #cc0000;
+}
+
+.Total-Price {
+    text-align: center;
+}
+
+.Send-Order-Button {
+    display: block;
+    margin: 0 auto;
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
+
+.Send-Order-Button:hover {
+    background-color: darkgreen;
+}

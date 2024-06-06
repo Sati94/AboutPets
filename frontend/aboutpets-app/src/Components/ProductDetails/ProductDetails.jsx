@@ -15,6 +15,7 @@ const ProductDetails = () => {
     const [quantity, setQuantity] = useState(1);
     const [orderId, setOrderId] = useState(null);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
 
 
@@ -31,49 +32,10 @@ const ProductDetails = () => {
         }
 
         fetchProducts();
-    }, [productId]);
+    }, [productId, loading]);
 
-    const getOrderId = async () => {
-        const userId = Cookies.get("userId");
-        if (!userId) {
-
-            navigate("/login", { state: { message: "You have to Log In First" } });
-        }
-        try {
-
-            const url = new URL(`${API_BASE_URL}/order/${userId}`);
-
-
-
-            const response = await fetch(url, {
-
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${Cookies.get('userToken')}`,
-                    'Role': Cookies.get('userRole')
-                },
-
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch the data!')
-            }
-            const data = await response.json();
-            console.log(data);
-            setOrderId(data.orderId);
-            Cookies.set("orderId", orderId);
-
-        }
-        catch (error) {
-
-            console.error("Error adding item to cart!");
-
-        }
-
-    }
 
     const handleAddToCart = async () => {
-        const orderId = await getOrderId();
-
 
         const userId = Cookies.get("userId");
         if (!userId) {
@@ -114,7 +76,9 @@ const ProductDetails = () => {
             console.error("Error adding item to cart!");
 
         }
-
+        setOrderId(orderId);
+        console.log(orderId)
+        setLoading(!loading);
     }
 
     if (!product) {

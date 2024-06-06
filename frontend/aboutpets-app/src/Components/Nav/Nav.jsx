@@ -7,51 +7,48 @@ import API_BASE_URL from '../../config'
 import Cookies from 'js-cookie'
 
 
-const Nav = ({ isLoggedIn, userName, userId, onLogout }) => {
+const Nav = ({ isLoggedIn, userName, userId, orderId, onLogout }) => {
 
   const [menu, setMenu] = useState("shop");
-  const [orderItems, setOrderitems] = useState(0);
+  const [orderItems, setOrderitems] = useState([]);
+
   const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn);
 
-  /*useEffect(() => {
+  useEffect(() => {
     const fetchOrderItems = async () => {
       try {
-        const userId = Cookies.get("userId");
         const userToken = Cookies.get("userToken");
         const userRole = Cookies.get("Role");
         const orderId = Cookies.get("orderId");
 
-        // Ha nincs felhasználó bejelentkezve, ne kérje le az orderId-t
-        if (!userId || !userToken || !userRole || orderId) {
-          return;
+        if (orderId) {
+          const url = new URL(`${API_BASE_URL}/order/orderItems/${orderId}`);
+          const response = await fetch(url, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${userToken}`,
+              'Role': userRole
+            },
+          });
+          if (!response.ok) {
+            throw new Error('Failed to fetch the data!');
+          }
+          const data = await response.json();
+          setOrderitems(data);
         }
-
-        const url = new URL(`${API_BASE_URL}/order/${userId}`);
-        const response = await fetch(url, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userToken}`,
-            'Role': userRole
-          },
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch the data!');
-        }
-        const data = await response.json();
-        console.log(data);
-
       } catch (error) {
-        console.error("Error fetching orderId:", error);
+        console.error("Error fetching orderItems:", error);
       }
     };
 
-    fetchOrderItems();
-
-  }, [isLoggedIn]);*/
+    if (isLoggedIn) {
+      fetchOrderItems();
+    }
+  }, [isLoggedIn]);
 
   useEffect(() => {
     setIsAuthenticated(isLoggedIn);
-
+    console.log(orderId);
   }, [isLoggedIn])
 
 
@@ -73,7 +70,7 @@ const Nav = ({ isLoggedIn, userName, userId, onLogout }) => {
         <div className='nav-login-cart'>
           <button onClick={onLogout}>Logout</button>
           <Link to='/cart'><img src={cart_icon} alt='' /></Link>
-          <div className='nav-cart-count'>{orderItems}</div>
+          <div className='nav-cart-count'>{orderId ? orderItems.length : 0}</div>
         </div>
       ) : (
         <div className='nav-login-cart'>
