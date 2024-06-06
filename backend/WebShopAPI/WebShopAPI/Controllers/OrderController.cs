@@ -32,6 +32,19 @@ namespace WebShopAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("/order/pending/{userId}"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<Order>> GetOrderByIdPending(string userId)
+        {
+            try
+            {
+                var order = await _orderService.GetPendingOrders(userId);
+                return Ok(order);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+        }
         [HttpGet("/order/orderItems/{orderId}"), Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItems(int orderId)
         {
@@ -43,7 +56,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(order.OrderItems);
         }
-        [HttpGet("/order/{orderId}"), Authorize("Admin,User")]
+        [HttpGet("/order/{orderId}"), Authorize( Roles = "Admin, User")]
         public async Task<ActionResult<Order>> GetOrderById(int orderId) 
         {
             try
@@ -56,7 +69,7 @@ namespace WebShopAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
-        [HttpGet("/order/{userId}"), Authorize(Roles = "Admin,User")]
+        [HttpGet("/order/user/{userId}"), Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<Order>> GetOrderByUserId(string userId)
         {
             try
@@ -69,7 +82,7 @@ namespace WebShopAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
-        [HttpDelete("/order/delete/{orderId}"), Authorize(Roles ="Admin,User")]
+        [HttpDelete("/order/delete/{orderId}"), Authorize(Roles ="Admin, User")]
         public async Task<ActionResult<Order>> DeleteOrderByIdAsync(int orderId)
         {
             try
@@ -82,7 +95,7 @@ namespace WebShopAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
-        [HttpPut("/order/update/{orderId}"), Authorize(Roles = "Admin")]
+        [HttpPut("/order/update/{orderId}"), Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<bool>> UpdateStatusByOrderId(int orderId, OrderStatuses orderstatus)
         {
             try

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Data;
 using WebShopAPI.Model;
@@ -11,10 +12,12 @@ namespace WebShopAPI.Service.OrderServiceMap
     public class OrderService : IOrderService
     {
         private readonly WebShopContext _context;
-        
+       
+
         public OrderService(WebShopContext context)
         {
             _context = context;
+            
         }
         public async Task<IEnumerable<Order>> GetAllOrderAsync()
         {
@@ -57,6 +60,20 @@ namespace WebShopAPI.Service.OrderServiceMap
             }
 
                 return order;   
+        }
+        public async Task<Order> GetPendingOrders(string userId)
+        {
+
+            var pendingOrder = await _context.Orders
+           .FirstOrDefaultAsync(o => o.OrderStatuses == OrderStatuses.Pending && o.UserId == userId);
+            if(pendingOrder == null)
+            {
+                return null;
+            }
+            return pendingOrder;
+           
+           
+    
         }
         public async Task<Order>GetOrderItemsByOrderIdAsync(int orderId)
         {
