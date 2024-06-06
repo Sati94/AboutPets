@@ -4,6 +4,7 @@ using NUnit.Framework;
 using WebShopAPI.Service.OrderServiceMap;
 using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.OrderModel.OrderStatus;
+using WebShopAPI.Model;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace WebShopAPI.Controllers
@@ -31,7 +32,18 @@ namespace WebShopAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("/ordelist/order/{orderId}"), Authorize(Roles = "Admin, User")]
+        [HttpGet("/order/orderItems/{orderId}"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItems(int orderId)
+        {
+            var order = await _orderService.GetOrderItemsByOrderIdAsync( orderId);
+
+            if (order == null || !order.OrderItems.Any())
+            {
+                return NotFound(new {message = "No itmes found for this order!" });
+            }
+            return Ok(order.OrderItems);
+        }
+        [HttpGet("/order/{orderId}"), Authorize("Admin,User")]
         public async Task<ActionResult<Order>> GetOrderById(int orderId) 
         {
             try

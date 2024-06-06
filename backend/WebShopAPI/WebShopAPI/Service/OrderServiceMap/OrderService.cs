@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Data;
+using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.OrderModel.OrderStatus;
+
 
 namespace WebShopAPI.Service.OrderServiceMap
 {
@@ -54,6 +57,18 @@ namespace WebShopAPI.Service.OrderServiceMap
             }
 
                 return order;   
+        }
+        public async Task<Order>GetOrderItemsByOrderIdAsync(int orderId)
+        {
+           var order =  await _context.Orders
+           .Include(o => o.OrderItems)
+           .ThenInclude(oi => oi.Product)
+           .FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if(order == null)
+            {
+                return null;
+            }
+            return order;
         }
         public async Task<bool> UpdateOrderStatus(int orderId, OrderStatuses newStatus)
         {

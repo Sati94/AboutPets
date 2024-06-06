@@ -97,9 +97,9 @@ namespace WebShopAPI.Service.ProductServiceMap
             var products = await _context.Products.Where(p=>(int)p.SubCategory == subCategory).ToListAsync();
             return products;
         }
-        public async Task<IEnumerable<Product>> GetProductsBySubAndMainCategory(int subCategory, int category)
+        public async Task<IEnumerable<Product>> GetProductsBySubAndMainCategory(int category, int subCategory)
         {
-           var products = await _context.Products.Where(p => (int)p.SubCategory == subCategory && (int)p.Category == category).ToListAsync();
+           var products = await _context.Products.Where(p => (int)p.Category == category && (int)p.SubCategory == subCategory).ToListAsync();
 
             return products;
         }

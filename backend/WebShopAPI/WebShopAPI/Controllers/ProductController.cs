@@ -39,7 +39,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(result);  
         }
-        [HttpGet("/product/{productId}"), Authorize(Roles = "Admin, User")]
+        [HttpGet("/product/{productId}")/*, Authorize(Roles = "Admin, User")*/]
         public async Task<ActionResult<ProductDto>> GetProductByIdAsync(int productId)
         {
             var product = await _productService.GetProductById(productId);
@@ -59,7 +59,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(product);
         }
-        [HttpGet("/products/category/{category}"),Authorize(Roles = "Admin, User")]
+        [HttpGet("/products/category/{category}"),/*Authorize(Roles = "Admin, User")*/]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategoryAsync(Category category)
         {
             var products = await _productService.GetProductsByCategory((int)category);
@@ -70,7 +70,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(products);
         }
-        [HttpGet("/products/category/subCategory/{subCategory}"), Authorize(Roles = "Admin, User")]
+        [HttpGet("/products/category/subCategory/{subCategory}"),/* Authorize(Roles = "Admin, User")*/]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubCategoryAsync(SubCategory subCategory)
         {
             var products = await _productService.GetProductsBySubCategory((int)subCategory);
@@ -81,7 +81,7 @@ namespace WebShopAPI.Controllers
             }
             return Ok(products);
         }
-        [HttpGet("/products/{category}/{subCategory}"), Authorize(Roles = "Admin, User")]
+        [HttpGet("/products/{category}/{subCategory}"),/* Authorize(Roles = "Admin, User")*/]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubAndMainCategoryAsync(Category category, SubCategory subCategory)
         {
             var products = await _productService.GetProductsBySubAndMainCategory((int)category, (int)subCategory);

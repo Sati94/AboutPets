@@ -15,12 +15,12 @@ namespace WebShopAPI.Service.OrderItemServiceMap
         {
             _context = context;
             _userManager = userManager;
-           
+
         }
         public async Task<OrderItem> AddOrderItemToUser(string userId, int productId, int quantity, int orderId)
         {
             var user = await _userManager.FindByIdAsync(userId);
-             
+
             if (user == null)
             {
                 throw new ArgumentException("User not found");
@@ -31,12 +31,17 @@ namespace WebShopAPI.Service.OrderItemServiceMap
             {
                 throw new ArgumentException("Product not found");
             }
-            Order order = null;
-            if (orderId != 0)
+
+
+            var order = await _context.Orders.Include(o => o.OrderItems)
+                                       .FirstOrDefaultAsync(or => or.UserId == userId && or.OrderStatuses == OrderStatuses.Pending);
+            if (order != null)
             {
-                order = await _context.Orders.FirstOrDefaultAsync(or => or.UserId == userId);
-             
+                orderId = order.OrderId;
             }
+
+
+
             if (order == null)
             {
                 order = new Order
@@ -57,18 +62,18 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                 Quantity = quantity,
                 Price = product.Price * quantity
             };
-            if(product.Stock < orderItem.Quantity)
+            if (product.Stock < orderItem.Quantity)
             {
                 throw new ArgumentException("Requested quantity exceeds available stock!");
             }
-            
+
             product.Stock = product.Stock - quantity;
-           
+
             order.OrderItems.Add(orderItem);
             _context.OrderItems.Add(orderItem);
 
-            
-            await _context.SaveChangesAsync();
+
+
             order.TotalPrice = order.OrderItems.Sum(oi => oi.Price);
             await _context.SaveChangesAsync();
             return orderItem;
@@ -89,10 +94,10 @@ namespace WebShopAPI.Service.OrderItemServiceMap
 
                     if (orderItem != null)
                     {
-                        
+
                         order.OrderItems.Remove(orderItem);
 
-                        
+
                         order.TotalPrice -= orderItem.Price;
 
                         if (order.OrderItems.Count == 0)
@@ -123,7 +128,7 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                 var orderItem = await _context.OrderItems.FirstOrDefaultAsync(oi => oi.OrderItemId == orderItemId);
 
 
-                if (orderItem != null && order.OrderItems.Contains(orderItem)) 
+                if (orderItem != null && order.OrderItems.Contains(orderItem))
                 {
                     var oldQuantity = orderItem.Quantity;
                     var difference = newquantity - oldQuantity;
@@ -132,7 +137,7 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                     if (product != null)
                     {
                         orderItem.Price = product.Price * newquantity;
-                        if (difference > 0 )
+                        if (difference > 0)
                         {
                             product.Stock -= difference;
                         }
@@ -140,14 +145,14 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                         {
                             product.Stock += Math.Abs(difference);
                         }
-                        
+
 
                         var orders = await _context.Orders.FirstOrDefaultAsync(o => o.OrderItems.Any(oi => oi.OrderItemId == orderItemId));
                         if (orders != null)
                         {
                             orders.TotalPrice = orders.OrderItems.Sum(oi => oi.Price);
                         }
-                        if(newquantity == 0)
+                        if (newquantity == 0)
                         {
                             _context.OrderItems.Remove(orderItem);
                             _context.Orders.Remove(order);
@@ -161,5 +166,6 @@ namespace WebShopAPI.Service.OrderItemServiceMap
             }
             return null;
         }
+    
     }
 }
