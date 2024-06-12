@@ -108,7 +108,7 @@ const CartElement = () => {
             toast.success("Item deleted!")
             setLoading(!loading);
         } catch (error) {
-            // Hiba esetén kezeljük a hibát
+            navigate("/")
             console.error('Error removing order item:', error.message);
         }
 
@@ -141,8 +141,10 @@ const CartElement = () => {
 
     return (
         <div>
-            {orderItems.length === 0 || orders.orderStatuses > 1 ? (
-                <p>Nincs rendelt termék.</p>
+            {orderItems.length === 0 || orders.orderStatuses > 1 || orderItems === null ? (
+                <div className='No-Data'>
+                    <p>No data</p>
+                </div>
             ) : (
                 <ul>
                     {orderItems.map((item) => (

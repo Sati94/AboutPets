@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import LoginRegisterForm from '../Components/LoginRegisterForm/LoginRegisterForm'
+import { AuthContext } from '../AuthContext/AuthContext'
 
-const Login = ({ onLogin }) => {
+const Login = () => {
+    const { login } = useContext(AuthContext);
     return (
         <div className="container-logging">
             <div className="left-div">
-                <LoginRegisterForm isHandleRegister={false} onLogin={onLogin} />
+                <LoginRegisterForm isHandleRegister={false} onLogin={login} />
             </div>
         </div>
     )

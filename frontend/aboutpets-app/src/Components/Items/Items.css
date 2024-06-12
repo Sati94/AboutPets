@@ -35,6 +35,11 @@
     transition: .5s;
 }
 
+.item_container.out-of-stock {
+    background-color: #f0f0f0;
+    opacity: 0.6;
+}
+
 .content_box {
     margin: 10px;
     position: relative;

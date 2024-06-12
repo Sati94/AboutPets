@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import './Nav.css'
 import logo from '../Assets/logo.png'
 import cart_icon from '../Assets/cart_icon.png'
 import { Link } from 'react-router-dom'
 import API_BASE_URL from '../../config'
-import Cookies from 'js-cookie'
+import { AuthContext } from '../../AuthContext/AuthContext'
 
 
-const Nav = ({ isLoggedIn, userName, userId, orderId, onLogout }) => {
+const Nav = () => {
+
+  const { authState, login, logout } = useContext(AuthContext);
+
 
   const [menu, setMenu] = useState("shop");
   const [orderItems, setOrderitems] = useState([]);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const fetchOrderItems = async () => {
       try {
-        const userToken = Cookies.get("userToken");
-        const userRole = Cookies.get("Role");
-        const orderId = Cookies.get("orderId");
+        const { userToken, userRole, orderId } = authState;
 
         if (orderId) {
           const url = new URL(`${API_BASE_URL}/order/orderItems/${orderId}`);
@@ -41,15 +42,15 @@ const Nav = ({ isLoggedIn, userName, userId, orderId, onLogout }) => {
       }
     };
 
-    if (isLoggedIn) {
+    if (authState) {
       fetchOrderItems();
     }
-  }, [isLoggedIn]);
+  }, [authState]);
 
   useEffect(() => {
-    setIsAuthenticated(isLoggedIn);
-    console.log(orderId);
-  }, [isLoggedIn])
+    setIsAuthenticated(true);
+
+  }, [authState])
 
 
   return (
@@ -68,9 +69,9 @@ const Nav = ({ isLoggedIn, userName, userId, orderId, onLogout }) => {
       </ul>
       {isAuthenticated ? (
         <div className='nav-login-cart'>
-          <button onClick={onLogout}>Logout</button>
+          <button onClick={logout}>Logout</button>
           <Link to='/cart'><img src={cart_icon} alt='' /></Link>
-          <div className='nav-cart-count'>{orderId ? orderItems.length : 0}</div>
+          <div className='nav-cart-count'>{orderItems ? orderItems.length : 0}</div>
         </div>
       ) : (
         <div className='nav-login-cart'>

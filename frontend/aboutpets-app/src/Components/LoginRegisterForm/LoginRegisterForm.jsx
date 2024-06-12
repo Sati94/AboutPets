@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useState, useEffect } from 'react'
 import "./LoginRegisterForm.css"
-import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import API_BASE_URL from '../../config'
 import { useNavigate, Link } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/ReactToastify.css'
+import { AuthContext } from '../../AuthContext/AuthContext';
 
 const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
 
@@ -14,10 +14,9 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
   const [savePassword, setSavePassword] = useState("");
   const [saveEmail, setSaveEmail] = useState("");
   const [error, setError] = useState("");
-  const [userToken, setUserToken] = useState("");
-  const [id, setId] = useState("");
   const navigate = useNavigate();
   const currentTime = new Date();
+  const { authState, login } = useContext(AuthContext);
   const expirationTime = new Date(currentTime.getTime() + 30 * 60 * 1000);
 
 
@@ -73,67 +72,37 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
 
       const data = await res.json();
 
-      console.log("Response data:", data);
-      const dataId = data.userId;
-      console.log(dataId);
-      const dataToken = data.token;
-      console.log(dataToken)
-      setUserToken(dataToken);
-      setId(dataId);
-      console.log("Token set in state:", userToken);
-      console.log("UserId", id)
 
-      if (!data) {
+      login(data);
+      if (!data.token) {
         toast.error('Email or Password is bad!');
         throw new Error(data.message || "Email or Password is bad!");
       }
 
-      const { userId, email, userName, token } = data;
 
-      Cookies.set("userId", userId, { expires: expirationTime });
-      Cookies.set("userEmail", email, { expires: expirationTime });
-      Cookies.set("userUserName", userName, { expires: expirationTime });
-      Cookies.set("userToken", token, { expires: expirationTime });
 
-      const decodedToken = jwtDecode(token);
-
-      if (
-        decodedToken &&
-        decodedToken[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] === "Admin"
-      ) {
-        // User is an admin
-        console.log("User is an admin.");
-        Cookies.set("Role", "Admin");
-        navigate("/admin", { state: { message: ('Login was successfully as Admin!') } });
-        onLogin();
-
+      if (data.role === 'Admin') {
+        navigate('/admin', { state: { message: 'Login was successfully as Admin!' } });
       } else {
-        // User is not an admin
-        console.log("User is an user.")
-        Cookies.set("Role", "User");
-        navigate("/", { state: { message: "Login was successfull as User!" } });
+        console.log(data.role);
+        navigate('/', { state: { message: 'Login was successfully as User!' } });
       }
-      onLogin(data.userId, data.token, data.role);
-      getOrderId();
-
-      setError("");
-
+      await getOrderId();
+      setError('');
     } catch (error) {
       toast.error('Email or Password is bad!');
-
-      console.error("Login error:", error.message);
-      setError("Invalid Email or Password!");
+      console.error('Login error:', error.message);
+      setError('Invalid Email or Password!');
     }
   };
 
 
+
   const getOrderId = async () => {
 
-    const userId = Cookies.get('userId');
-    const userRole = Cookies.get('Role');
-    const token = Cookies.get('userToken');
+    const userId = authState.userId;
+    const userRole = authState.userRole
+    const token = authState.token;
 
     try {
 
@@ -151,11 +120,12 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
 
       const data = await response.json();
       console.log(data);
-      const orderId = data.orderId;
+      let orderId = data.orderId;
       if (orderId !== null) {
-        Cookies.set("orderId", orderId);
+        localStorage.setItem('orderId', orderId)
       }
       else {
+        orderId = 0;
         toast.info("You don't have got any Order now!")
       }
 

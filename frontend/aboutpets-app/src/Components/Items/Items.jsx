@@ -16,10 +16,14 @@ const Items = (props) => {
 
     const priceStyle = {
         color: props.discount ? 'red' : 'black'
+
+
     };
+
+    const containerClass = props.stock === 0 ? 'item_container out-of-stock' : 'item_container'
     return (
 
-        <div className='item_container' key={props.productId}>
+        <div className={containerClass} key={props.productId}>
             <div className='imgBox'>
                 <img src={props.imageBase64}
                     alt={props.productName} />
@@ -42,7 +46,7 @@ const Items = (props) => {
                 <hr />
                 {props.discount > 0 && <h4>Discount : {props.discount * 100}%</h4>}
                 <hr />
-                <button onClick={handleClick}>View</button>
+                <button onClick={handleClick} disabled={props.stock === 0}>View</button>
             </div>
 
         </div>
