@@ -9,26 +9,25 @@ import { AuthContext } from '../../AuthContext/AuthContext'
 
 const Nav = () => {
 
-  const { authState, login, logout } = useContext(AuthContext);
-
-
+  const { authState, logout } = useContext(AuthContext);
   const [menu, setMenu] = useState("shop");
   const [orderItems, setOrderitems] = useState([]);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
   useEffect(() => {
     const fetchOrderItems = async () => {
       try {
-        const { userToken, userRole, orderId } = authState;
+        const { token, role, orderId } = authState;
+
 
         if (orderId) {
           const url = new URL(`${API_BASE_URL}/order/orderItems/${orderId}`);
           const response = await fetch(url, {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${userToken}`,
-              'Role': userRole
+              'Authorization': `Bearer ${token}`,
+              'Role': role
             },
           });
           if (!response.ok) {
@@ -42,16 +41,19 @@ const Nav = () => {
       }
     };
 
-    if (authState) {
+    if (authState && authState.token && authState.orderId) {
       fetchOrderItems();
     }
   }, [authState]);
 
-  useEffect(() => {
-    setIsAuthenticated(true);
 
-  }, [authState])
 
+  const handleLogout = () => {
+    logout();
+  }
+
+
+  const isAuthenticated = !!authState.token;
 
   return (
     <div className='nav'>
@@ -69,13 +71,13 @@ const Nav = () => {
       </ul>
       {isAuthenticated ? (
         <div className='nav-login-cart'>
-          <button onClick={logout}>Logout</button>
+          <button onClick={handleLogout}>Logout</button>
           <Link to='/cart'><img src={cart_icon} alt='' /></Link>
           <div className='nav-cart-count'>{orderItems ? orderItems.length : 0}</div>
         </div>
       ) : (
         <div className='nav-login-cart'>
-          <Link to='/login'><button>Login</button></Link>
+          <Link to='/login'><button >Login</button></Link>
         </div>
       )}
 

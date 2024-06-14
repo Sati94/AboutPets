@@ -1,23 +1,22 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import "./CartElement.css";
-import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 import API_BASE_URL from '../../config';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../AuthContext/AuthContext';
+
 
 const CartElement = () => {
 
     const [orderItems, setOrderItems] = useState([]);
     const [orders, setOrders] = useState([]);
-    const userToken = Cookies.get("userToken");
-    const userRole = Cookies.get("Role");
-    const orderId = Cookies.get("orderId");
-    const userId = Cookies.get("userId");
+    const { authState, setAuthState } = useContext(AuthContext)
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
+        const { orderId, token, role } = authState;
         const fetchOrderById = async () => {
             try {
 
@@ -25,8 +24,8 @@ const CartElement = () => {
                 const response = await fetch(`${API_BASE_URL}/order/${orderId}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${userToken}`,
-                        'Role': userRole
+                        'Authorization': `Bearer ${token}`,
+                        'Role': role
                     },
                 })
                 if (!response.ok) {
@@ -46,14 +45,15 @@ const CartElement = () => {
 
 
     useEffect(() => {
+        const { orderId, token, role } = authState;
         const fetchOrderItems = async () => {
             try {
 
                 const response = await fetch(`${API_BASE_URL}/order/orderItems/${orderId}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${userToken}`,
-                        'Role': userRole
+                        'Authorization': `Bearer ${token}`,
+                        'Role': role
                     },
                 })
                 if (!response.ok) {
@@ -86,14 +86,15 @@ const CartElement = () => {
     }, []);*/
 
     const removedOrderItem = async (orderItemId) => {
+        const { orderId, token, role, userId } = authState;
         try {
 
             const response = await fetch(`${API_BASE_URL}/orderitem/remove?orderId=${orderId}&orderItemId=${orderItemId}&userId=${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`,
-                    'Role': userRole
+                    'Authorization': `Bearer ${token}`,
+                    'Role': role
                 },
             });
 
@@ -115,13 +116,14 @@ const CartElement = () => {
     };
 
     const updateOrderStatus = async () => {
+        const { orderId, token, role } = authState;
         try {
             const response = await fetch(`${API_BASE_URL}/order/update/${orderId}?&orderstatus=2`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`,
-                    'Role': userRole
+                    'Authorization': `Bearer ${token}`,
+                    'Role': role
                 },
             });
             if (!response.ok) {
@@ -132,7 +134,11 @@ const CartElement = () => {
             toast.success('Order is sending!')
 
             setLoading(!loading);
-            Cookies.remove("orderId")
+            const updatedAuthState = {
+                ...authState,
+                orderId: null
+            };
+            setAuthState(updatedAuthState);
             navigate("/")
         } catch (error) {
             console.error('Error updating order status:', error.message);

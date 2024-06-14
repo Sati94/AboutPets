@@ -12,7 +12,6 @@ import Login from './Pages/Login';
 import ProductsDisplay from './Components/ProductsDisplay/ProductsDisplay';
 import SubCategoryPage from './Pages/SubCategoryPage';
 import Register from './Pages/Register';
-import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
 import { AuthProvider, AuthContext } from './AuthContext/AuthContext'
 
 
@@ -61,13 +60,16 @@ const App = () => {
             <Route path='/products' element={<ProductsDisplay />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
+            <Route path='/products/:productId' element={<Product />} />
+            <Route path='/category/:category/:subCategory' element={<SubCategoryPage />} />
 
-            <Route element={<ProtectedRoute />}>
-              <Route path='/profile' element={<Profile />} />
-              <Route path='/cart' element={<Cart />} />
-              <Route path='/category/:category/:subCategory' element={<SubCategoryPage />} />
-              <Route path='/products/:productId' element={<Product />} />
-            </Route>
+
+
+            <Route path='/profile' element={<Profile />} />
+            <Route path='/cart' element={<Cart />} />
+
+
+
           </Routes>
         </Router>
       </AuthProvider>

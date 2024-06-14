@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './UserProfile.css';
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
@@ -6,15 +6,13 @@ import API_BASE_URL from '../../config';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/ReactToastify.css'
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../AuthContext/AuthContext';
 
 
 const UserProfile = () => {
 
     const navigate = useNavigate();
-    const userId = Cookies.get("userId");
-    const userName = Cookies.get("userUserName");
-    const userToken = Cookies.get("userToken");
-    const userRole = Cookies.get("userRole")
+    const { authState } = useContext(AuthContext);
 
     const [profile, setProfile] = useState({
         userProfileId: "",
@@ -30,36 +28,39 @@ const UserProfile = () => {
 
 
     useEffect(() => {
+        const { token, role, userId } = authState;
+
         if (!userId) {
             toast.error('First, you have to Log In!');
-
             navigate('/login');
-
             return;
         }
 
-        fetch(`${API_BASE_URL}/UserProfile/user/profile/${userId}`, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${userToken}`,
-                "Role": { userRole }
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response is bad");
+        fetchUserProfile(userId, token, role);
+    }, []);
+
+    const fetchUserProfile = async (userId, token, role) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/UserProfile/user/profile/${userId}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                    "Role": role
                 }
-                return response.json();
-            })
-            .then(data => {
-                setProfile(data);
-                setLoading(false);
-            })
-            .catch(error => {
-                setError(error);
-                setLoading(false);
             });
-    }, [userId, userToken, navigate, userRole]);
+
+            if (!response.ok) {
+                throw new Error("Network response is bad");
+            }
+
+            const data = await response.json();
+            setProfile(data);
+            setLoading(false);
+        } catch (error) {
+            setError(error);
+            setLoading(false);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -71,12 +72,14 @@ const UserProfile = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const { token, role, userId, userName } = authState;
+
         fetch(`${API_BASE_URL}/update/user/profile/${userId}`, {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${userToken}`,
-                "Role": { userRole }
+                "Authorization": `Bearer ${token}`,
+                "Role": role
             },
             body: JSON.stringify(profile)
         })
@@ -101,7 +104,7 @@ const UserProfile = () => {
     return (
 
         <div className="profile-container">
-            <h2>{userName} Profile</h2>
+            <h2>{authState.userName} Profile</h2>
             <form className="profile-form" onSubmit={handleSubmit}>
                 <div>
                     <label>First Name:</label>

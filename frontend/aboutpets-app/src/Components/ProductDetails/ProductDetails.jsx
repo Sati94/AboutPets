@@ -1,21 +1,21 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import "./ProductDetails.css"
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import API_BASE_URL from '../../config'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
-import Cookies from 'js-cookie'
 import 'react-toastify/ReactToastify.css'
+import { AuthContext } from '../../AuthContext/AuthContext'
 
 const ProductDetails = () => {
 
     const { productId } = useParams();
     const [product, setProduct] = useState([]);
     const [quantity, setQuantity] = useState(1);
-    const [orderId, setOrderId] = useState(null);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const { authState, setAuthState } = useContext(AuthContext);
 
 
 
@@ -37,7 +37,7 @@ const ProductDetails = () => {
 
     const handleAddToCart = async () => {
 
-        const userId = Cookies.get("userId");
+        const { userId, orderId, token, role } = authState
         if (!userId) {
 
             navigate("/login", { state: { message: "You have to Log In First" } });
@@ -54,8 +54,8 @@ const ProductDetails = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${Cookies.get('userToken')}`,
-                    'Role': Cookies.get('userRole')
+                    'Authorization': `Bearer ${token}`,
+                    'Role': role
                 },
                 body: JSON.stringify({
                     userId,
@@ -70,13 +70,19 @@ const ProductDetails = () => {
             }
             const data = await response.json();
             toast.success('Item added to cart!')
+            const updatedAuthState = {
+                ...authState,
+                orderId: orderId
+            };
+            setAuthState(updatedAuthState);
             console.log(data);
+            console.log(authState)
         } catch (error) {
 
             console.error("Error adding item to cart!");
 
         }
-        setOrderId(orderId);
+
         console.log(orderId)
         setLoading(!loading);
     }
