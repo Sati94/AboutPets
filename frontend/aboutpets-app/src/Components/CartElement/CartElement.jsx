@@ -156,7 +156,7 @@ const CartElement = () => {
                     {orderItems.map((item) => (
                         <li key={item.orderItemId} className="cart-item"> {/* Hozzáadva a cart-item class */}
                             <div className="cart-item-content">
-                                <img src={item.product.imageBase64} alt={item.product.productName} className="cart-item-image" /> {/* Kép hozzáadása */}
+                                <img src={`data:image/jpeg;base64,${item.product.imageBase64}`} alt={item.product.productName} className="cart-item-image" /> {/* Kép hozzáadása */}
                                 <div className="cart-item-details">
                                     <p>{item.product.productName}</p>
                                     <p>{item.product.description}</p>

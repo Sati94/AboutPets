@@ -1,8 +1,7 @@
-import Cookies from 'js-cookie';
-import { useState, useContext } from 'react';
+
 import './App.css';
 import Nav from './Components/Nav/Nav';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Shop from './Pages/Shop';
 import ShopCategory from './Pages/ShopCategory';
 import Product from './Pages/Product'
@@ -12,7 +11,9 @@ import Login from './Pages/Login';
 import ProductsDisplay from './Components/ProductsDisplay/ProductsDisplay';
 import SubCategoryPage from './Pages/SubCategoryPage';
 import Register from './Pages/Register';
-import { AuthProvider, AuthContext } from './AuthContext/AuthContext'
+import ManageProductsPage from './AdminPages/ManageProductsPage';
+import UpdateProductPage from './AdminPages/UpdateProductPage';
+import { AuthProvider } from './AuthContext/AuthContext';
 
 
 
@@ -62,11 +63,12 @@ const App = () => {
             <Route path='/register' element={<Register />} />
             <Route path='/products/:productId' element={<Product />} />
             <Route path='/category/:category/:subCategory' element={<SubCategoryPage />} />
-
-
-
             <Route path='/profile' element={<Profile />} />
             <Route path='/cart' element={<Cart />} />
+
+
+            <Route path='/admin/products' element={<ManageProductsPage />} />
+            <Route path='/admin/product/:productId' element={<UpdateProductPage />} />
 
 
 

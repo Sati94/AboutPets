@@ -3,9 +3,9 @@ import ProductDetails from '../Components/ProductDetails/ProductDetails'
 
 const Product = () => {
     return (
-        <div>
-            <ProductDetails />
-        </div>
+
+        <ProductDetails />
+
     )
 }
 

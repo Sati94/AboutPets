@@ -1,0 +1,33 @@
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.product-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    width: 300px;
+    border-radius: 5px;
+}
+
+.product-item ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.product-item ul li {
+    margin-bottom: 5px;
+}
+
+.product-item .update {
+    margin-right: 5px;
+    background-color: green;
+
+}
+
+.product-item .delete {
+    margin-right: 5px;
+    background-color: red;
+
+}

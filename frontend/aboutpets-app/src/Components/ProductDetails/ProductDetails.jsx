@@ -93,7 +93,7 @@ const ProductDetails = () => {
 
     return (
         <div className="productDetails">
-            <img src={product.imageBase64} alt={product.productName} />
+            <img src={`data:image/jpeg;base64,${product.imageBase64}`} alt={product.productName} />
             <h1>{product.productName}</h1>
             <p>Price: ${product.price}</p>
             {product.discount > 0 && <p>Discount: {product.discount * 100}%</p>}

@@ -25,7 +25,7 @@ const Items = (props) => {
 
         <div className={containerClass} key={props.productId}>
             <div className='imgBox'>
-                <img src={props.imageBase64}
+                <img src={`data:image/jpeg;base64,${props.imageBase64}`}
                     alt={props.productName} />
 
             </div>

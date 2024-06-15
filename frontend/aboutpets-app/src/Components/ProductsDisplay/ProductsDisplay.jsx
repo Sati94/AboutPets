@@ -80,7 +80,7 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
                             category={product.category}
                             subCategory={product.subCategory}
                             discount={product.discount}
-                            image={product.imageBase64}
+                            image={`data:image/jpeg;base64,${product.imageBase64}`}
                         />
                     ))}
                 </div>
