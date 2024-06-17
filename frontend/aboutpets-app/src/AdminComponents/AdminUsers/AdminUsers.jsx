@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config';
 import SearchInput from '../../Components/SearchInput/SearchInput';
 import { ToastContainer, toast } from 'react-toastify';
+import DeleteConfirmModal from '../../Modal/DeleteConfirmModal';
 import "./AdminUsers.css";
 
 
@@ -16,7 +17,9 @@ const AdminUsers = () => {
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredUsers, setFilteredUsers] = useState([]);
-    const [userProfileId, setUserProfileId] = useState("");
+    const [userId, setUserId] = useState("");
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
     const navigate = useNavigate();
 
 
@@ -66,65 +69,53 @@ const AdminUsers = () => {
 
     }
     const handleProfileClick = (userId) => {
-        setUserProfileId(userId);
+        setUserId(userId);
         navigate(`/admin/users/${userId}`)
     };
 
 
-    /*useEffect(() => {
-        async function fetchUserProfile() {
+    const toggleDeleteModal = () => {
+        setShowDeleteModal(!showDeleteModal);
+    }
+    const openDeleteModal = (user) => {
+        setUserToDelete(user);
+        setShowDeleteModal(true);
+    }
+
+
+    const cancelDelete = () => {
+        setShowDeleteModal(false);
+    };
+
+    const confirmToDelete = async () => {
+        if (userToDelete) {
             try {
                 const { token, role } = authState;
-                const response = await fetch(`${API_BASE_URL}/UserProfile/user/profile/${userProfileId}`, {
+                const response = await fetch(`${API_BASE_URL}/user/delete/${userToDelete.id}`, {
+                    method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`,
                         'Role': role
                     }
-                });
+                })
                 if (response.ok) {
-                    const data = await response.json();
-                    console.log("User profile data:", data);
-
-                } else {
-                    console.error("Error fetching user profile:", response.status, response.statusText);
+                    toast.success("Element deleted!");
+                    const updatedUsers = users.filter((user) => user.id !== userToDelete.id);
+                    setUsers(updatedUsers);
+                    setFilteredUsers(updatedUsers);
+                    setShowDeleteModal(false);
                 }
-            } catch (error) {
-                console.error("Error fetching user profile:", error);
-            }
-        }
-
-        if (userProfileId !== "") {
-            fetchUserProfile();
-        }
-    }, [userProfileId, authState]);*/
-
-
-    const handleDelete = async (userId) => {
-
-        try {
-            const { token, role } = authState;
-            const response = await fetch(`${API_BASE_URL}/user/delete/${userId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    'Role': role
+                else {
+                    toast.error("Somehing is worng!");
                 }
-            })
-            if (response.ok) {
-                toast.success("Element deleted!");
-            }
-            else {
-                toast.error("Somehing is worng!");
-            }
 
+            }
+            catch (error) {
+                console.log("Error:", error);
+                toast.error("Somehing is worng!")
+            }
         }
-        catch (error) {
-            console.log("Error:", error);
-            toast.error("Somehing is worng!")
-        }
-
     };
 
 
@@ -142,7 +133,7 @@ const AdminUsers = () => {
                                 <li><strong>Email:</strong> {user.email}</li>
                             </ul>
                             <button className='profile' onClick={() => handleProfileClick(user.id)}>Profile</button>
-                            <button className='delete' onClick={() => handleDelete(user.id)}>Delete</button>
+                            <button className='delete' onClick={() => openDeleteModal(user)}>Delete</button>
 
                         </div>
 
@@ -157,7 +148,9 @@ const AdminUsers = () => {
                 ))}
             </div>
             <ToastContainer />
-        </div>
+            <DeleteConfirmModal isOpen={showDeleteModal} onCancel={cancelDelete} onConfirm={confirmToDelete} />
+
+        </div >
     )
 
 }

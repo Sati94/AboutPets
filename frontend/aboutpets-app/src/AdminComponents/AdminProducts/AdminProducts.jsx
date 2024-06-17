@@ -6,12 +6,15 @@ import SearchInput from '../../Components/SearchInput/SearchInput'
 import API_BASE_URL from '../../config'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
+import DeleteConfirmModal from '../../Modal/DeleteConfirmModal'
 
 const AdminProducts = () => {
     const { authState } = useContext(AuthContext);
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [productToDelete, setProductToDelete] = useState(false);
     const navigate = useNavigate();
 
 
@@ -49,6 +52,9 @@ const AdminProducts = () => {
             })
             if (response.ok) {
                 toast.success("Element deleted");
+                const updatedProducts = products.filter((product) => product.productId !== productId);
+                setProducts(updatedProducts);
+                setFilteredProducts(updatedProducts);
             }
             else {
                 toast.error("Somehing is worng!");
@@ -99,7 +105,23 @@ const AdminProducts = () => {
     const addProductClick = () => {
         navigate("/admin/addproduct")
     }
+    const toggleDeleteModal = () => {
+        setShowDeleteModal(!showDeleteModal);
+    }
+    const openDeleteModal = (product) => {
+        setProductToDelete(product);
+        setShowDeleteModal(true);
+    }
 
+    const confirmDelete = async () => {
+        if (productToDelete) {
+            await handleDelete(productToDelete.productId);
+            setShowDeleteModal(false);
+        }
+    }
+    const cancelDelete = () => {
+        setShowDeleteModal(false);
+    }
 
 
 
@@ -127,12 +149,13 @@ const AdminProducts = () => {
 
                             </ul>
                             <button className='update' onClick={() => handleClick(product)}>Update</button>
-                            <button className='delete' onClick={() => handleDelete(product.productId)}>Delete</button>
+                            <button className='delete' onClick={() => openDeleteModal(product)}>Delete</button>
                         </div>
                     )
                 })}
             </div>
             <ToastContainer />
+            <DeleteConfirmModal isOpen={showDeleteModal} onCancel={cancelDelete} onConfirm={confirmDelete} />
         </div>
     )
 }
