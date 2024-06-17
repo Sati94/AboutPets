@@ -14,7 +14,10 @@ import Register from './Pages/Register';
 import ManageProductsPage from './AdminPages/ManageProductsPage';
 import UpdateProductPage from './AdminPages/UpdateProductPage';
 import AddProductPage from './AdminPages/AddProductPage';
+import ManageUseresPages from './AdminPages/ManageUseresPages';
+import UpdateUserProfile from './AdminComponents/AdminUsers/UpdateUserProfile/UpdateUserProfile';
 import { AuthProvider } from './AuthContext/AuthContext';
+import UpdateUserProfilePage from './AdminPages/UpdateUserProfilePage';
 
 
 
@@ -71,6 +74,8 @@ const App = () => {
             <Route path='/admin/products' element={<ManageProductsPage />} />
             <Route path='/admin/product/:productId' element={<UpdateProductPage />} />
             <Route path='/admin/addproduct' element={<AddProductPage />} />
+            <Route path='/admin/users' element={<ManageUseresPages />} />
+            <Route path='/admin/users/:userId' element={<UpdateUserProfilePage />} />
 
 
           </Routes>
