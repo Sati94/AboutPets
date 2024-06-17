@@ -13,6 +13,7 @@ import SubCategoryPage from './Pages/SubCategoryPage';
 import Register from './Pages/Register';
 import ManageProductsPage from './AdminPages/ManageProductsPage';
 import UpdateProductPage from './AdminPages/UpdateProductPage';
+import AddProductPage from './AdminPages/AddProductPage';
 import { AuthProvider } from './AuthContext/AuthContext';
 
 
@@ -69,7 +70,7 @@ const App = () => {
 
             <Route path='/admin/products' element={<ManageProductsPage />} />
             <Route path='/admin/product/:productId' element={<UpdateProductPage />} />
-
+            <Route path='/admin/addproduct' element={<AddProductPage />} />
 
 
           </Routes>

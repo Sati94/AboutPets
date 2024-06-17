@@ -11,6 +11,7 @@ const Items = (props) => {
     }
     const bonus = props.discount ? props.price * (props.discount / 100) : 0;
 
+
     const newPrice = Math.ceil(props.price - bonus);
 
 
@@ -25,7 +26,7 @@ const Items = (props) => {
 
         <div className={containerClass} key={props.productId}>
             <div className='imgBox'>
-                <img src={`data:image/jpeg;base64,${props.imageBase64}`}
+                <img src={`data:image/jpeg;base64,${props.image}`}
                     alt={props.productName} />
 
             </div>
