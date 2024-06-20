@@ -94,7 +94,15 @@ namespace WebShopAPI.Service.OrderItemServiceMap
 
                     if (orderItem != null)
                     {
+                        var product = orderItem.Product;
+                        _context.OrderItems.Remove(orderItem);
+                        if (product != null)
+                        {
+                            Console.WriteLine($"Product information: ProductId: {product.ProductId}, ProductName: {product.ProductName}, Stock: {product.Stock}");
+                            product.Stock += orderItem.Quantity;
+                            _context.Products.Update(product);
 
+                        }
                         order.OrderItems.Remove(orderItem);
 
 

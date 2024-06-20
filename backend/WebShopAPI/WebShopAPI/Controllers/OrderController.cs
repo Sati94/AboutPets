@@ -96,11 +96,11 @@ namespace WebShopAPI.Controllers
             }
         }
         [HttpPut("/order/update/{orderId}"), Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<bool>> UpdateStatusByOrderId(int orderId, OrderStatuses orderstatus)
+        public async Task<ActionResult<bool>> UpdateStatusByOrderId(int orderId, [FromBody] int orderStatuses)
         {
             try
             {
-                var order = await _orderService.UpdateOrderStatus(orderId, orderstatus);
+                var order = await _orderService.UpdateOrderStatus(orderId, orderStatuses);
                 return Ok(order);
             }
             catch (ArgumentException ex)

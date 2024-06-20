@@ -75,7 +75,7 @@ namespace WebShopAPI.Controllers
                 AddErrors(result);
                 return BadRequest(ModelState);
             }
-            return Ok(new AuthResponse(result.IdentityUserId, result.Email, result.UserName, result.Token));
+            return Ok(new AuthResponse(result.IdentityUserId, result.Email, result.UserName, result.Token, result.Role));
         }
     }
 

@@ -28,11 +28,11 @@ namespace WebShopAPI.Service.Authentication
             await _userManager.AddToRoleAsync(identityuser, role);
 
 
-            return new AuthResult(true, identityuser.Id, email, username, "");
+            return new AuthResult(true, identityuser.Id, email, username, "", role);
         }
         private static AuthResult FailedRegistration(IdentityResult result, string email, string username)
         {
-            var authResult = new AuthResult(false, null, email, username, "");
+            var authResult = new AuthResult(false, null, email, username, "", "");
 
             foreach (var error in result.Errors)
             {
@@ -61,18 +61,18 @@ namespace WebShopAPI.Service.Authentication
             var adminAccessToken = _tokenService.CreateToken(managedUser, role);
 
 
-            return new AuthResult(true, managedUser.Id, managedUser.Email, managedUser.UserName, adminAccessToken);
+            return new AuthResult(true, managedUser.Id, managedUser.Email, managedUser.UserName, adminAccessToken, role);
 
         }
         private static AuthResult InvalidEmail(string email)
         {
-            var result = new AuthResult(false, null, email, "", "");
+            var result = new AuthResult(false, null, email, "", "", "");
             result.ErrorMessages.Add("Bad credentials", "Invalid email");
             return result;
         }
         private static AuthResult InvalidPassword(string email, string userName)
         {
-            var result = new AuthResult(false, null, email, userName, "");
+            var result = new AuthResult(false, null, email, userName, "", "");
             result.ErrorMessages.Add("Bad credentials", "Invalid password");
             return result;
         }

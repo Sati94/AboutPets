@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Data;
 using WebShopAPI.Model;
@@ -87,12 +88,12 @@ namespace WebShopAPI.Service.OrderServiceMap
             }
             return order;
         }
-        public async Task<bool> UpdateOrderStatus(int orderId, OrderStatuses newStatus)
+        public async Task<bool> UpdateOrderStatus(int orderId, [FromBody] int orderStatuses)
         {
             var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
             if (order != null)
             {
-                order.OrderStatuses = newStatus;
+                order.OrderStatuses = (OrderStatuses)orderStatuses;
                 await _context.SaveChangesAsync();
                 return true;
             }

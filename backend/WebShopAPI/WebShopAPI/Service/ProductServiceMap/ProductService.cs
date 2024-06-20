@@ -19,6 +19,7 @@ namespace WebShopAPI.Service.ProductServiceMap
         }
         public async Task<Product> CreatePorductAsync(ProductDto product)
         {
+
              var newProduct  = new Product 
              {
                  ProductName = product.ProductName,
