@@ -103,38 +103,40 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
     const userId = authState.userId;
     const userRole = authState.userRole
     const token = authState.token;
+    if (userRole === 'User') {
+      try {
 
-    try {
+        const response = await fetch(`${API_BASE_URL}/order/pending/${userId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'Role': userRole,
+          },
+        });
 
-      const response = await fetch(`${API_BASE_URL}/order/pending/${userId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'Role': userRole,
-        },
-      });
+        if (!response.ok) {
+          throw new Error('Failed to fetch the data!');
+        }
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch the data!');
+        const data = await response.json();
+        console.log(data);
+        let orderId = data.orderId;
+        if (orderId !== null) {
+          localStorage.setItem('orderId', orderId)
+        }
+        else {
+          orderId = 0;
+          toast.info("You don't have got any Order now!")
+        }
+
+        console.log(document.cookie);
+      } catch (error) {
+        console.error("Error fetching OrderId:", error);
       }
-
-      const data = await response.json();
-      console.log(data);
-      let orderId = data.orderId;
-      if (orderId !== null) {
-        localStorage.setItem('orderId', orderId)
-      }
-      else {
-        orderId = 0;
-        toast.info("You don't have got any Order now!")
-      }
-
-      console.log(document.cookie);
-    } catch (error) {
-      console.error("Error fetching OrderId:", error);
+    } else {
+      console.log("User role is not 'user'. Skipping order fetch.");
     }
-  };
-
+  }
 
   return (
     <div className="form">

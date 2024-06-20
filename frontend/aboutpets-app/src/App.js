@@ -12,6 +12,7 @@ import ProductsDisplay from './Components/ProductsDisplay/ProductsDisplay';
 import SubCategoryPage from './Pages/SubCategoryPage';
 import Register from './Pages/Register';
 import ManageProductsPage from './AdminPages/ManageProductsPage';
+import AdminToDo from './AdminComponents/AdminToDo/AdminToDo';
 import UpdateProductPage from './AdminPages/UpdateProductPage';
 import AddProductPage from './AdminPages/AddProductPage';
 import ManageUseresPages from './AdminPages/ManageUseresPages';
@@ -72,7 +73,7 @@ const App = () => {
             <Route path='/profile' element={<Profile />} />
             <Route path='/cart' element={<Cart />} />
 
-
+            <Route path='/admin' element={<AdminToDo />} />
             <Route path='/admin/products' element={<ManageProductsPage />} />
             <Route path='/admin/product/:productId' element={<UpdateProductPage />} />
             <Route path='/admin/addproduct' element={<AddProductPage />} />

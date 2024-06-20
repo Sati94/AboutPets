@@ -5,18 +5,25 @@ import cart_icon from '../Assets/cart_icon.png'
 import { Link } from 'react-router-dom'
 import API_BASE_URL from '../../config'
 import { AuthContext } from '../../AuthContext/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 
 const Nav = () => {
 
-  const { authState, logout } = useContext(AuthContext);
+  const { authState, logout, fetchOrderId } = useContext(AuthContext);
   const [menu, setMenu] = useState("shop");
   const [orderItems, setOrderitems] = useState([]);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (authState && authState.token && authState.role) {
+      fetchOrderId(); // fetchOrderId hívása az AuthContext-ben
+    }
+  }, [authState, fetchOrderId]);
 
 
   useEffect(() => {
-    console.log('Auth State :', authState)
+
     const fetchOrderItems = async () => {
       try {
         const { token, role, orderId } = authState;
@@ -51,6 +58,7 @@ const Nav = () => {
 
   const handleLogout = () => {
     logout();
+    navigate('/')
   }
 
 

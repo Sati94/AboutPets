@@ -16,8 +16,9 @@ const CartElement = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const { orderId, token, role } = authState;
+
         const fetchOrderById = async () => {
+            const { orderId, token, role } = authState;
             try {
 
                 console.log(orderId)
@@ -70,20 +71,8 @@ const CartElement = () => {
 
         };
         fetchOrderItems();
-    }, [loading]);
+    }, [loading, authState.orderId]);
 
-    /*const groupedOrderItems = orderItems.reduce((acc, item) => {
-        const existingItemIndex = acc.findIndex(i => i.productId === item.productId);
-        if (existingItemIndex !== -1) {
-
-            acc[existingItemIndex].quantity += item.quantity;
-            acc[existingItemIndex].price += item.price;
-        } else {
-
-            acc.push(item);
-        }
-        return acc;
-    }, []);*/
 
     const removedOrderItem = async (orderItemId) => {
         const { orderId, token, role, userId } = authState;
@@ -118,13 +107,14 @@ const CartElement = () => {
     const updateOrderStatus = async () => {
         const { orderId, token, role } = authState;
         try {
-            const response = await fetch(`${API_BASE_URL}/order/update/${orderId}?&orderstatus=2`, {
+            const response = await fetch(`${API_BASE_URL}/order/update/${orderId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                     'Role': role
                 },
+                body: JSON.stringify(2)
             });
             if (!response.ok) {
                 const errorMessage = await response.text();

@@ -19,3 +19,30 @@
 .order-item ul li {
     margin-bottom: 5px;
 }
+
+.order-item .update {
+    margin-right: 5px;
+    background-color: rgb(216, 238, 20);
+    color: black;
+    transition: background-color 0.3s, color 0.3s;
+
+}
+
+.order-item .delete {
+    margin-right: 5px;
+    background-color: red;
+    transition: background-color 0.3s;
+
+}
+
+.order-item .update:hover {
+    background-color: yellow;
+
+    color: black;
+
+}
+
+.order-item .delete:hover {
+    background-color: darkred;
+
+}

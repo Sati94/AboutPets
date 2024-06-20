@@ -22,12 +22,27 @@
 
 .product-item .update {
     margin-right: 5px;
-    background-color: green;
+    background-color: rgb(216, 238, 20);
+    color: black;
+    transition: background-color 0.3s, color 0.3s;
 
 }
 
 .product-item .delete {
     margin-right: 5px;
     background-color: red;
+    transition: background-color 0.3s;
+
+}
+
+.product-item .update:hover {
+    background-color: yellow;
+
+    color: black;
+
+}
+
+.product-item .delete:hover {
+    background-color: darkred;
 
 }

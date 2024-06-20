@@ -19,3 +19,30 @@
 .user-item ul li {
     margin-bottom: 5px;
 }
+
+.user-item .profile {
+    margin-right: 5px;
+    background-color: rgb(216, 238, 20);
+    color: black;
+    transition: background-color 0.3s, color 0.3s;
+
+}
+
+.user-item .delete {
+    margin-right: 5px;
+    background-color: red;
+    transition: background-color 0.3s;
+
+}
+
+.user-item .profile:hover {
+    background-color: yellow;
+
+    color: black;
+
+}
+
+.user-item .delete:hover {
+    background-color: darkred;
+
+}
