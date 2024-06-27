@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import "./ProductDetails.css"
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import Cookies from 'js-cookie'
 import API_BASE_URL from '../../config'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
@@ -37,7 +38,8 @@ const ProductDetails = () => {
 
     const handleAddToCart = async () => {
 
-        const { userId, orderId, token, role } = authState
+        const { userId, token, role, orderId } = authState
+
         if (!userId) {
 
             navigate("/login", { state: { message: "You have to Log In First" } });
@@ -48,7 +50,9 @@ const ProductDetails = () => {
             url.searchParams.append('userId', userId);
             url.searchParams.append('productId', productId);
             url.searchParams.append('quantity', quantity);
-            url.searchParams.append('orderId', orderId || 0);
+            if (orderId) {
+                url.searchParams.append('orderId', orderId);
+            }
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -64,28 +68,65 @@ const ProductDetails = () => {
                     orderId: orderId || 0
                 })
             });
-            if (!response.ok) {
-                toast.error('Failed to add item to cart!')
-                throw new Error('Failed to add item to cart!')
+            if (response.ok) {
+
+                const data = await response.json();
+                console.log(data);
+                if (data.orderId) {
+                    setAuthState(prevState => ({
+                        ...prevState,
+                        orderId: data.orderId
+                    }));
+                    Cookies.set("orderId", data.orderId);
+                }
+
+                toast.success('Item added to cart!');
+                console.log(data.orderId);
+                console.log(authState);
             }
-            const data = await response.json();
-            toast.success('Item added to cart!')
-            const updatedAuthState = {
-                ...authState,
-                orderId: orderId
-            };
-            setAuthState(updatedAuthState);
-            console.log(data);
-            console.log(authState)
         } catch (error) {
 
             console.error("Error adding item to cart!");
+            toast.error('Failed to add item to cart!')
+
+            await refreshUserOrder();
 
         }
 
-        console.log(orderId)
+
         setLoading(!loading);
     }
+
+    const refreshUserOrder = async () => {
+        const { userId, token, role } = authState;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/order/pending/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Role': role
+                }
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                if (userData.orderId) {
+                    setAuthState(prevState => ({
+                        ...prevState,
+                        orderId: userData.orderId
+                    }));
+                    Cookies.set("orderId", userData.orderId);
+                    console.log(userData)
+                }
+            } else {
+                console.error("Failed to fetch user data.");
+            }
+        } catch (error) {
+            console.error("Error refreshing user data.", error);
+        }
+    };
 
     if (!product) {
         return <div>Loading...</div>;

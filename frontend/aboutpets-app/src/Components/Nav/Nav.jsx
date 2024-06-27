@@ -8,25 +8,22 @@ import { AuthContext } from '../../AuthContext/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
 
+
+
 const Nav = () => {
 
-  const { authState, logout, fetchOrderId } = useContext(AuthContext);
+  const { authState, logout } = useContext(AuthContext);
   const [menu, setMenu] = useState("shop");
   const [orderItems, setOrderitems] = useState([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (authState && authState.token && authState.role) {
-      fetchOrderId(); // fetchOrderId hívása az AuthContext-ben
-    }
-  }, [authState, fetchOrderId]);
-
 
   useEffect(() => {
 
     const fetchOrderItems = async () => {
       try {
         const { token, role, orderId } = authState;
+
+
 
 
         if (orderId) {
@@ -49,10 +46,10 @@ const Nav = () => {
       }
     };
 
-    if (authState && authState.token && authState.orderId) {
+    if (authState.token && authState.orderId) {
       fetchOrderItems();
     }
-  }, [authState]);
+  }, [authState, orderItems]);
 
 
 

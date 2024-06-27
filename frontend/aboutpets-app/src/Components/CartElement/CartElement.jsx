@@ -5,22 +5,24 @@ import API_BASE_URL from '../../config';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext/AuthContext';
+import Cookies from 'js-cookie';
 
 
 const CartElement = () => {
 
     const [orderItems, setOrderItems] = useState([]);
     const [orders, setOrders] = useState([]);
-    const { authState, setAuthState } = useContext(AuthContext)
+    const { authState } = useContext(AuthContext)
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
 
         const fetchOrderById = async () => {
-            const { orderId, token, role } = authState;
-            try {
 
+            try {
+                const { token, role } = authState;
+                const orderId = Cookies.get("orderId");
                 console.log(orderId)
                 const response = await fetch(`${API_BASE_URL}/order/${orderId}`, {
                     headers: {
@@ -40,13 +42,17 @@ const CartElement = () => {
             }
 
         }
-        fetchOrderById()
-    }, [loading])
+        if (authState.token) {
+            fetchOrderById();
+        }
+
+    }, [authState.token, loading])
 
 
 
     useEffect(() => {
-        const { orderId, token, role } = authState;
+        const { token, role, orderId } = authState;
+
         const fetchOrderItems = async () => {
             try {
 
@@ -70,12 +76,15 @@ const CartElement = () => {
 
 
         };
-        fetchOrderItems();
-    }, [loading, authState.orderId]);
+        if (authState.token) {
+            fetchOrderItems();
+        }
+    }, [authState.token, loading]);
 
 
     const removedOrderItem = async (orderItemId) => {
         const { orderId, token, role, userId } = authState;
+
         try {
 
             const response = await fetch(`${API_BASE_URL}/orderitem/remove?orderId=${orderId}&orderItemId=${orderItemId}&userId=${userId}`, {
@@ -96,7 +105,7 @@ const CartElement = () => {
             // A válasz megfelelő, a megrendelési tétel sikeresen eltávolítva
             console.log('Order item removed successfully!');
             toast.success("Item deleted!")
-            setLoading(!loading);
+            setLoading((prev) => !prev);
         } catch (error) {
             navigate("/")
             console.error('Error removing order item:', error.message);
@@ -123,12 +132,9 @@ const CartElement = () => {
             console.log('Order status updated successfully!');
             toast.success('Order is sending!')
 
-            setLoading(!loading);
-            const updatedAuthState = {
-                ...authState,
-                orderId: null
-            };
-            setAuthState(updatedAuthState);
+            setLoading((prev) => !prev);
+            Cookies.remove("orderId");
+
             navigate("/")
         } catch (error) {
             console.error('Error updating order status:', error.message);

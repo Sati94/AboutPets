@@ -20,6 +20,7 @@ import ManageOrdersPages from './AdminPages/ManageOrdersPages';
 import UpdateOrdersPage from './AdminPages/UpdateOrdersPage';
 import { AuthProvider } from './AuthContext/AuthContext';
 import UpdateUserProfilePage from './AdminPages/UpdateUserProfilePage';
+import Cookies from 'js-cookie';
 
 
 
@@ -32,7 +33,7 @@ const App = () => {
   const userToken = Cookies.get("userToken");
   const userEmail = Cookies.get("userEmail");
   const userRole = Cookies.get("Role");
-  const orderId = Cookies.get("orderId");
+ 
 */
 
   /*const [isLoggedIn, setIsLoggedIn] = useState(!userId ? false : true);*/
@@ -55,6 +56,7 @@ const App = () => {
  
    }
      */
+  const orderId = Cookies.get("orderId");
   return (
     <div >
       <AuthProvider>

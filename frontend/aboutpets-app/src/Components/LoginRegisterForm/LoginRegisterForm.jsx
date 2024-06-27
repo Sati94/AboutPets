@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import "./LoginRegisterForm.css"
 import Cookies from 'js-cookie'
 import API_BASE_URL from '../../config'
@@ -87,7 +87,7 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
         console.log(data.role);
         navigate('/', { state: { message: 'Login was successfully as User!' } });
       }
-      await getOrderId();
+
       setError('');
     } catch (error) {
       toast.error('Email or Password is bad!');
@@ -98,45 +98,7 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
 
 
 
-  const getOrderId = async () => {
 
-    const userId = authState.userId;
-    const userRole = authState.userRole
-    const token = authState.token;
-    if (userRole === 'User') {
-      try {
-
-        const response = await fetch(`${API_BASE_URL}/order/pending/${userId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-            'Role': userRole,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch the data!');
-        }
-
-        const data = await response.json();
-        console.log(data);
-        let orderId = data.orderId;
-        if (orderId !== null) {
-          localStorage.setItem('orderId', orderId)
-        }
-        else {
-          orderId = 0;
-          toast.info("You don't have got any Order now!")
-        }
-
-        console.log(document.cookie);
-      } catch (error) {
-        console.error("Error fetching OrderId:", error);
-      }
-    } else {
-      console.log("User role is not 'user'. Skipping order fetch.");
-    }
-  }
 
   return (
     <div className="form">
