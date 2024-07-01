@@ -56,7 +56,7 @@ const App = () => {
  
    }
      */
-  const orderId = Cookies.get("orderId");
+  //const orderId = Cookies.get("orderId");
   return (
     <div >
       <AuthProvider>

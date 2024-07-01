@@ -14,7 +14,9 @@ const Nav = () => {
 
   const { authState, logout } = useContext(AuthContext);
   const [menu, setMenu] = useState("shop");
-  const [orderItems, setOrderitems] = useState([]);
+  const [orderItems, setOrderItems] = useState([]);
+  const [length, setLength] = useState(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,8 +24,6 @@ const Nav = () => {
     const fetchOrderItems = async () => {
       try {
         const { token, role, orderId } = authState;
-
-
 
 
         if (orderId) {
@@ -39,23 +39,33 @@ const Nav = () => {
             throw new Error('Failed to fetch the data!');
           }
           const data = await response.json();
-          setOrderitems(data);
+          setOrderItems(data);
+          setLength(data.length);
+
         }
       } catch (error) {
         console.error("Error fetching orderItems:", error);
+        navigate("/");
       }
     };
 
-    if (authState.token && authState.orderId) {
-      fetchOrderItems();
+    if (authState.token) {
+      if (authState.orderId) {
+        fetchOrderItems();
+        console.log(authState.orderId)
+      } else {
+
+        console.log(authState.orderId)
+        setLength(0);
+      }
     }
-  }, [authState, orderItems]);
+  }, [authState.token, authState.orderId, orderItems]);
 
 
 
   const handleLogout = () => {
     logout();
-    navigate('/')
+    navigate('/');
   }
 
 
@@ -79,7 +89,7 @@ const Nav = () => {
           <div className='nav-login-cart'>
             <button onClick={handleLogout}>Logout</button>
             <Link to='/cart'><img src={cart_icon} alt='' /></Link>
-            <div className='nav-cart-count'>{orderItems.length}</div>
+            <div className='nav-cart-count'>{length}</div>
           </div>
         ) : (
           <div className='nav-login-cart'>

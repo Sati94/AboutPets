@@ -77,7 +77,7 @@ const ProductDetails = () => {
                         ...prevState,
                         orderId: data.orderId
                     }));
-                    Cookies.set("orderId", data.orderId);
+
                 }
 
                 toast.success('Item added to cart!');
@@ -117,8 +117,8 @@ const ProductDetails = () => {
                         ...prevState,
                         orderId: userData.orderId
                     }));
-                    Cookies.set("orderId", userData.orderId);
-                    console.log(userData)
+
+
                 }
             } else {
                 console.error("Failed to fetch user data.");

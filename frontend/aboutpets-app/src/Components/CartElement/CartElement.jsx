@@ -12,7 +12,7 @@ const CartElement = () => {
 
     const [orderItems, setOrderItems] = useState([]);
     const [orders, setOrders] = useState([]);
-    const { authState } = useContext(AuthContext)
+    const { authState, setAuthState } = useContext(AuthContext)
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -21,8 +21,8 @@ const CartElement = () => {
         const fetchOrderById = async () => {
 
             try {
-                const { token, role } = authState;
-                const orderId = Cookies.get("orderId");
+                const { token, role, orderId } = authState;
+
                 console.log(orderId)
                 const response = await fetch(`${API_BASE_URL}/order/${orderId}`, {
                     headers: {
@@ -72,11 +72,16 @@ const CartElement = () => {
 
             } catch (error) {
                 console.error("Error fetching orderItems:", error);
+
+                setAuthState(prevState => ({
+                    ...prevState,
+                    orderId: null
+                }));
             }
 
 
         };
-        if (authState.token) {
+        if (authState.token && authState.orderId) {
             fetchOrderItems();
         }
     }, [authState.token, loading]);
@@ -133,7 +138,8 @@ const CartElement = () => {
             toast.success('Order is sending!')
 
             setLoading((prev) => !prev);
-            Cookies.remove("orderId");
+
+
 
             navigate("/")
         } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useState, createContext } from 'react'
 import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie';
+
 import API_BASE_URL from '../config';
 
 
@@ -16,7 +16,7 @@ const AuthProvider = ({ children }) => {
         userName: null,
         token: null,
         role: null,
-        orderId: Cookies.get('orderId') || null,
+        orderId: null,
     });
 
     const fetchOrderId = async (userId, role, token) => {
@@ -35,16 +35,16 @@ const AuthProvider = ({ children }) => {
                 }
 
                 const data = await response.json();
-                const orderId = data.orderId !== null ? data.orderId : 0;
+                const orderId = data.orderId !== null ? data.orderId : null;
 
-                Cookies.set('orderId', orderId);
+
 
                 return orderId;
 
             } catch (error) {
                 console.error("Error fetching OrderId:", error);
-                Cookies.set('orderId', 0);
-                return 0;
+
+                return null;
             }
         }
     };
@@ -76,7 +76,7 @@ const AuthProvider = ({ children }) => {
             console.error("Error fetching orderId:", error);
             setAuthState(prevState => ({
                 ...prevState,
-                orderId: 0,
+                orderId: null,
             }));
         }
 
@@ -94,7 +94,7 @@ const AuthProvider = ({ children }) => {
         });
 
         localStorage.removeItem('userData');
-        Cookies.remove("orderId");
+
     }
 
 
