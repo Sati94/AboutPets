@@ -85,9 +85,9 @@ namespace WebShopAPI.Service.OrderItemServiceMap
             if (user != null)
             {
                 var order = await _context.Orders
-                    .Include(o => o.OrderItems)
-                    .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
-
+                          .Include(o => o.OrderItems)
+                          .ThenInclude(oi => oi.Product) 
+                          .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
                 if (order != null)
                 {
                     var orderItem = order.OrderItems.FirstOrDefault(oi => oi.OrderItemId == orderItemId);
@@ -98,7 +98,7 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                         _context.OrderItems.Remove(orderItem);
                         if (product != null)
                         {
-                            Console.WriteLine($"Product information: ProductId: {product.ProductId}, ProductName: {product.ProductName}, Stock: {product.Stock}");
+               
                             product.Stock += orderItem.Quantity;
                             _context.Products.Update(product);
 
