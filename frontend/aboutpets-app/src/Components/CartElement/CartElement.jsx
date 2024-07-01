@@ -5,11 +5,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext/AuthContext';
 
+
 const CartElement = () => {
     const [orderItems, setOrderItems] = useState([]);
     const [orders, setOrders] = useState({});
     const { authState, setAuthState } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
+    const [hasBonus, setHasBonus] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,10 +42,39 @@ const CartElement = () => {
             }
         };
 
+        const fetchUserProfile = async () => {
+            try {
+                const { token, userId } = authState;
+
+                const response = await fetch(`${API_BASE_URL}/UserProfile/user/profile/${userId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user profile!');
+                }
+
+                const userProfile = await response.json();
+                console.log(userProfile)
+                if (userProfile.bonus > 0) {
+                    setHasBonus(true);
+                } else {
+                    setHasBonus(false);
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+            }
+        };
+
         if (authState.token) {
             fetchOrderById();
+            fetchUserProfile();
         }
     }, [authState.token, loading, authState.orderId]);
+
 
     useEffect(() => {
         const fetchOrderItems = async () => {
@@ -125,12 +156,38 @@ const CartElement = () => {
 
             toast.success('Order is sending!');
             setLoading(prev => !prev);
+            setAuthState(prevState => ({
+                ...prevState,
+                orderId: null
+            }));
             navigate("/");
         } catch (error) {
             console.error('Error updating order status:', error.message);
         }
     };
+    const applyBonusToOrder = async () => {
+        const { orderId, token, userId } = authState;
+        try {
+            const response = await fetch(`${API_BASE_URL}/order/${orderId}/apply-cupon/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
 
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`Failed to apply bonus to order: ${errorMessage}`);
+            }
+
+            toast.success('Bonus applied to order!');
+            setLoading(prev => !prev);
+            // You may want to refetch order details or update state after applying bonus
+        } catch (error) {
+            console.error('Error applying bonus to order:', error.message);
+        }
+    };
     return (
         <div>
             {!Array.isArray(orderItems) || orderItems.length === 0 || orders.orderStatuses > 1 ? (
@@ -154,7 +211,9 @@ const CartElement = () => {
                         </li>
                     ))}
                     <h2 className='Total-Price'>Total Price : {orders.totalPrice}</h2>
+                    {hasBonus && <button className='Apply-Bonus-Button' onClick={applyBonusToOrder}>Apply Bonus</button>}
                     <button className='Send-Order-Button' onClick={updateOrderStatus}>Send the order</button>
+
                 </ul>
             )}
             <ToastContainer />

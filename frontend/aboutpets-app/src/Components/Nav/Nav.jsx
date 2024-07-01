@@ -12,12 +12,12 @@ import { useNavigate } from 'react-router-dom'
 
 const Nav = () => {
 
-  const { authState, logout } = useContext(AuthContext);
+  const { authState, logout, setAuthState } = useContext(AuthContext);
   const [menu, setMenu] = useState("shop");
   const [orderItems, setOrderItems] = useState([]);
   const [length, setLength] = useState(0);
-
   const navigate = useNavigate();
+
 
   useEffect(() => {
 
@@ -42,22 +42,25 @@ const Nav = () => {
           setOrderItems(data);
           setLength(data.length);
 
+
         }
       } catch (error) {
         console.error("Error fetching orderItems:", error);
+
+        setAuthState(prevState => ({
+          ...prevState,
+          orderId: null
+        }));
+
         navigate("/");
       }
     };
 
-    if (authState.token) {
-      if (authState.orderId) {
-        fetchOrderItems();
-        console.log(authState.orderId)
-      } else {
+    if (authState.token && authState.orderId) {
+      fetchOrderItems();
+    } else {
 
-        console.log(authState.orderId)
-        setLength(0);
-      }
+      setLength(0);
     }
   }, [authState.token, authState.orderId, orderItems]);
 
