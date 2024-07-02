@@ -279,7 +279,7 @@ const CartElement = () => {
                 onCancel={cancelSendOrder}
                 onConfirm={confirmSendOrder}
                 title="Confirm Send Order"
-                message="Are you sure you want to send this order?"
+                message="Are you sure you want to send this order?(If you have a bonus, have you activated that?)"
                 confirmButtonText="Send Order"
                 confirmButtonClass="send"
             />
