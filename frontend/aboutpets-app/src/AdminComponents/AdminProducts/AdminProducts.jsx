@@ -6,7 +6,7 @@ import SearchInput from '../../Components/SearchInput/SearchInput'
 import API_BASE_URL from '../../config'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
-import DeleteConfirmModal from '../../Modal/DeleteConfirmModal'
+import DeleteConfirmModal from '../../Modal/DeleteConfirmModal/DeleteConfirmModal'
 
 const AdminProducts = () => {
     const { authState } = useContext(AuthContext);

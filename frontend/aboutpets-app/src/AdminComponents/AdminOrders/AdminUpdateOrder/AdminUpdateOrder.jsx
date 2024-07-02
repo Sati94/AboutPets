@@ -4,7 +4,7 @@ import API_BASE_URL from '../../../config';
 import './AdminUpdateOrder.css';
 import { AuthContext } from '../../../AuthContext/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
-
+import DeleteConfirmModal from '../../../Modal/DeleteConfirmModal/DeleteConfirmModal';
 
 const AdminUpdateOrder = () => {
     const { authState } = useContext(AuthContext);
@@ -12,9 +12,22 @@ const AdminUpdateOrder = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
     const [orderItems, setOrderItems] = useState([]);
+    const [deleteToOrderItem, setDeleteToOrderItem] = useState(null);
     const [status, setStatus] = useState(0);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [id, setId] = useState("");
 
+    const toggleDeleteModal = () => {
+        setShowDeleteModal(!showDeleteModal);
+    }
+    const openDeleteModal = (orderItem) => {
+        setDeleteToOrderItem(orderItem);
 
+        setShowDeleteModal(true);
+    }
+    const cancelDelete = () => {
+        setShowDeleteModal(false);
+    }
 
     useEffect(() => {
         const fetchOrderDetails = async () => {
@@ -29,6 +42,8 @@ const AdminUpdateOrder = () => {
                 });
                 const data = await response.json();
                 setOrder(data);
+                const user = data.userId;
+                setId(user);
             } catch (error) {
                 toast.error("Failed to fetch order details.");
             }
@@ -37,7 +52,7 @@ const AdminUpdateOrder = () => {
         if (authState.token) {
             fetchOrderDetails();
         }
-    }, [authState.token, authState.role, orderId]);
+    }, [authState.token, authState.role, orderId, orderItems]);
 
     useEffect(() => {
         const fetchOrderItems = async () => {
@@ -61,6 +76,7 @@ const AdminUpdateOrder = () => {
             fetchOrderItems();
         }
     }, [authState.token, authState.role, orderId]);
+
     const handleStatusChange = async (event) => {
         const newStatus = event.target.value;
         setStatus(newStatus);
@@ -96,29 +112,45 @@ const AdminUpdateOrder = () => {
         }
 
     };
-    const handleDeleteItem = async (orderItemId) => {
-        try {
-            const { token, role, userId } = authState;
-            const response = await fetch(`${API_BASE_URL}/orderitem/remove?orderId=${orderId}&orderItemId=${orderItemId}&userId=${userId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    'Role': role
-                }
-            });
+    const handleDeleteItem = async () => {
+        if (deleteToOrderItem) {
+            try {
+                const { token, role } = authState;
 
-            if (response.ok) {
-                setOrderItems(orderItems.filter(item => item.orderItemId !== orderItemId));
-                toast.success("Item deleted!");
-                console.log(orderItems)
-            } else {
+                console.log('Delete Parameters:', {
+                    orderId,
+                    orderItemId: deleteToOrderItem.orderItemId,
+                    id
+                });
+                const response = await fetch(`${API_BASE_URL}/orderitem/remove?orderId=${orderId}&orderItemId=${deleteToOrderItem.orderItemId}&userId=${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Role': role
+                    }
+                });
+
+                if (response.ok) {
+                    const updatedOrderItems = orderItems.filter(item => item.orderItemId !== deleteToOrderItem.orderItemId)
+                    setOrderItems(updatedOrderItems);
+                    toast.success("Item deleted!");
+                    setShowDeleteModal(false);
+                    console.log('Updated Order Items:', updatedOrderItems);
+                    if (updatedOrderItems.length === 0) {
+                        navigate('/admin/orders');
+                    }
+                } else {
+
+                    toast.error("Failed to delete item.");
+                }
+            } catch (error) {
                 toast.error("Failed to delete item.");
             }
-        } catch (error) {
-            toast.error("Failed to delete item.");
         }
+
     };
+
     return (
         <div>
             <h1>Order Details</h1>
@@ -131,6 +163,7 @@ const AdminUpdateOrder = () => {
                         <li>
                             <strong>Status:</strong>
                             <select value={status} onChange={handleStatusChange}>
+                                <option value="0">Select Status </option>
                                 <option value="1">Pending</option>
                                 <option value="2">Processing</option>
                                 <option value="3">Shipped</option>
@@ -151,7 +184,7 @@ const AdminUpdateOrder = () => {
                             <li><strong>Quantity:</strong> {item.quantity}</li>
                             <li><strong>Price:</strong> {item.price}</li>
                         </ul>
-                        <button onClick={() => handleDeleteItem(item.orderItemId)}>Delete</button>
+                        <button onClick={() => openDeleteModal(item)}>Delete</button>
                     </div>
                 ))
             ) : (
@@ -161,6 +194,7 @@ const AdminUpdateOrder = () => {
                 <button type="submit">Update Status</button>
             </form>
             <ToastContainer />
+            <DeleteConfirmModal isOpen={showDeleteModal} onCancel={cancelDelete} onConfirm={handleDeleteItem} />
         </div>
     );
 }

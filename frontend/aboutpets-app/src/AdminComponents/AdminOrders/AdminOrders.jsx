@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import API_BASE_URL from '../../config'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../AuthContext/AuthContext'
-import DeleteConfirmModal from '../../Modal/DeleteConfirmModal'
+import DeleteConfirmModal from '../../Modal/DeleteConfirmModal/DeleteConfirmModal'
 import SearchInput from '../../Components/SearchInput/SearchInput'
 import { ToastContainer, toast } from 'react-toastify'
 import './AdminOrders.css'
@@ -71,6 +71,7 @@ const AdminOrders = () => {
     }
     const openDeleteModal = (order) => {
         setDeleteToOrder(order);
+
         setShowDeleteModal(true);
     }
     const cancelDelete = () => {

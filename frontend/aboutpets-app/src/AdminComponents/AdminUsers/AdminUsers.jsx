@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config';
 import SearchInput from '../../Components/SearchInput/SearchInput';
 import { ToastContainer, toast } from 'react-toastify';
-import DeleteConfirmModal from '../../Modal/DeleteConfirmModal';
+import DeleteConfirmModal from '../../Modal/DeleteConfirmModal/DeleteConfirmModal';
 import "./AdminUsers.css";
 
 
