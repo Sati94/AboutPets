@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import './UserProfile.css';
 import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
 import API_BASE_URL from '../../config';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/ReactToastify.css'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext/AuthContext';
+import ConfirmModal from '../../Modal/ConfimModal';
 
 
 const UserProfile = () => {
@@ -25,6 +25,7 @@ const UserProfile = () => {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
 
 
     useEffect(() => {
@@ -38,6 +39,7 @@ const UserProfile = () => {
 
         fetchUserProfile(userId, token, role);
     }, []);
+
 
     const fetchUserProfile = async (userId, token, role) => {
         try {
@@ -72,7 +74,13 @@ const UserProfile = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const { token, role, userId, userName } = authState;
+        setShowUpdateConfirm(true);
+    }
+    const oncancel = () => {
+        setShowUpdateConfirm(false);
+    }
+    const submit = async () => {
+        const { token, role, userId } = authState;
 
         fetch(`${API_BASE_URL}/update/user/profile/${userId}`, {
             method: 'PUT',
@@ -91,11 +99,13 @@ const UserProfile = () => {
             })
             .then(() => {
                 toast.success('Profile updated successfully!')
+                navigate("/");
             })
             .catch(error => {
                 setError(error);
                 toast.error('Error updating profile')
             });
+        setShowUpdateConfirm(false);
     };
 
     if (loading) return <p>Loading...</p>;
@@ -128,7 +138,17 @@ const UserProfile = () => {
                 </div>
                 <button type="submit"> Update Profile</button>
             </form>
+
             <ToastContainer />
+            <ConfirmModal
+                isOpen={showUpdateConfirm}
+                onCancel={oncancel}
+                onConfirm={submit}
+                title="Confirm Update"
+                message="Are you sure you want to update your Profile?"
+                confirmButtonText="Update"
+                confirmButtonClass="update"
+            />
         </div>
     )
 }

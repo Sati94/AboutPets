@@ -31,10 +31,25 @@
     margin: 0 10px;
     padding: 8px 20px;
     cursor: pointer;
+    border: none;
 }
 
 .modal-buttons .delete {
     background-color: #e74c3c;
     color: white;
-    border: none;
+}
+
+.modal-buttons .update {
+    background-color: #f39c12;
+    color: black;
+}
+
+.modal-buttons .add {
+    background-color: rgb(0, 22, 89);
+    color: white;
+}
+
+.modal-buttons .send {
+    background-color: green;
+    color: white;
 }

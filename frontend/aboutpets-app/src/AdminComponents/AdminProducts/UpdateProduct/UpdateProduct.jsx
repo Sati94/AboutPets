@@ -4,6 +4,7 @@ import { useEffect, useState, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../../AuthContext/AuthContext'
 import './UpdateProduct.css'
+import ConfirmModal from '../../../Modal/ConfimModal'
 
 
 
@@ -24,6 +25,7 @@ const UpdateProduct = () => {
     })
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageBase64, setImageBase64] = useState('');
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
 
 
     const readFileAsBase64AndCompress = (file, maxWidth = 800, maxHeight = 600, quality = 0.8) => {
@@ -90,30 +92,6 @@ const UpdateProduct = () => {
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
     };
-
-    useEffect(() => {
-        const fetchProduct = async () => {
-            const { token, role } = authState;
-            try {
-                const response = await fetch(`${API_BASE_URL}/product/${productId}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                        'Role': role
-                    }
-                });
-                const data = await response.json();
-                setProduct(data);
-            } catch (error) {
-                console.error("Error fetching product:", error);
-            }
-        };
-
-        if (authState.token) {
-            fetchProduct();
-        }
-    }, [authState, productId]);
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setProduct({ ...product, [name]: value });
@@ -133,6 +111,9 @@ const UpdateProduct = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setShowUpdateModal(true)
+    }
+    const submit = async () => {
         const { token, role } = authState;
 
         try {
@@ -166,6 +147,40 @@ const UpdateProduct = () => {
             console.error("Error updating product:", error);
         }
     };
+    const oncancel = () => {
+        setShowUpdateModal(false);
+    }
+
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            const { token, role } = authState;
+            try {
+                const response = await fetch(`${API_BASE_URL}/product/${productId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Role': role
+                    }
+                });
+                const data = await response.json();
+                setProduct(data);
+            } catch (error) {
+                console.error("Error fetching product:", error);
+            }
+        };
+
+        if (authState.token) {
+            fetchProduct();
+        }
+    }, [authState, productId]);
+
+
+
+
+
+
+
     return (
         <div>
             <h1>Update Product</h1>
@@ -240,9 +255,19 @@ const UpdateProduct = () => {
                     onChange={handleFileChange}
                 />
                 <button type="button" onClick={handleUpload}>Upload Image</button>
-                <button type="submit">Update Product</button>
+                <button type="submit" onClick={handleSubmit}>Update Product</button>
             </form>
 
+
+            <ConfirmModal
+                isOpen={showUpdateModal}
+                onCancel={oncancel}
+                onConfirm={submit}
+                title="Confirm Update"
+                message="Are you sure you want to update this product?"
+                confirmButtonText="Update"
+                confirmButtonClass="update"
+            />
         </div>
     );
 }

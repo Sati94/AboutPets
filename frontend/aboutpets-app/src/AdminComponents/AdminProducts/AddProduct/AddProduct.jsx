@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from 'react'
 import API_BASE_URL from '../../../config'
 import { AuthContext } from '../../../AuthContext/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import ConfirmModal from '../../../Modal/ConfimModal'
 
 
 
@@ -23,6 +24,7 @@ const AddProduct = () => {
     });
 
     const [selectedFile, setSelectedFile] = useState(null);
+    const [showAddConfirmModal, setShowAddConfirmModal] = useState(false);
     const readFileAsBase64AndCompress = (file, maxWidth = 800, maxHeight = 600, quality = 0.8) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -111,6 +113,13 @@ const AddProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setShowAddConfirmModal(true)
+    }
+    const oncancel = () => {
+        setShowAddConfirmModal(false);
+    }
+
+    const addProduct = async () => {
 
         try {
             const { token, role } = authState;
@@ -134,6 +143,7 @@ const AddProduct = () => {
         } catch (error) {
             console.error("Error creating product:", error)
         };
+        setShowAddConfirmModal(false);
     }
 
     return (
@@ -213,6 +223,16 @@ const AddProduct = () => {
                 <button type="button" onClick={handleUpload}>Upload Image</button>
                 <button type="submit">Add Product</button>
             </form>
+            <ConfirmModal
+                isOpen={showAddConfirmModal}
+                onCancel={oncancel}
+                onConfirm={addProduct}
+                title="Confirm Add New Product"
+                message="Are you sure you want to add this product?"
+                confirmButtonText="Add"
+                confirmButtonClass="add"
+            />
+
         </div>
     )
 }

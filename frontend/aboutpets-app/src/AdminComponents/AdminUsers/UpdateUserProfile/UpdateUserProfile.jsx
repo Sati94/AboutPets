@@ -2,12 +2,15 @@ import React, { useState, useEffect, useContext } from 'react'
 import API_BASE_URL from '../../../config'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../../AuthContext/AuthContext'
+import ConfirmModal from '../../../Modal/ConfimModal'
+
 
 
 const UpdateUserProfile = () => {
     const { userId } = useParams();
     const { authState } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [userProfile, setUserProfile] = useState({
         firstName: "",
         lastName: "",
@@ -41,9 +44,12 @@ const UpdateUserProfile = () => {
             fetchProduct();
         }
     }, [authState, userId]);
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
+        setShowUpdateModal(true);
+    };
+    const handleConfirmUpdate = async (e) => {
+
         const { token, role } = authState;
 
         try {
@@ -68,6 +74,7 @@ const UpdateUserProfile = () => {
         } catch (error) {
             console.error("Error updating profile:", error);
         }
+        setShowUpdateModal(false);
     };
     return (
         <div>
@@ -116,6 +123,15 @@ const UpdateUserProfile = () => {
 
                 <button type="submit">Update Profile</button>
             </form>
+            <ConfirmModal
+                isOpen={showUpdateModal}
+                onCancel={() => setShowUpdateModal(false)}
+                onConfirm={handleConfirmUpdate}
+                title="Confirm Update"
+                message="Are you sure you want to update this profile?"
+                confirmButtonText="Update"
+                confirmButtonClass="update"
+            />
 
         </div>
     );

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config';
 import SearchInput from '../../Components/SearchInput/SearchInput';
 import { ToastContainer, toast } from 'react-toastify';
-import DeleteConfirmModal from '../../Modal/DeleteConfirmModal/DeleteConfirmModal';
+import ConfirmModal from '../../Modal/ConfimModal';
 import "./AdminUsers.css";
 
 
@@ -74,18 +74,17 @@ const AdminUsers = () => {
     };
 
 
-    const toggleDeleteModal = () => {
-        setShowDeleteModal(!showDeleteModal);
-    }
     const openDeleteModal = (user) => {
         setUserToDelete(user);
         setShowDeleteModal(true);
-    }
+    };
 
 
     const cancelDelete = () => {
         setShowDeleteModal(false);
     };
+
+
 
     const confirmToDelete = async () => {
         if (userToDelete) {
@@ -148,7 +147,15 @@ const AdminUsers = () => {
                 ))}
             </div>
             <ToastContainer />
-            <DeleteConfirmModal isOpen={showDeleteModal} onCancel={cancelDelete} onConfirm={confirmToDelete} />
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                onCancel={cancelDelete}
+                onConfirm={confirmToDelete}
+                title="Confirm Delete"
+                message="Are you sure want to delete this item?"
+                confirmButtonText="Delete"
+                confirmButtonClass="delete"
+            />
 
         </div >
     )

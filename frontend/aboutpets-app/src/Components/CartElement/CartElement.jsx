@@ -4,6 +4,7 @@ import API_BASE_URL from '../../config';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext/AuthContext';
+import ConfirmModal from '../../Modal/ConfimModal';
 
 
 const CartElement = () => {
@@ -12,6 +13,10 @@ const CartElement = () => {
     const { authState, setAuthState } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [hasBonus, setHasBonus] = useState(false);
+    const [showApplyBonusModal, setShowApplyBonusModal] = useState(false);
+    const [showSendOrderModal, setShowSendOrderModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteItemId, setDeleteItemId] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -188,6 +193,45 @@ const CartElement = () => {
             console.error('Error applying bonus to order:', error.message);
         }
     };
+
+    const toggleApplyBonusModal = () => {
+        setShowApplyBonusModal(!showApplyBonusModal);
+    };
+
+    const toggleSendOrderModal = () => {
+        setShowSendOrderModal(!showSendOrderModal);
+    };
+
+    const toggleDeleteModal = () => {
+        setShowDeleteModal(!showDeleteModal);
+    };
+
+    const confirmApplyBonus = async () => {
+        toggleApplyBonusModal(); // Close modal
+        await applyBonusToOrder(); // Apply bonus
+    };
+
+    const confirmSendOrder = async () => {
+        toggleSendOrderModal(); // Close modal
+        await updateOrderStatus(); // Send order
+    };
+
+    const confirmDeleteItem = async () => {
+        toggleDeleteModal(); // Close modal
+        await removedOrderItem(deleteItemId); // Remove item
+    };
+
+    const cancelApplyBonus = () => {
+        setShowApplyBonusModal(false);
+    };
+
+    const cancelSendOrder = () => {
+        setShowSendOrderModal(false);
+    };
+
+    const cancelDeleteItem = () => {
+        setShowDeleteModal(false);
+    };
     return (
         <div>
             {!Array.isArray(orderItems) || orderItems.length === 0 || orders.orderStatuses > 1 ? (
@@ -206,17 +250,49 @@ const CartElement = () => {
                                     <p>Price: {item.price}</p>
                                     <p>Stock: {item.quantity}</p>
                                 </div>
-                                <button onClick={() => removedOrderItem(item.orderItemId)}>Delete</button>
+                                <button onClick={() => {
+                                    setDeleteItemId(item.orderItemId);
+                                    setShowDeleteModal(true);
+                                }}>Delete</button>
                             </div>
                         </li>
                     ))}
                     <h2 className='Total-Price'>Total Price : {orders.totalPrice}</h2>
-                    {hasBonus && <button className='Apply-Bonus-Button' onClick={applyBonusToOrder}>Apply Bonus</button>}
-                    <button className='Send-Order-Button' onClick={updateOrderStatus}>Send the order</button>
+                    {hasBonus && <button className='Apply-Bonus-Button' onClick={toggleApplyBonusModal}>Apply Bonus</button>}
+                    <button className='Send-Order-Button' onClick={toggleSendOrderModal}>Send the order</button>
 
                 </ul>
             )}
             <ToastContainer />
+            <ConfirmModal
+                isOpen={showApplyBonusModal}
+                onCancel={cancelApplyBonus}
+                onConfirm={confirmApplyBonus}
+                title="Confirm Apply Bonus"
+                message="Are you sure you want to apply bonus to this order?"
+                confirmButtonText="Apply Bonus"
+                confirmButtonClass="add"
+            />
+            {/* Confirm modal for Send Order */}
+            <ConfirmModal
+                isOpen={showSendOrderModal}
+                onCancel={cancelSendOrder}
+                onConfirm={confirmSendOrder}
+                title="Confirm Send Order"
+                message="Are you sure you want to send this order?"
+                confirmButtonText="Send Order"
+                confirmButtonClass="send"
+            />
+            {/* Confirm modal for Delete Item */}
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                onCancel={cancelDeleteItem}
+                onConfirm={confirmDeleteItem}
+                title="Confirm Delete"
+                message="Are you sure you want to delete this item from the order?"
+                confirmButtonText="Delete"
+                confirmButtonClass="delete"
+            />
         </div>
     );
 }

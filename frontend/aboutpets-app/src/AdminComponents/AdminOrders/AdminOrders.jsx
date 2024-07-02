@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import API_BASE_URL from '../../config'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../AuthContext/AuthContext'
-import DeleteConfirmModal from '../../Modal/DeleteConfirmModal/DeleteConfirmModal'
+import ConfirmModal from '../../Modal/ConfimModal'
 import SearchInput from '../../Components/SearchInput/SearchInput'
 import { ToastContainer, toast } from 'react-toastify'
 import './AdminOrders.css'
@@ -143,7 +143,14 @@ const AdminOrders = () => {
                 ))}
             </div>
             <ToastContainer />
-            <DeleteConfirmModal isOpen={showDeleteModal} onCancel={cancelDelete} onConfirm={confirmToDelete} />
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                onCancel={cancelDelete}
+                onConfirm={confirmToDelete}
+                title="Confirm Delete"
+                message="Are you sure you want to delete this order?"
+                confirmButtonText="Delete"
+                confirmButtonClass="delete" />
 
         </div >
     )

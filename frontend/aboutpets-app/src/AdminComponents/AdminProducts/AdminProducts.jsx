@@ -6,7 +6,7 @@ import SearchInput from '../../Components/SearchInput/SearchInput'
 import API_BASE_URL from '../../config'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
-import DeleteConfirmModal from '../../Modal/DeleteConfirmModal/DeleteConfirmModal'
+import ConfirmModal from '../../Modal/ConfimModal'
 
 const AdminProducts = () => {
     const { authState } = useContext(AuthContext);
@@ -37,7 +37,11 @@ const AdminProducts = () => {
         }
 
 
-    }, [products]);
+    }, [authState]);
+
+    const handleSearch = (term) => {
+        setSearchTerm(term);
+    }
     const handleDelete = async (productId) => {
 
         try {
@@ -68,36 +72,6 @@ const AdminProducts = () => {
 
     };
 
-
-
-    useEffect(() => {
-        const data = products.filter(product => {
-            const searchLower = searchTerm.toLowerCase();
-
-            return (
-                product.productName.toLowerCase().includes(searchLower)
-            )
-
-        });
-        setFilteredProducts(data);
-
-    }, [searchTerm, products]);
-
-    const handleSearch = (term) => {
-        setSearchTerm(term);
-    }
-
-    const categoryMapping = {
-        1: 'Dog',
-        2: 'Cat'
-    };
-
-    const subCategoryMapping = {
-        1: 'Games',
-        2: 'Accessories',
-        3: 'WetFood',
-        4: 'DryFood'
-    };
     const handleClick = (product) => {
         navigate(`/admin/product/${product.productId}`)
 
@@ -122,6 +96,34 @@ const AdminProducts = () => {
     const cancelDelete = () => {
         setShowDeleteModal(false);
     }
+
+    useEffect(() => {
+        const data = products.filter(product => {
+            const searchLower = searchTerm.toLowerCase();
+
+            return (
+                product.productName.toLowerCase().includes(searchLower)
+            )
+
+        });
+        setFilteredProducts(data);
+
+    }, [searchTerm, products]);
+
+
+
+    const categoryMapping = {
+        1: 'Dog',
+        2: 'Cat'
+    };
+
+    const subCategoryMapping = {
+        1: 'Games',
+        2: 'Accessories',
+        3: 'WetFood',
+        4: 'DryFood'
+    };
+
 
 
 
@@ -155,7 +157,15 @@ const AdminProducts = () => {
                 })}
             </div>
             <ToastContainer />
-            <DeleteConfirmModal isOpen={showDeleteModal} onCancel={cancelDelete} onConfirm={confirmDelete} />
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                onCancel={cancelDelete}
+                onConfirm={confirmDelete}
+                title="Confirm Delete"
+                message="Are you sure you want to delete this product?"
+                confirmButtonText="Delete"
+                confirmButtonClass="delete"
+            />
         </div>
     )
 }

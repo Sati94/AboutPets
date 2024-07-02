@@ -4,7 +4,7 @@ import API_BASE_URL from '../../../config';
 import './AdminUpdateOrder.css';
 import { AuthContext } from '../../../AuthContext/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
-import DeleteConfirmModal from '../../../Modal/DeleteConfirmModal/DeleteConfirmModal';
+import ConfirmModal from '../../../Modal/ConfimModal';
 
 const AdminUpdateOrder = () => {
     const { authState } = useContext(AuthContext);
@@ -15,19 +15,29 @@ const AdminUpdateOrder = () => {
     const [deleteToOrderItem, setDeleteToOrderItem] = useState(null);
     const [status, setStatus] = useState(0);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [id, setId] = useState("");
 
     const toggleDeleteModal = () => {
         setShowDeleteModal(!showDeleteModal);
-    }
+    };
+
     const openDeleteModal = (orderItem) => {
         setDeleteToOrderItem(orderItem);
-
         setShowDeleteModal(true);
-    }
+    };
+
+    const openUpdateModal = () => {
+        setShowUpdateModal(true);
+    };
+
     const cancelDelete = () => {
         setShowDeleteModal(false);
-    }
+    };
+
+    const cancelUpdate = () => {
+        setShowUpdateModal(false);
+    };
 
     useEffect(() => {
         const fetchOrderDetails = async () => {
@@ -80,14 +90,15 @@ const AdminUpdateOrder = () => {
     const handleStatusChange = async (event) => {
         const newStatus = event.target.value;
         setStatus(newStatus);
-        console.log(newStatus);
-        console.log(status);
+
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
+        setShowUpdateModal(true);
+    };
 
-
+    const handleConfirmUpdate = async () => {
 
         try {
             const { token, role } = authState;
@@ -136,7 +147,7 @@ const AdminUpdateOrder = () => {
                     setOrderItems(updatedOrderItems);
                     toast.success("Item deleted!");
                     setShowDeleteModal(false);
-                    console.log('Updated Order Items:', updatedOrderItems);
+
                     if (updatedOrderItems.length === 0) {
                         navigate('/admin/orders');
                     }
@@ -194,7 +205,24 @@ const AdminUpdateOrder = () => {
                 <button type="submit">Update Status</button>
             </form>
             <ToastContainer />
-            <DeleteConfirmModal isOpen={showDeleteModal} onCancel={cancelDelete} onConfirm={handleDeleteItem} />
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                onCancel={cancelDelete}
+                onConfirm={handleDeleteItem}
+                title="Confirm Delete"
+                message="Are you sure you want to delete this item?"
+                confirmButtonText="Delete"
+                confirmButtonClass="delete"
+            />
+            <ConfirmModal
+                isOpen={showUpdateModal}
+                onCancel={cancelUpdate}
+                onConfirm={handleConfirmUpdate}
+                title="Confirm Update"
+                message="Are you sure you want to update this item?"
+                confirmButtonText="Update"
+                confirmButtonClass="update"
+            />
         </div>
     );
 }
