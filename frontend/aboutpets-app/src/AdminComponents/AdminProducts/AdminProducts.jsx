@@ -128,33 +128,56 @@ const AdminProducts = () => {
 
 
     return (
-        <div>
-            <h1>Products</h1>
-            <SearchInput value={searchTerm} onSearch={handleSearch} placeholder="Search Products..." />
-            <button onClick={addProductClick}>Add Product</button>
-            <div className='product-list'>
-                {filteredProducts.map(product => {
-                    return (
-                        <div key={product.productId} className='product-item'>
-                            <ul>
-                                <li><strong>Product Name:</strong> {product.productName}</li>
-                                <li><strong>Description:</strong> {product.description}</li>
-                                <li><strong>Price:</strong> {product.price}</li>
-                                <li><strong>Stock:</strong> {product.stock}</li>
-                                <li><strong>Discount:</strong> {product.discount}</li>
-                                <li><strong>Category:</strong> {categoryMapping[product.category]}</li>
-                                <li><strong>SubCategory:</strong> {subCategoryMapping[product.subCategory]}</li>
-                                {product.imageBase64 ?
-                                    (<li><strong>Image:</strong> Yes </li>) : (
-                                        <li><strong>Image:</strong> No </li>
-                                    )}
+        <div className="container">
+            <h1 className="page-title">Products</h1>
+            <button className="add-product" onClick={addProductClick}>Add Product</button>
+            <div className="search-bar text-center">
+                <SearchInput value={searchTerm} onSearch={handleSearch} placeholder="Search Products..." />
+            </div>
 
-                            </ul>
-                            <button className='update' onClick={() => handleClick(product)}>Update</button>
-                            <button className='delete' onClick={() => openDeleteModal(product)}>Delete</button>
+            <div className="product-list">
+                {filteredProducts.map((product) => (
+                    <div key={product.productId} className="product-item">
+                        <ul>
+                            <li>
+                                <strong>Product Name:</strong> {product.productName}
+                            </li>
+                            <li>
+                                <strong>Description:</strong> {product.description}
+                            </li>
+                            <li>
+                                <strong>Price:</strong> {product.price}
+                            </li>
+                            <li>
+                                <strong>Stock:</strong> {product.stock}
+                            </li>
+                            <li>
+                                <strong>Discount:</strong> {product.discount}
+                            </li>
+                            <li>
+                                <strong>Category:</strong> {categoryMapping[product.category]}
+                            </li>
+                            <li>
+                                <strong>SubCategory:</strong> {subCategoryMapping[product.subCategory]}
+                            </li>
+                            <li>
+                                <strong>Image:</strong> {product.imageBase64 ? 'Yes' : 'No'}
+                            </li>
+                        </ul>
+                        <div className="actions">
+                            <button className="update" onClick={() => handleClick(product)}>
+                                Update
+                            </button>
+                            <button className="delete" onClick={() => openDeleteModal(product)}>
+                                Delete
+                            </button>
                         </div>
-                    )
-                })}
+
+                    </div>
+
+
+                ))}
+
             </div>
             <ToastContainer />
             <ConfirmModal
@@ -167,7 +190,7 @@ const AdminProducts = () => {
                 confirmButtonClass="delete"
             />
         </div>
-    )
+    );
 }
 
 export default AdminProducts
