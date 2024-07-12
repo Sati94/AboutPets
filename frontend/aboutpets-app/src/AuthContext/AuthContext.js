@@ -1,4 +1,4 @@
-import React, { useState, createContext } from 'react'
+import React, { useState, createContext, useEffect } from 'react'
 import { jwtDecode } from 'jwt-decode'
 
 import API_BASE_URL from '../config';
@@ -19,6 +19,28 @@ const AuthProvider = ({ children }) => {
         orderId: null,
     });
 
+    useEffect(() => {
+        const storedUserData = localStorage.getItem('userData');
+        if (storedUserData) {
+            const userData = JSON.parse(storedUserData);
+            const decodedToken = jwtDecode(userData.token);
+
+
+            const currentTime = new Date().getTime() / 1000;
+            if (decodedToken.exp > currentTime) {
+
+                setAuthState(userData);
+                fetchOrderId(userData.userId, userData.role, userData.token)
+                    .then(orderId => setAuthState(prevState => ({ ...prevState, orderId })))
+                    .catch(error => {
+                        console.error("Error fetching orderId:", error);
+                        setAuthState(prevState => ({ ...prevState, orderId: null }));
+                    });
+            } else {
+                localStorage.removeItem('userData');
+            }
+        }
+    }, []);
     const fetchOrderId = async (userId, role, token) => {
         if (role === 'User') {
             try {

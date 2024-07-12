@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { useState } from 'react'
 import "./LoginRegisterForm.css"
-import Cookies from 'js-cookie'
 import API_BASE_URL from '../../config'
 import { useNavigate, Link } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
@@ -76,7 +75,7 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
       login(data);
       if (!data.token) {
         toast.error('Email or Password is bad!');
-        throw new Error(data.message || "Email or Password is bad!");
+
       }
 
 
