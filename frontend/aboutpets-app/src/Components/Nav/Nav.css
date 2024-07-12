@@ -1,10 +1,15 @@
 .nav {
     margin: 10px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    align-items: center;
     padding: 16px;
     box-shadow: 5px 1px 5px 1px black;
     background: rgb(255, 255, 255);
+    position: relative;
+    width: calc(100% - 20px);
+    box-sizing: border-box;
+
 }
 
 .nav-logo img {
@@ -17,7 +22,7 @@
     margin: 10px;
     color: #171717;
     font-size: 38px;
-    font-weight: 600px;
+    font-weight: 600;
 }
 
 .nav-menu {
@@ -28,8 +33,8 @@
     gap: 50px;
     color: #171717;
     font-size: 20px;
-    font-weight: 500px;
-    font-family: Arial, Helvetica, sans-serif
+    font-weight: 500;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .nav-menu li {
@@ -51,7 +56,7 @@
     background: rgb(215, 229, 237);
 }
 
-.nav-logo {
+.nav-login-cart {
     margin: 10px;
     display: flex;
     align-items: center;
@@ -64,13 +69,6 @@
     height: auto;
 }
 
-.nav-login-cart {
-    margin: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 .nav-login-cart button {
     margin: 10px;
     width: 157px;
@@ -80,7 +78,7 @@
     border-radius: 75px;
     color: rgb(23, 20, 20);
     font-size: 20px;
-    font-weight: 500px;
+    font-weight: 500;
     background: rgb(215, 229, 237);
     cursor: pointer;
 }
@@ -91,7 +89,6 @@
 
 .nav-login-cart button:hover {
     background-color: #e0e0e0;
-    ;
 }
 
 .nav-cart-count {
@@ -101,10 +98,45 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -35px;
-    margin-left: -45px;
     border-radius: 11px;
     background: rgb(215, 229, 237);
     color: black;
+}
 
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.nav-toggle .bar {
+    height: 3px;
+    width: 25px;
+    background-color: #333;
+    margin: 4px 0;
+    transition: 0.4s;
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background-color: #fff;
+        box-shadow: 5px 1px 5px 1px black;
+        padding: 10px;
+        width: 200px;
+        z-index: 1;
+    }
+
+    .nav-menu.open {
+        display: flex;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
 }

@@ -14,9 +14,9 @@ const LoginRegisterForm = ({ isHandleRegister, onLogin }) => {
   const [saveEmail, setSaveEmail] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const currentTime = new Date();
-  const { authState, login } = useContext(AuthContext);
-  const expirationTime = new Date(currentTime.getTime() + 30 * 60 * 1000);
+
+  const { login } = useContext(AuthContext);
+
 
 
   const handleRegister = async (e) => {
