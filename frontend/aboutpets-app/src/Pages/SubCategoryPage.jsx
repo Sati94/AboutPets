@@ -73,7 +73,9 @@ const SubCategoryPage = () => {
                     ))}
                 </div>
             ) : (
-                <>No Product added yet...</>
+                <div className="No-data">
+                    <p style={{ textAlign: 'center', fontSize: '24px', color: '#fefae0' }}>No Product added yet...</p>
+                </div>
             )}
 
         </div>

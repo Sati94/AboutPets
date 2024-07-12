@@ -86,7 +86,10 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
                 </div>
 
             ) : (
-                <>No Product added yet...</>
+                <div className='No-data'>
+                    <p>No Product...</p>
+                </div>
+
             )}
             <ToastContainer />
         </div>

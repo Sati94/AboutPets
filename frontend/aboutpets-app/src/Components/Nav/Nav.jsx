@@ -66,7 +66,37 @@ const Nav = () => {
   }, [authState.token, authState.orderId, orderItems]);
 
 
-
+  const handleMenuClick = (menuItem) => {
+    setMenu(menuItem); // Menüpont állapotának frissítése
+    // Navigálás az adott oldalra
+    switch (menuItem) {
+      case 'shop':
+        navigate('/');
+        break;
+      case 'dog':
+        navigate('/dog');
+        break;
+      case 'cat':
+        navigate('/cat');
+        break;
+      case 'action':
+        navigate('/action');
+        break;
+      case 'profile':
+        navigate('/profile');
+        break;
+      case 'adminDashboard':
+        navigate('/admin');
+      case 'manageUsers':
+        navigate('/admin/users');
+      case 'manageOrders':
+        navigate('/admin/orders');
+      case 'manageProducts':
+        navigate('/admin/products');
+      default:
+        break;
+    }
+  };
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -86,11 +116,28 @@ const Nav = () => {
         <p>About Pets</p>
       </div>
       <div className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
-        <li onClick={() => setMenu("shop")}><Link style={{ textDecoration: 'none' }} to='/'>Shop</Link>{menu === "shop" && <hr />}</li>
-        <li onClick={() => setMenu("dog")}><Link style={{ textDecoration: 'none' }} to='/dog'>Dog</Link>{menu === "dog" && <hr />}</li>
-        <li onClick={() => setMenu("cat")}><Link style={{ textDecoration: 'none' }} to='/cat'>Cat</Link>{menu === "cat" && <hr />}</li>
-        <li onClick={() => setMenu("action")}><Link style={{ textDecoration: 'none' }} to='/action'>Discounts</Link>{menu === "action" && <hr />}</li>
-        <li onClick={() => setMenu("profile")}><Link style={{ textDecoration: 'none' }} to='/profile'>My Profile</Link>{menu === "profile" && <hr />}</li>
+        <ul className="nav-menu">
+          <li className={menu === 'shop' ? 'active' : ''} onClick={() => handleMenuClick('shop')}>
+            Shop
+            {menu === 'shop' && <hr />}
+          </li>
+          <li className={menu === 'dog' ? 'active' : ''} onClick={() => handleMenuClick('dog')}>
+            Dog
+            {menu === 'dog' && <hr />}
+          </li>
+          <li className={menu === 'cat' ? 'active' : ''} onClick={() => handleMenuClick('cat')}>
+            Cat
+            {menu === 'cat' && <hr />}
+          </li>
+          <li className={menu === 'action' ? 'active' : ''} onClick={() => handleMenuClick('action')}>
+            Discounts
+            {menu === 'action' && <hr />}
+          </li>
+          <li className={menu === 'profile' ? 'active' : ''} onClick={() => handleMenuClick('profile')}>
+            My Profile
+            {menu === 'profile' && <hr />}
+          </li>
+        </ul>
       </div>
       {isAuthenticated ? (
         <div className='nav-login-cart'>
@@ -114,7 +161,7 @@ const Nav = () => {
   const renderAdminMenu = () => (
     <div className='nav'>
       <div className='nav-logo'>
-        <img src={logo} alt='' />
+        <img src={logo} alt='Logo' />
         <p>About Pets</p>
       </div>
       <div className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
