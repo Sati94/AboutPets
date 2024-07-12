@@ -108,8 +108,8 @@ const UserProfile = () => {
         setShowUpdateConfirm(false);
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error loading profile: {error.message}</p>;
+    if (loading) return <div className="profile-container loading">Loading...</div>;
+    if (error) return <div className="profile-container">Error loading profile: {error.message}</div>;
 
     return (
 

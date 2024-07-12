@@ -135,20 +135,22 @@ const ProductDetails = () => {
     return (
         <div className="productDetails">
             <img src={`data:image/jpeg;base64,${product.imageBase64}`} alt={product.productName} />
-            <h1>{product.productName}</h1>
-            <p>Price: ${product.price}</p>
-            {product.discount > 0 && <p>Discount: {product.discount * 100}%</p>}
-            <p>Stock: {product.stock} pcs</p>
-            <p>Description: {product.description}</p>
-            <div className="quantity">
-                <button onClick={() => setQuantity(Math.max(quantity - 1, 1))}>-</button>
-                <span>{quantity}</span>
-                <button onClick={() => setQuantity(Math.min(quantity + 1, product.stock))}>+</button>
+            <div className="details">
+                <h1>{product.productName}</h1>
+                <p>Price: ${product.price}</p>
+                {product.discount > 0 && <p>Discount: {product.discount * 100}%</p>}
+                <p>Stock: {product.stock} pcs</p>
+                <p>Description: {product.description}</p>
+                <div className="quantity">
+                    <button onClick={() => setQuantity(Math.max(quantity - 1, 1))}>-</button>
+                    <span>{quantity}</span>
+                    <button onClick={() => setQuantity(Math.min(quantity + 1, product.stock))}>+</button>
+                </div>
+                <button onClick={handleAddToCart}>Add to Cart</button>
             </div>
-            <button onClick={handleAddToCart}>Add to Cart</button>
             <ToastContainer />
         </div>
-    )
+    );
 }
 
 export default ProductDetails

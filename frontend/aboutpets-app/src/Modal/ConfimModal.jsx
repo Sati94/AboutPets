@@ -8,7 +8,7 @@ const ConfirmModal = ({ isOpen, onCancel, onConfirm, title, message, confirmButt
                 <h2>{title}</h2>
                 <p>{message}</p>
                 <div className='modal-buttons'>
-                    <button onClick={onCancel}>Cancel</button>
+                    <button className='cancel' onClick={onCancel}>Cancel</button>
                     <button onClick={onConfirm} className={confirmButtonClass}>{confirmButtonText}</button>
                 </div>
             </div>

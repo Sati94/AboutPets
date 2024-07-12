@@ -78,20 +78,23 @@
 
 .nav-login-cart button {
     margin: 10px;
-    width: 157px;
-    height: 58px;
-    outline: none;
+    padding: 10px;
     border: 1px solid #171717;
     border-radius: 75px;
-    color: rgb(23, 20, 20);
-    font-size: 20px;
-    font-weight: 500;
-    background: #fefae0;
     cursor: pointer;
+    font-size: 16px;
+    width: 100px;
+    transition: background-color 0.3s ease;
 }
 
-.nav-login-cart button:active {
-    background: #f3f3f3;
+.nav-login-cart button.logout-button {
+    background-color: #fefae0;
+    color: rgb(148, 42, 42);
+}
+
+.nav-login-cart button.login-button {
+    background-color: rgb(148, 42, 42);
+    color: #fefae0;
 }
 
 .nav-login-cart button:hover {
@@ -106,8 +109,8 @@
     justify-content: center;
     align-items: center;
     border-radius: 11px;
-    background: rgb(215, 229, 237);
-    color: black;
+    background: rgb(148, 42, 42);
+    color: white;
 }
 
 .nav-toggle {

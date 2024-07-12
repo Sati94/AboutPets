@@ -2,7 +2,8 @@
     border: 1px solid #ccc;
     margin-bottom: 10px;
     padding: 10px;
-    background: rgb(200, 236, 236);
+    background: #fefae0;
+    border-radius: 10px;
 }
 
 .cart-item .cart-item-content {
@@ -13,7 +14,6 @@
 
 .cart-item .cart-item-image {
     width: 100px;
-    /* Változtasd a szélességet az igényeid szerint */
     margin-right: 20px;
 }
 
@@ -22,8 +22,8 @@
 }
 
 .cart-item button {
-    background-color: #ff3333;
-    color: white;
+    background-color: rgb(239, 11, 11);
+    color: #fefae0;
     border: none;
     padding: 10px 20px;
     border-radius: 20px;
@@ -44,8 +44,8 @@
 .Send-Order-Button {
     display: block;
     margin: 0 auto;
-    background-color: green;
-    color: white;
+    background-color: rgb(148, 42, 42);
+    color: #fefae0;
     padding: 10px 20px;
     font-size: 16px;
     border: none;
@@ -55,7 +55,8 @@
 }
 
 .Send-Order-Button:hover {
-    background-color: darkgreen;
+    background-color: #e0e0e0;
+    ;
 }
 
 .No-Data {

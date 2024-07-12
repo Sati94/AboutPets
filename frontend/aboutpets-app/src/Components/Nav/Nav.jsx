@@ -87,12 +87,16 @@ const Nav = () => {
         break;
       case 'adminDashboard':
         navigate('/admin');
+        break;
       case 'manageUsers':
         navigate('/admin/users');
+        break;
       case 'manageOrders':
         navigate('/admin/orders');
+        break;
       case 'manageProducts':
         navigate('/admin/products');
+        break;
       default:
         break;
     }
@@ -141,13 +145,13 @@ const Nav = () => {
       </div>
       {isAuthenticated ? (
         <div className='nav-login-cart'>
-          <button onClick={handleLogout}>Logout</button>
+          <button className="logout-button" onClick={handleLogout}>Logout</button>
           <Link to='/cart'><img src={cart_icon} alt='' /></Link>
           <div className='nav-cart-count'>{length}</div>
         </div>
       ) : (
         <div className='nav-login-cart'>
-          <Link to='/login'><button>Login</button></Link>
+          <Link to='/login'><button className="login-button">Login</button></Link>
         </div>
       )}
       <div className='nav-toggle' onClick={toggleMenu}>
@@ -165,14 +169,28 @@ const Nav = () => {
         <p>About Pets</p>
       </div>
       <div className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
-        <li onClick={() => setMenu("adminDashboard")}><Link style={{ textDecoration: 'none' }} to='/admin'>Admin Dashboard</Link>{menu === "adminDashboard" && <hr />}</li>
-        <li onClick={() => setMenu("manageUsers")}><Link style={{ textDecoration: 'none' }} to='/admin/users'>Manage Users</Link>{menu === "manageUsers" && <hr />}</li>
-        <li onClick={() => setMenu("manageOrders")}><Link style={{ textDecoration: 'none' }} to='/admin/orders'>Manage Orders</Link>{menu === "manageOrders" && <hr />}</li>
-        <li onClick={() => setMenu("manageProducts")}><Link style={{ textDecoration: 'none' }} to='/admin/products'>Manage Products</Link>{menu === "manageProducts" && <hr />}</li>
+
+        <li className={menu === 'adminDashboard' ? 'active' : ''} onClick={() => handleMenuClick('adminDashboard')}>
+          AdminToDo
+          {menu === 'adminDashboard' && <hr />}
+        </li>
+        <li className={menu === 'manageUsers' ? 'active' : ''} onClick={() => handleMenuClick('manageUsers')}>
+          Manage Users
+          {menu === 'manageUsers' && <hr />}
+        </li>
+        <li className={menu === 'manageOrders' ? 'active' : ''} onClick={() => handleMenuClick('manageOrders')}>
+          Manage Orders
+          {menu === 'manageOrders' && <hr />}
+        </li>
+        <li className={menu === 'manageProducts' ? 'active' : ''} onClick={() => handleMenuClick('manageProducts')}>
+          Manage Products
+          {menu === 'manageProducts' && <hr />}
+        </li>
+
       </div>
       {isAuthenticated && (
         <div className='nav-login-cart'>
-          <button onClick={handleLogout}>Logout</button>
+          <button className="logout-button" onClick={handleLogout}>Logout</button>
         </div>
       )}
       <div className='nav-toggle' onClick={toggleMenu}>
@@ -183,7 +201,10 @@ const Nav = () => {
     </div>
   );
 
-  return authState?.role === 'Admin' ? renderAdminMenu() : renderUserMenu();
+  if (authState.role === 'Admin') {
+    return renderAdminMenu();
+  }
+  return renderUserMenu();
 }
 
 export default Nav

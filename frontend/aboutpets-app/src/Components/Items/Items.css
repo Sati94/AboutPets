@@ -8,7 +8,7 @@
     justify-content: space-around;
     width: 320px;
     max-height: 700px;
-    background: rgb(215, 229, 237);
+    background: #5f6f52;
     border: 1px solid black;
     border-radius: 20px;
     overflow: hidden;
@@ -28,7 +28,6 @@
     padding-top: 20px;
     z-index: 1;
     border-radius: 10px;
-    border: solid 1px black;
 }
 
 .imgBox img {
@@ -58,7 +57,7 @@
 .content_box h3 {
     margin: 10px;
     font-size: 18px;
-    color: black;
+    color: white;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -66,18 +65,21 @@
 
 .content_box h5 {
     margin: 10px;
+    color: white;
 }
 
 .content_box h4 {
     margin: 10px;
+    color: white;
 }
 
 .content_box button {
     margin: 5px;
     padding: 5px 10px;
     font-size: 20px;
-    background-color: rgb(231, 238, 242);
     border: 1px solid #171717;
+    background-color: rgb(148, 42, 42);
+    color: #fefae0;
     border-radius: 75px;
     cursor: pointer;
 }

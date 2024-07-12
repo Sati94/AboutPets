@@ -13,4 +13,16 @@
     border: 2px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+    background-color: #fefae0;
+}
+
+.search-input::placeholder {
+    color: rgb(245, 183, 183);
+
+}
+
+.search-input:focus {
+    border-color: #5f6f52;
+    outline: none;
+    box-shadow: 0 0 5px #5f6f52;
 }

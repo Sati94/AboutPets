@@ -1,27 +1,88 @@
 .productDetails {
-    margin: 10px;
-    display: grid;
-    align-content: space-around;
-    align-items: center;
-    justify-items: center;
-    justify-content: space-around;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    background-color: #5f6f52;
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+}
+
+.productDetails img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
 
 }
 
-.productDetails button {
-    margin: 5px;
-    padding: 5px 10px;
-    font-size: 20px;
-    background-color: rgb(231, 238, 242);
-    border: 1px solid #171717;
-    border-radius: 75px;
+.productDetails .details {
+    width: 100%;
+}
+
+.productDetails h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.productDetails p {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.productDetails .quantity {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: white;
+    justify-content: center;
+}
+
+.productDetails .quantity button {
+    padding: 8px 12px;
+    font-size: 16px;
+    background-color: #fefae0;
+    color: rgb(148, 42, 42);
+    border: none;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+
+}
+
+.productDetails .quantity button:hover {
+    background-color: #e0e0e0;
+}
+
+.productDetails .quantity button:active {
+    background-color: red;
+}
+
+.productDetails .quantity span {
+    margin: 0 10px;
+}
+
+.productDetails button {
+    align-self: flex-start;
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: rgb(148, 42, 42);
+    color: #fefae0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .productDetails button:hover {
     background-color: #e0e0e0;
-}
-
-.productDetails button:active {
-    background: #f3f3f3;
 }

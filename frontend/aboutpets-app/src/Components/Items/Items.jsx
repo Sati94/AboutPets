@@ -16,7 +16,7 @@ const Items = (props) => {
 
 
     const priceStyle = {
-        color: props.discount ? 'red' : 'black'
+        color: props.discount ? 'red' : 'white'
 
 
     };
@@ -42,9 +42,6 @@ const Items = (props) => {
                 <h5>Stock : {props.stock}pcs</h5>
                 <hr />
                 <h5>{props.category === 1 ? "Dog" : "Cat"}</h5>
-                <hr />
-                <h5>{props.subCategory}</h5>
-                <hr />
                 {props.discount > 0 && <h4>Discount : {props.discount * 100}%</h4>}
                 <hr />
                 <button onClick={handleClick} disabled={props.stock === 0}>View</button>
