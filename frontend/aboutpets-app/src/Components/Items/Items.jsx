@@ -16,7 +16,7 @@ const Items = (props) => {
 
 
     const priceStyle = {
-        color: props.discount ? 'red' : 'white'
+        color: props.discount ? 'bisque' : 'white'
 
 
     };

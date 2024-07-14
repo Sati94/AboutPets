@@ -11,6 +11,10 @@
 
 .body {
 
-  background-color: #b99470;
+
+  background-image: url('/src/Components/Assets/wallpaper.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 
 }

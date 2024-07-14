@@ -182,7 +182,7 @@ const UpdateProduct = () => {
 
 
     return (
-        <div>
+        <div className="update-product-container">
             <h1>Update Product</h1>
             <form onSubmit={handleSubmit}>
                 <label>Product Name:</label>
@@ -254,8 +254,8 @@ const UpdateProduct = () => {
                     accept=".jpg,.jpeg,.png"
                     onChange={handleFileChange}
                 />
-                <button type="button" onClick={handleUpload}>Upload Image</button>
-                <button type="submit" onClick={handleSubmit}>Update Product</button>
+                <button type="button" className='upload-image' onClick={handleUpload}>Upload Image</button>
+                <button type="submit" className='send-button' onClick={handleSubmit}>Update Product</button>
             </form>
 
 

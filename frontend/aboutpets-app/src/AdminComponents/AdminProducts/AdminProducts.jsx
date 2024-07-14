@@ -128,9 +128,9 @@ const AdminProducts = () => {
 
 
     return (
-        <div className="container">
+        <div className="container-product">
             <h1 className="page-title">Products</h1>
-            <button className="add-product" onClick={addProductClick}>Add Product</button>
+
             <div className="search-bar text-center">
                 <SearchInput value={searchTerm} onSearch={handleSearch} placeholder="Search Products..." />
             </div>
@@ -138,6 +138,10 @@ const AdminProducts = () => {
             <div className="product-list">
                 {filteredProducts.map((product) => (
                     <div key={product.productId} className="product-item">
+                        <div className='imgBox-product'>
+                            <img src={`data:image/jpeg;base64,${product.imageBase64}`}
+                                alt={product.productName} />
+                        </div>
                         <ul>
                             <li>
                                 <strong>Product Name:</strong> {product.productName}
@@ -160,9 +164,7 @@ const AdminProducts = () => {
                             <li>
                                 <strong>SubCategory:</strong> {subCategoryMapping[product.subCategory]}
                             </li>
-                            <li>
-                                <strong>Image:</strong> {product.imageBase64 ? 'Yes' : 'No'}
-                            </li>
+
                         </ul>
                         <div className="actions">
                             <button className="update" onClick={() => handleClick(product)}>
@@ -176,8 +178,12 @@ const AdminProducts = () => {
                     </div>
 
 
+
                 ))}
 
+            </div>
+            <div className="add-product" >
+                <button onClick={addProductClick}>Add Product</button>
             </div>
             <ToastContainer />
             <ConfirmModal

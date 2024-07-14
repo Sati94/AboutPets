@@ -33,7 +33,6 @@
 .imgBox img {
     max-width: 100%;
     max-height: 200px;
-    /* Add this line to limit the height of the image */
     transition: .5s;
 }
 

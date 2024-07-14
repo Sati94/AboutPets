@@ -68,7 +68,7 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
             <div className="search-input-container ">
                 <SearchInput onSearch={handleSearch} />
             </div>
-            {filteredProducts.length > 0 ? (
+            {finalProducts.length > 0 ? (
                 <div className="data">
                     {finalProducts.map((product) => (
                         <Items

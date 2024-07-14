@@ -1,6 +1,6 @@
 .profile-container {
     display: flex;
-    background: #5f6f52;
+    background: #435336;
     flex-direction: column;
     align-items: center;
     margin-top: 50px;
@@ -53,7 +53,7 @@
 .profile-form:focus {
     border-color: #5f6f52;
     outline: none;
-    box-shadow: 0 0 5px #5f6f52;
+    box-shadow: 0 0 5px #435336;
 }
 
 .profile-form button {

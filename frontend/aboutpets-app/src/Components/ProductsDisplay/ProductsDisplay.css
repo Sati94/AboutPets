@@ -17,11 +17,11 @@
 .No-data {
     display: grid;
     place-items: center;
-    height: 100vh;
+
 }
 
 .No-data p {
     text-align: center;
     font-size: 24px;
-    color: #fefae0;
+    color: #333;
 }
