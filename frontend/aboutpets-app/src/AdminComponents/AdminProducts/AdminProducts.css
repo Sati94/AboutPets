@@ -92,7 +92,8 @@
 .product-item .actions {
     display: flex;
     justify-content: space-evenly;
-    margin-top: auto;
+    margin-top: 20px;
+
 }
 
 .product-item .actions button {

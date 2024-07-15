@@ -41,9 +41,16 @@
     text-align: center;
 }
 
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+}
+
+
 .Send-Order-Button {
-    display: block;
-    margin: 0 auto;
     background-color: rgb(148, 42, 42);
     color: #fefae0;
     padding: 10px 20px;
@@ -51,12 +58,16 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
 
+.Apply-Bonus-Button,
+.Send-Order-Button {
+    margin: 0;
+    /* Reset margin */
 }
 
 .Send-Order-Button:hover {
     background-color: #e0e0e0;
-    ;
 }
 
 .No-Data {
@@ -71,4 +82,20 @@
     font-size: 24px;
     font-weight: bold;
     color: #333;
+}
+
+.Apply-Bonus-Button {
+
+    background-color: rgb(75 228 29 / 76%);
+    color: black;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.Apply-Bonus-Button:hover {
+    background-color: #65b228;
+    /* Add hover effect for consistency */
 }

@@ -1,14 +1,34 @@
+.user-container {
+    min-height: 100%;
+    display: contents;
+    flex-direction: column;
+}
+
+.user-container h1 {
+    color: #333;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
 .user-list {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px;
 }
 
 .user-item {
     border: 1px solid #ccc;
     padding: 10px;
-    margin: 10px;
-    width: 300px;
     border-radius: 5px;
+    flex-direction: column;
+    background-color: #5f6f52;
+    display: flex;
+    color: white;
+
+
 }
 
 .user-item ul {
@@ -20,29 +40,34 @@
     margin-bottom: 5px;
 }
 
-.user-item .profile {
-    margin-right: 5px;
-    background-color: rgb(216, 238, 20);
-    color: black;
+.user-item .button-actions {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: auto;
+}
+
+
+.user-item .button-actions button {
+
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
     transition: background-color 0.3s, color 0.3s;
-
 }
 
-.user-item .delete {
-    margin-right: 5px;
-    background-color: red;
-    transition: background-color 0.3s;
-
+.user-item .button-actions .profile {
+    background-color: rgb(75 228 29 / 76%);
+    color: black
 }
 
-.user-item .profile:hover {
-    background-color: yellow;
-
-    color: black;
-
+.user-item .button-actions .delete {
+    background-color: #db2828eb;
+    color: white;
 }
 
-.user-item .delete:hover {
-    background-color: darkred;
+.user-item .button-actions button:hover {
+    filter: brightness(0.8);
 
 }

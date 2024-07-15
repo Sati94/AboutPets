@@ -1,0 +1,48 @@
+.update-profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #435336;
+    color: white;
+}
+
+.update-profile-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.update-profile-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.update-profile-container label {
+    margin-bottom: 8px;
+}
+
+.update-profile-container input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.update-profile-container button[type="submit"] {
+    padding: 10px;
+    margin-top: 20px;
+    background-color: rgb(148, 42, 42);
+    color: #fefae0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.update-profile-container button[type="submit"]:hover {
+    background-color: rgb(63, 27, 27);
+}

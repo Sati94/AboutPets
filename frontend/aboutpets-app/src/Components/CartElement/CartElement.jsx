@@ -258,8 +258,10 @@ const CartElement = () => {
                         </li>
                     ))}
                     <h2 className='Total-Price'>Total Price : {orders.totalPrice}</h2>
-                    {hasBonus && <button className='Apply-Bonus-Button' onClick={toggleApplyBonusModal}>Apply Bonus</button>}
-                    <button className='Send-Order-Button' onClick={toggleSendOrderModal}>Send the order</button>
+                    <div className="button-container">
+                        {hasBonus && <button className='Apply-Bonus-Button' onClick={toggleApplyBonusModal}>Apply Bonus</button>}
+                        <button className='Send-Order-Button' onClick={toggleSendOrderModal}>Send the order</button>
+                    </div>
 
                 </ul>
             )}

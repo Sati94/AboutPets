@@ -163,10 +163,10 @@ const AdminUpdateOrder = () => {
     };
 
     return (
-        <div>
+        <div className='update-order-container'>
             <h1>Order Details</h1>
             {order && (
-                <div>
+                <div className='order-details'>
                     <ul>
                         <li><strong>Id:</strong> {order.orderId}</li>
                         <li><strong>Date:</strong> {order.orderDate}</li>
@@ -189,20 +189,21 @@ const AdminUpdateOrder = () => {
             <h2>Order Items</h2>
             {orderItems.length > 0 ? (
                 orderItems.map(item => (
-                    <div key={item.orderItemId} className='order-item'>
+                    <div key={item.orderItemId} className='order-items-container'>
+
                         <ul>
                             <li><strong>Product Id:</strong> {item.productId}</li>
                             <li><strong>Quantity:</strong> {item.quantity}</li>
                             <li><strong>Price:</strong> {item.price}</li>
                         </ul>
-                        <button onClick={() => openDeleteModal(item)}>Delete</button>
+                        <button className='delete-button' onClick={() => openDeleteModal(item)}>Delete</button>
                     </div>
                 ))
             ) : (
                 <p>No items found for this order</p>
             )}
             <form onSubmit={handleSubmit}>
-                <button type="submit">Update Status</button>
+                <button className='send-order-button'>Update Status</button>
             </form>
             <ToastContainer />
             <ConfirmModal

@@ -3,6 +3,7 @@ import API_BASE_URL from '../../../config'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../../AuthContext/AuthContext'
 import ConfirmModal from '../../../Modal/ConfimModal'
+import './UpdateUserProfile.css'
 
 
 
@@ -77,7 +78,7 @@ const UpdateUserProfile = () => {
         setShowUpdateModal(false);
     };
     return (
-        <div>
+        <div className='update-profile-container'>
             <h1>Update Profile</h1>
             <form onSubmit={handleSubmit}>
                 <label> First Name:</label>

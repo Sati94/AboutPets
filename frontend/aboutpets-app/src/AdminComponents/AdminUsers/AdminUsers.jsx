@@ -120,9 +120,11 @@ const AdminUsers = () => {
 
 
     return (
-        <div>
+        <div className='user-container'>
             <h1>Users</h1>
-            <SearchInput value={searchTerm} onSearch={handleSearch} placeholder="Search Users..." />
+            <div className="search-bar text-center">
+                <SearchInput value={searchTerm} onSearch={handleSearch} placeholder="Search Users..." />
+            </div>
             <div className='user-list'>
                 {filteredUsers.map(user => (
                     user.userName !== 'admin' ? (
@@ -131,8 +133,10 @@ const AdminUsers = () => {
                                 <li><strong>Name:</strong> {user.userName}</li>
                                 <li><strong>Email:</strong> {user.email}</li>
                             </ul>
-                            <button className='profile' onClick={() => handleProfileClick(user.id)}>Profile</button>
-                            <button className='delete' onClick={() => openDeleteModal(user)}>Delete</button>
+                            <div className='button-actions'>
+                                <button className='profile' onClick={() => handleProfileClick(user.id)}>Profile</button>
+                                <button className='delete' onClick={() => openDeleteModal(user)}>Delete</button>
+                            </div>
 
                         </div>
 

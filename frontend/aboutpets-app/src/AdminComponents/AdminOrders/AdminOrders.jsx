@@ -114,18 +114,17 @@ const AdminOrders = () => {
 
 
 
-
-
-
     return (
-        <div>
+        <div className='order-container'>
             <h1>Orders</h1>
-            <SearchInput value={searchTerm} onSearch={handleSearch} placeholder="Search Order Statuses..." />
+            <div className="search-bar text-center">
+                <SearchInput value={searchTerm} onSearch={handleSearch} placeholder="Search Orders..." />
+            </div>
             <div className='order-list'>
                 {filteredOrders.map(order => (
 
 
-                    <div key={order.orderId} className='order-item'>
+                    <div key={order.orderId} className='order-item-data'>
                         <ul>
                             <li><strong>Id:</strong> {order.orderId}</li>
                             <li><strong>Date:</strong> {order.orderDate}</li>
@@ -133,8 +132,10 @@ const AdminOrders = () => {
                             <li><strong>Status:</strong> {statusMapping[order.orderStatuses]}</li>
                             <li><strong>User Id:</strong>{order.userId}</li>
                         </ul>
-                        <button className='update' onClick={() => handleOrderElement(order.orderId)}> Update</button>
-                        <button className='delete' onClick={() => openDeleteModal(order)}>Delete</button>
+                        <div className='buttons-actions'>
+                            <button className='update' onClick={() => handleOrderElement(order.orderId)}> Update</button>
+                            <button className='delete' onClick={() => openDeleteModal(order)}>Delete</button>
+                        </div>
 
                     </div>
 
