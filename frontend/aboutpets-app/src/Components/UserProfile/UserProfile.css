@@ -71,3 +71,42 @@
 .profile-form button:hover {
     background-color: #e0e0e0;
 }
+
+.coupon {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 217, 0, 0.771);
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.center {
+    text-align: center;
+}
+
+
+.center h2 {
+    background: #333;
+    color: gold;
+    padding: 10px 20px;
+    font-size: 2.5rem;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.center h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.center p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 0;
+}

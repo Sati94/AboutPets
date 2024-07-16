@@ -132,12 +132,24 @@ const UserProfile = () => {
                     <label>Address:</label>
                     <input type="text" name="address" value={profile.address} onChange={handleChange} />
                 </div>
-                <div>
-                    <label>Bonus:</label>
-                    <input type="text" name="bonus" value={profile.bonus} disabled />
-                </div>
+
                 <button type="submit"> Update Profile</button>
+
             </form>
+
+            <div class="coupon">
+
+                <div class="center">
+                    <div>
+                        <h3>Coupon</h3>
+                        <h2>{profile.bonus * 100} %</h2>
+
+                    </div>
+                </div>
+
+
+            </div>
+
 
             <ToastContainer />
             <ConfirmModal
