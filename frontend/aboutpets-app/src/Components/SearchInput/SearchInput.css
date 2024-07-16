@@ -2,8 +2,8 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    margin: 50px;
-
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 .search-input {
@@ -25,4 +25,14 @@
     border-color: #5f6f52;
     outline: none;
     box-shadow: 0 0 5px #5f6f52;
+}
+
+@media (max-width: 1000px) {
+    .search-input-container {
+        flex-direction: column;
+        top: 60px;
+        right: 60px;
+        width: 300px;
+        z-index: 1;
+    }
 }

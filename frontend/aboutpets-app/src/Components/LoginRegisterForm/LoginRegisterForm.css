@@ -40,6 +40,10 @@
 
 }
 
+.error-input {
+    border-color: red !important;
+}
+
 .input:focus {
     border-color: #5f6f52;
     outline: none;

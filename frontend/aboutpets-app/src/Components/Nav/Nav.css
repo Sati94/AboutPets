@@ -133,13 +133,13 @@
     transition: 0.4s;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .nav-menu {
         display: none;
         flex-direction: column;
         position: absolute;
         top: 60px;
-        right: 20px;
+        right: 60px;
         background-color: #fff;
         box-shadow: 5px 1px 5px 1px black;
         padding: 10px;
@@ -153,5 +153,17 @@
 
     .nav-toggle {
         display: flex;
+    }
+
+    .nav-menu-list {
+        flex-direction: column;
+    }
+
+    .nav-menu li {
+        margin: 1rem 0;
+    }
+
+    .nav-login-cart {
+        margin-top: 1rem;
     }
 }
