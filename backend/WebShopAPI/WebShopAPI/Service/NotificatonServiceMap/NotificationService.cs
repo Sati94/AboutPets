@@ -23,6 +23,13 @@ namespace WebShopAPI.Service.NotificatonServiceMap
             _context = context;
             _userManager = userManager;
         }
+
+        public async Task<List<TodoItem>> ListAllElement()
+        {
+            var todos = await _context.TodoItems.ToListAsync();
+
+            return todos;
+        }
         public async Task<TodoItem> CheckUserSpending(string userId, int orderId)
         {
             var user = await _userManager.FindByIdAsync(userId);

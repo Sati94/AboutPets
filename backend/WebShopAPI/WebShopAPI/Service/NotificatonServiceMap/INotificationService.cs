@@ -5,12 +5,14 @@ namespace WebShopAPI.Service.NotificatonServiceMap
 {
     public interface INotificationService
     {
+        Task<List<TodoItem>> ListAllTodo();
         Task<TodoItem> CheckUserSpending(string userId, int orderId);
         Task<TodoItem> CheckProductStock(int productId);
         Task<TodoItem> NewOrderReceived(int orderId);
         Task<bool> DeleteTodoItem(int todoItemId);
         Task<bool> UpdatetodoItemStatus(int todoItemId, TodoStatus status);
         Task<TodoItem> AddNotification(TodoModel todoModel);
+        
     }
         
 

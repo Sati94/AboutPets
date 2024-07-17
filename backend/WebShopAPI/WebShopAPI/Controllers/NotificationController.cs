@@ -21,6 +21,19 @@ namespace WebShopAPI.Controllers
         {
             _notificationService = notificationService;
         }
+        [HttpGet("/notofocations/all"), Authorize("Admin")]
+        public async  Task<ActionResult<List<TodoItem>>> GetAllTodo()
+        {
+            try
+            {
+                var result = await _notificationService.ListAllTodo();
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
 
         [HttpDelete("notifications/deleteTodoItem/{todoItemId}")]
         public async Task<ActionResult<bool>> DeleteTodoItemController(int todoItemId)
