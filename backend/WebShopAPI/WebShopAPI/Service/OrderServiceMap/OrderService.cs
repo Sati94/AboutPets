@@ -108,11 +108,7 @@ namespace WebShopAPI.Service.OrderServiceMap
             var totalPrice = order.TotalPrice;
             decimal baseNumber = 100;
             
-
-
             order.OrderStatuses = (OrderStatuses)orderStatuses;
-
-
 
 
             try
