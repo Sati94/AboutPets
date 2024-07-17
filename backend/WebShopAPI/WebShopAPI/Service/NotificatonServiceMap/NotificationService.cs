@@ -24,7 +24,7 @@ namespace WebShopAPI.Service.NotificatonServiceMap
             _userManager = userManager;
         }
 
-        public async Task<List<TodoItem>> ListAllElement()
+        public async Task<IEnumerable<TodoItem>> ListAllTodo()
         {
             var todos = await _context.TodoItems.ToListAsync();
 

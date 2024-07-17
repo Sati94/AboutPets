@@ -5,7 +5,7 @@ namespace WebShopAPI.Service.NotificatonServiceMap
 {
     public interface INotificationService
     {
-        Task<List<TodoItem>> ListAllTodo();
+        Task<IEnumerable<TodoItem>> ListAllTodo();
         Task<TodoItem> CheckUserSpending(string userId, int orderId);
         Task<TodoItem> CheckProductStock(int productId);
         Task<TodoItem> NewOrderReceived(int orderId);

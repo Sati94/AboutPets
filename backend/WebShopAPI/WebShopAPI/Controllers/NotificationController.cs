@@ -21,8 +21,8 @@ namespace WebShopAPI.Controllers
         {
             _notificationService = notificationService;
         }
-        [HttpGet("/notofocations/all"), Authorize("Admin")]
-        public async  Task<ActionResult<List<TodoItem>>> GetAllTodo()
+        [HttpGet("/notifications/all"), Authorize(Roles = "Admin")]
+        public async  Task<ActionResult<IEnumerable<TodoItem>>> GetAllTodo()
         {
             try
             {
