@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.UserModels;
+using WebShopAPI.Model.TodoItem;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebShopAPI.Data
@@ -19,6 +20,7 @@ namespace WebShopAPI.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<TodoItem> TodoItems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

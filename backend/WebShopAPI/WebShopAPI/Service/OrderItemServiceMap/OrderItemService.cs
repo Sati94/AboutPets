@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using WebShopAPI.Data;
 using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
-using WebShopAPI.Model.OrderModel.OrderStatus; 
+using WebShopAPI.Model.OrderModel.OrderStatus;
+using WebShopAPI.Model.TodoItem;
+using WebShopAPI.Service.NotificatonServiceMap;
 
 namespace WebShopAPI.Service.OrderItemServiceMap
 {
@@ -11,11 +13,12 @@ namespace WebShopAPI.Service.OrderItemServiceMap
     {
         private readonly WebShopContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        public OrderItemService(WebShopContext context, UserManager<IdentityUser> userManager)
+        private readonly INotificationService _notificationService;
+        public OrderItemService(WebShopContext context, UserManager<IdentityUser> userManager, INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
-
+            _notificationService = notificationService;
         }
         public async Task<OrderItem> AddOrderItemToUser(string userId, int productId, int quantity, int orderId)
         {
@@ -72,7 +75,7 @@ namespace WebShopAPI.Service.OrderItemServiceMap
             order.OrderItems.Add(orderItem);
             _context.OrderItems.Add(orderItem);
 
-
+            await _notificationService.CheckProductStock(productId);
 
             order.TotalPrice = order.OrderItems.Sum(oi => oi.Price);
             await _context.SaveChangesAsync();
@@ -85,9 +88,10 @@ namespace WebShopAPI.Service.OrderItemServiceMap
             if (user != null)
             {
                 var order = await _context.Orders
-                          .Include(o => o.OrderItems)
-                          .ThenInclude(oi => oi.Product) 
-                          .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
+                                          .Include(o => o.OrderItems)
+                                          .ThenInclude(oi => oi.Product)
+                                          .FirstOrDefaultAsync(o => o.OrderId == orderId && o.UserId == userId);
+
                 if (order != null)
                 {
                     var orderItem = order.OrderItems.FirstOrDefault(oi => oi.OrderItemId == orderItemId);
@@ -95,17 +99,9 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                     if (orderItem != null)
                     {
                         var product = orderItem.Product;
+
                         _context.OrderItems.Remove(orderItem);
-                        if (product != null)
-                        {
-               
-                            product.Stock += orderItem.Quantity;
-                            _context.Products.Update(product);
-
-                        }
                         order.OrderItems.Remove(orderItem);
-
-
                         order.TotalPrice -= orderItem.Price;
 
                         if (order.OrderItems.Count == 0)
@@ -113,11 +109,24 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                             _context.Orders.Remove(order);
                         }
 
-                        // OrderItem törlése az adatbázisból
-                        _context.OrderItems.Remove(orderItem);
-
-                        // Adatok mentése
                         await _context.SaveChangesAsync();
+
+                        // Az orderItem törlése után frissítjük a termék készletét és töröljük a Stock Alert todoItem-et, ha szükséges
+                        if (product != null)
+                        {
+                            product.Stock += orderItem.Quantity;
+                            _context.Products.Update(product);
+
+                            if (product.Stock > 10)
+                            {
+                                var stockAlert = await _context.TodoItems.FirstOrDefaultAsync(ti => ti.Title == "Stock Alert" && ti.Description.Contains(product.ProductName));
+                                if (stockAlert != null)
+                                {
+                                    _context.TodoItems.Remove(stockAlert);
+                                    await _context.SaveChangesAsync(); // Mentsük el a változtatásokat az adatbázisban
+                                }
+                            }
+                        }
 
                         return orderItem;
                     }

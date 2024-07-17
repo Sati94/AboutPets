@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 using WebShopAPI.Data;
 using WebShopAPI.Model;
 using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.OrderModel.OrderStatus;
+using WebShopAPI.Model.TodoItem;
+using WebShopAPI.Service.NotificatonServiceMap;
 
 
 namespace WebShopAPI.Service.OrderServiceMap
@@ -13,12 +16,15 @@ namespace WebShopAPI.Service.OrderServiceMap
     public class OrderService : IOrderService
     {
         private readonly WebShopContext _context;
-       
+        private readonly INotificationService _notificationService;
 
-        public OrderService(WebShopContext context)
+
+
+        public OrderService(WebShopContext context, INotificationService notificationService)
         {
             _context = context;
-            
+            _notificationService = notificationService;
+         
         }
         public async Task<IEnumerable<Order>> GetAllOrderAsync()
         {
@@ -91,13 +97,56 @@ namespace WebShopAPI.Service.OrderServiceMap
         public async Task<bool> UpdateOrderStatus(int orderId, [FromBody] int orderStatuses)
         {
             var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
-            if (order != null)
+
+            if (order == null)
             {
-                order.OrderStatuses = (OrderStatuses)orderStatuses;
-                await _context.SaveChangesAsync();
-                return true;
+                return false;
             }
-            return false;
+
+            var userId = order.UserId;
+            var previousStatus = order.OrderStatuses;
+            var totalPrice = order.TotalPrice;
+            decimal baseNumber = 100;
+            
+
+
+            order.OrderStatuses = (OrderStatuses)orderStatuses;
+
+
+
+
+            try
+            {
+                
+                if (previousStatus != order.OrderStatuses && order.OrderStatuses == OrderStatuses.Processing)
+                {
+                    var newOrderNotification = await _notificationService.NewOrderReceived(orderId);
+
+                    _context.TodoItems.Add(newOrderNotification);
+                }
+
+                
+                if (order.TotalPrice >= baseNumber)
+                {
+                    var bonusNotification = await _notificationService.CheckUserSpending(userId, orderId);
+                    if (bonusNotification != null) 
+                    {
+                        _context.TodoItems.Add(bonusNotification);
+                    }
+                }
+
+               
+                await _context.SaveChangesAsync();
+
+                return true; 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Something went wrong: {ex.Message}");
+                return false; 
+            }
+
+
         }
         public async Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId)
         {

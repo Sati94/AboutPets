@@ -9,6 +9,7 @@ using System.Text;
 using WebShopAPI.Data;
 using WebShopAPI.Service.ProductServiceMap;
 using WebShopAPI.Service.UserServiceMap;
+using WebShopAPI.Service.NotificatonServiceMap;
 using Microsoft.Extensions.DependencyInjection;
 using WebShopAPI.Service.UserProfileMap;
 using WebShopAPI.Service.OrderItemServiceMap;
@@ -28,6 +29,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddDbContext<WebShopContext>();
 

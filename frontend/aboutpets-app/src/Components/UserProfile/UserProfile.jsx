@@ -136,19 +136,20 @@ const UserProfile = () => {
                 <button type="submit"> Update Profile</button>
 
             </form>
+            {profile.bonus > 0 && (
+                <div class="coupon">
 
-            <div class="coupon">
+                    <div class="center">
+                        <div>
+                            <h3>Coupon</h3>
+                            <h2>{profile.bonus * 100} %</h2>
 
-                <div class="center">
-                    <div>
-                        <h3>Coupon</h3>
-                        <h2>{profile.bonus * 100} %</h2>
-
+                        </div>
                     </div>
+
+
                 </div>
-
-
-            </div>
+            )}
 
 
             <ToastContainer />
