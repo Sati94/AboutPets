@@ -9,10 +9,7 @@ const Items = (props) => {
     const handleClick = () => {
         navigate(`/products/${props.productId}`)
     }
-    const bonus = props.discount ? props.price * (props.discount / 100) : 0;
 
-
-    const newPrice = Math.ceil(props.price - bonus);
 
 
     const priceStyle = {
@@ -37,7 +34,7 @@ const Items = (props) => {
                     <span>{props.productName}</span>
                 </h3>
                 <hr />
-                <h4 style={priceStyle}>Price : {newPrice}$</h4>
+                {props.discount > 0 ? <h4 style={priceStyle}>Price : {props.price}$</h4> : <h4>{props.price}$</h4>}
                 <hr />
                 <h5>Stock : {props.stock}pcs</h5>
                 <hr />

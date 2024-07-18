@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../../AuthContext/AuthContext'
 import './UpdateProduct.css'
 import ConfirmModal from '../../../Modal/ConfimModal'
+import { ToastContainer, toast } from 'react-toastify'
 
 
 
@@ -101,12 +102,12 @@ const UpdateProduct = () => {
             try {
                 const imageBase64 = await readFileAsBase64AndCompress(selectedFile);
                 setImageBase64(imageBase64);
-                console.log(imageBase64); // Ellenőrizd, hogy kapott-e értéket
+                toast.success("Image added!")
             } catch (error) {
-                console.error("Error compressing image:", error);
+                toast.error("Image is bad!!")
             }
         } else {
-            console.error("No file selected");
+            toast.error("Image is missing!")
         }
     };
     const handleSubmit = async (e) => {
@@ -268,6 +269,7 @@ const UpdateProduct = () => {
                 confirmButtonText="Update"
                 confirmButtonClass="update"
             />
+            <ToastContainer />
         </div>
     );
 }

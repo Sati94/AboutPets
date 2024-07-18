@@ -144,7 +144,7 @@ const AddProduct = () => {
                 console.log("Product created :", data);
                 navigate("/admin/products");
             } else {
-                console.error("Error creating product:", response.status, response.statusText);
+                toast.error(`Error creating product: ${response.status} ${response.statusText}`);
             }
 
         } catch (error) {
