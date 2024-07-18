@@ -25,6 +25,17 @@ const AdminOrders = () => {
         5: 'Cancelled'
 
     }
+
+    const formatDate = (createdDate) => {
+        const date = new Date(createdDate);
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const hours = ('0' + date.getHours()).slice(-2);
+        const minutes = ('0' + date.getMinutes()).slice(-2);
+
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+    };
     useEffect(() => {
         async function fetchOrders() {
             try {
@@ -127,8 +138,8 @@ const AdminOrders = () => {
                     <div key={order.orderId} className='order-item-data'>
                         <ul>
                             <li><strong>Id:</strong> {order.orderId}</li>
-                            <li><strong>Date:</strong> {order.orderDate}</li>
-                            <li><strong>Tortal Price:</strong>{order.totalPrice}</li>
+                            <li><strong>Date:</strong> {formatDate(order.orderDate)}</li>
+                            <li><strong>Tortal Price:</strong>{order.totalPrice}$</li>
                             <li><strong>Status:</strong> {statusMapping[order.orderStatuses]}</li>
                             <li><strong>User Id:</strong>{order.userId}</li>
                         </ul>

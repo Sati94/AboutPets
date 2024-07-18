@@ -1,10 +1,12 @@
 .container-product {
+    margin-top: 50px;
     min-height: 100%;
     display: contents;
     flex-direction: column;
 }
 
 .container-product h1 {
+    margin-top: 50px;
     color: #333;
 }
 
@@ -39,6 +41,7 @@
 }
 
 .search-bar {
+    margin-top: 50px;
     margin-bottom: 20px;
 
 

@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import API_BASE_URL from '../../config';
 import { AuthContext } from '../../AuthContext/AuthContext';
 import './LoginRegisterForm.css';
+import Footer from '../FooterItem/Footer';
 
 const LoginRegisterForm = ({ isHandleRegister }) => {
   const { login } = useContext(AuthContext);
@@ -194,6 +195,7 @@ const LoginRegisterForm = ({ isHandleRegister }) => {
         </>
       )}
       <ToastContainer />
+
     </div>
   );
 };

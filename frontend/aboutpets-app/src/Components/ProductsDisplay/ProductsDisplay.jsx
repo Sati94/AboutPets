@@ -1,11 +1,13 @@
 import React from 'react'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import API_BASE_URL from "../../config";
 import Items from '../Items/Items';
 import './ProductsDisplay.css'
 import SearchInput from '../SearchInput/SearchInput';
 import { useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import { AuthContext } from '../../AuthContext/AuthContext';
+import Footer from '../FooterItem/Footer';
 
 
 
@@ -16,6 +18,8 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredProducts, setFilteredProducts] = useState([]);
     const location = useLocation();
+    const { authState, setAuthState } = useContext(AuthContext);
+
 
     useEffect(() => {
         if (location.state?.message) {
@@ -92,6 +96,7 @@ const ProductsDisplay = ({ onlyDiscounted = false }) => {
 
             )}
             <ToastContainer />
+
         </div>
     )
 }

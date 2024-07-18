@@ -3,16 +3,17 @@ import './AddItemModal.css'
 
 const AddItemModal = ({ isOpenAdd, onCancelAdd, onConfirmAdd, currentUser }) => {
 
-    const [sender, setSender] = useState(currentUser.Username || 'Admin');
+    const [sender, setSender] = useState(currentUser.userName || '');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
     const handleConfirmAdd = () => {
         onConfirmAdd({ sender, title, description });
-        setSender('');
+        setSender(currentUser.userName || '');
         setTitle('');
         setDescription('');
     }
+
 
     if (!isOpenAdd) return null;
     return (

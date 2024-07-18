@@ -247,7 +247,7 @@ const CartElement = () => {
                                 <div className="cart-item-details">
                                     <p>{item.product.productName}</p>
                                     <p>{item.product.description}</p>
-                                    <p>Price: {item.price}</p>
+                                    <p>Price: {item.price}$</p>
                                     <p>Stock: {item.quantity}</p>
                                 </div>
                                 <button onClick={() => {
@@ -257,7 +257,7 @@ const CartElement = () => {
                             </div>
                         </li>
                     ))}
-                    <h2 className='Total-Price'>Total Price : {orders.totalPrice}</h2>
+                    <h2 className='Total-Price'>Total Price : {orders.totalPrice}$</h2>
                     <div className="button-container">
                         {hasBonus && <button className='Apply-Bonus-Button' onClick={toggleApplyBonusModal}>Apply Bonus</button>}
                         <button className='Send-Order-Button' onClick={toggleSendOrderModal}>Send the order</button>
