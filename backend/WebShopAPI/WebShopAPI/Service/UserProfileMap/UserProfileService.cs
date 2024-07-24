@@ -31,7 +31,9 @@ namespace WebShopAPI.Service.UserProfileMap
             existingProfile.FirstName = userProfile.FirstName;
             existingProfile.LastName = userProfile.LastName;
             existingProfile.PhoneNumber = userProfile.PhoneNumber;
-            existingProfile.Address = userProfile.Address;
+            existingProfile.City = userProfile.City;
+            existingProfile.Country = userProfile.Country;
+            existingProfile.StreetAddress = userProfile.StreetAddress;
 
             await _context.SaveChangesAsync();
             return existingProfile;
@@ -47,7 +49,9 @@ namespace WebShopAPI.Service.UserProfileMap
             existingProfile.FirstName = updatedProfile.FirstName;
             existingProfile.LastName = updatedProfile.LastName;
             existingProfile.PhoneNumber = updatedProfile.PhoneNumber;
-            existingProfile.Address = updatedProfile.Address;
+            existingProfile.City = updatedProfile.City;
+            existingProfile.Country = updatedProfile.Country;
+            existingProfile.StreetAddress = updatedProfile.StreetAddress;
             existingProfile.Bonus = updatedProfile.Bonus;
 
             await _context.SaveChangesAsync();

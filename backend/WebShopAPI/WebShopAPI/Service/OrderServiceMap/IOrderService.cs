@@ -2,6 +2,7 @@
 using WebShopAPI.Model.OrderModel.OrderStatus;
 using WebShopAPI.Model;
 using Microsoft.AspNetCore.Mvc;
+using WebShopAPI.Model.OrderModel.DeliveryType;
 
 namespace WebShopAPI.Service.OrderServiceMap
 {
@@ -15,5 +16,6 @@ namespace WebShopAPI.Service.OrderServiceMap
         Task<Order> GetPendingOrders(string userId);
         Task<bool> UpdateOrderStatus(int orderId, [FromBody] int orderStatuses);
         Task<bool> UpdateOrderTotlaPriceWithBonus(int orderId, string userId );
+        Task<bool> UpdateOrderDeliveryTypeAndAddress(int orderId,[FromBody] UpdateOrderDeliveryRequest request);
     }
 }

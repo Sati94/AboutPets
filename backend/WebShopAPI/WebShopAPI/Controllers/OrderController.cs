@@ -6,6 +6,7 @@ using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.OrderModel.OrderStatus;
 using WebShopAPI.Model;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using WebShopAPI.Model.OrderModel.DeliveryType;
 
 namespace WebShopAPI.Controllers
 {
@@ -27,7 +28,7 @@ namespace WebShopAPI.Controllers
                 var result = await _orderService.GetAllOrderAsync();
                 return Ok(result);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -48,23 +49,23 @@ namespace WebShopAPI.Controllers
         [HttpGet("/order/orderItems/{orderId}"), Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItems(int orderId)
         {
-            var order = await _orderService.GetOrderItemsByOrderIdAsync( orderId);
+            var order = await _orderService.GetOrderItemsByOrderIdAsync(orderId);
 
             if (order == null || !order.OrderItems.Any())
             {
-                return NotFound(new {message = "No itmes found for this order!" });
+                return NotFound(new { message = "No itmes found for this order!" });
             }
             return Ok(order.OrderItems);
         }
-        [HttpGet("/order/{orderId}"), Authorize( Roles = "Admin, User")]
-        public async Task<ActionResult<Order>> GetOrderById(int orderId) 
+        [HttpGet("/order/{orderId}"), Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<Order>> GetOrderById(int orderId)
         {
             try
             {
                 var order = await _orderService.GetOrderByIdAsync(orderId);
                 return Ok(order);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -77,12 +78,12 @@ namespace WebShopAPI.Controllers
                 var order = await _orderService.GetOrderByUserId(userId);
                 return Ok(order);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 return NotFound(ex.Message);
             }
         }
-        [HttpDelete("/order/delete/{orderId}"), Authorize(Roles ="Admin, User")]
+        [HttpDelete("/order/delete/{orderId}"), Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<Order>> DeleteOrderByIdAsync(int orderId)
         {
             try
@@ -90,7 +91,7 @@ namespace WebShopAPI.Controllers
                 var order = await _orderService.DeleteOrderById(orderId);
                 return Ok(order);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -105,7 +106,7 @@ namespace WebShopAPI.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);  
+                return BadRequest(ex.Message);
             }
         }
         [HttpPut("/order/{orderId}/apply-cupon/{userId}"), Authorize(Roles = "User, Admin")]
@@ -121,6 +122,20 @@ namespace WebShopAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+        [HttpPost("/update-order-delivery/{orderId}")]
+        public async Task<ActionResult<bool>> UpdateOrderDelivery(int orderId, [FromBody] UpdateOrderDeliveryRequest request)
+        {
+            var updateResult = await _orderService.UpdateOrderDeliveryTypeAndAddress(orderId, request);
+
+            if (updateResult)
+            {
+                return Ok("Order delivery type and address updated successfully.");
+            }
+            else
+            {
+                return BadRequest("Failed to update order delivery type and address.");
+            }
+
+        }
     }
 }

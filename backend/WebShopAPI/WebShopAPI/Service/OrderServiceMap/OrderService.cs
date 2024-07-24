@@ -9,6 +9,7 @@ using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.OrderModel.OrderStatus;
 using WebShopAPI.Model.TodoItem;
 using WebShopAPI.Service.NotificatonServiceMap;
+using WebShopAPI.Model.OrderModel.DeliveryType;
 
 
 namespace WebShopAPI.Service.OrderServiceMap
@@ -172,6 +173,30 @@ namespace WebShopAPI.Service.OrderServiceMap
             }
             return false;
           
+        }
+        public async Task<bool> UpdateOrderDeliveryTypeAndAddress(int orderId, [FromBody] UpdateOrderDeliveryRequest request)
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if(order == null)
+            {
+                return false;
+            }
+
+            order.DeliveryType = request.DeliveryType;
+            order.Country = request.Country;
+            order.City = request.City;
+            order.StreetAddress = request.StreetAddress;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Something is wrong is Updated Delivery and Address {ex.Message}");
+                return false;
+            }
         }
     }
 }

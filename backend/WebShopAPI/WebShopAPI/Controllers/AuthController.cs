@@ -44,7 +44,9 @@ namespace WebShopAPI.Controllers
                     FirstName = string.Empty,
                     LastName = string.Empty,
                     PhoneNumber = string.Empty,
-                    Address = string.Empty,
+                    Country= string.Empty,
+                    City = string.Empty,
+                    StreetAddress = string.Empty,
                     Bonus = decimal.Zero,
                     UserId = user.Id,
 
