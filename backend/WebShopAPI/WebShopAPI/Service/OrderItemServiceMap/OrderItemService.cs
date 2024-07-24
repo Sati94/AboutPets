@@ -6,6 +6,7 @@ using WebShopAPI.Model.OrderModel;
 using WebShopAPI.Model.OrderModel.OrderStatus;
 using WebShopAPI.Model.TodoItem;
 using WebShopAPI.Service.NotificatonServiceMap;
+using WebShopAPI.Model.OrderModel.DeliveryType;
 
 namespace WebShopAPI.Service.OrderItemServiceMap
 {
@@ -52,6 +53,10 @@ namespace WebShopAPI.Service.OrderItemServiceMap
                     OrderDate = DateTime.Now,
                     TotalPrice = 0,
                     OrderStatuses = OrderStatuses.Pending,
+                    Country = "",
+                    City = "",
+                    StreetAddress = "",
+                    DeliveryType = DeliveryTypes.Post,
                     UserId = userId,
                 };
                 _context.Orders.Add(order);

@@ -25,6 +25,11 @@ const AdminOrders = () => {
         5: 'Cancelled'
 
     }
+    const deliveryMapping = {
+        1: 'GLS',
+        2: 'Post',
+        3: 'DPD'
+    }
 
     const formatDate = (createdDate) => {
         const date = new Date(createdDate);
@@ -139,6 +144,10 @@ const AdminOrders = () => {
                         <ul>
                             <li><strong>Id:</strong> {order.orderId}</li>
                             <li><strong>Date:</strong> {formatDate(order.orderDate)}</li>
+                            <li><strong>Country:</strong> {order.country}</li>
+                            <li><strong>City:</strong> {order.city}</li>
+                            <li><strong>Street Address:</strong> {order.streetAddress}</li>
+                            <li><strong>Delivery Type:</strong> {deliveryMapping[order.deliveryType]}</li>
                             <li><strong>Tortal Price:</strong>{order.totalPrice}$</li>
                             <li><strong>Status:</strong> {statusMapping[order.orderStatuses]}</li>
                             <li><strong>User Id:</strong>{order.userId}</li>

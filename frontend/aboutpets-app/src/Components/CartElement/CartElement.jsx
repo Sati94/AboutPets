@@ -18,6 +18,12 @@ const CartElement = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteItemId, setDeleteItemId] = useState(null);
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        country: "",
+        city: "",
+        streetAddress: "",
+        deliveryType: "0"
+    })
 
     useEffect(() => {
         const fetchOrderById = async () => {
@@ -69,6 +75,12 @@ const CartElement = () => {
                 } else {
                     setHasBonus(false);
                 }
+                setFormData({
+                    country: userProfile.country || "",
+                    city: userProfile.city || "",
+                    streetAddress: userProfile.streetAddress || "",
+                    deliveryType: ''
+                })
             } catch (error) {
                 console.error("Error fetching user profile:", error);
             }
@@ -138,6 +150,38 @@ const CartElement = () => {
             setOrderItems(updatedOrderItems);
         } catch (error) {
             console.error('Error removing order item:', error.message);
+        }
+    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const { orderId, token, role } = authState;
+        const requestBody = {
+            country: formData.country,
+            city: formData.city,
+            streetAddress: formData.streetAddress,
+            deliveryType: parseInt(formData.deliveryType)
+        };
+        try {
+            const response = await fetch(`${API_BASE_URL}/update-order-delivery/${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Role': role
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`Failed to update order delivery type and address: ${errorMessage}`);
+            }
+
+            toast.success('Order delivery type and address updated successfully!');
+            setLoading(prev => !prev);
+        } catch (error) {
+            toast.error('Error updating order delivery type and address!');
+            console.log(error)
         }
     };
 
@@ -232,6 +276,13 @@ const CartElement = () => {
     const cancelDeleteItem = () => {
         setShowDeleteModal(false);
     };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
     return (
         <div>
             {!Array.isArray(orderItems) || orderItems.length === 0 || orders.orderStatuses > 1 ? (
@@ -258,9 +309,31 @@ const CartElement = () => {
                         </li>
                     ))}
                     <h2 className='Total-Price'>Total Price : {orders.totalPrice}$</h2>
+                    <div className="form-group">
+                        <label>Country:</label>
+                        <input type="text" name="country" value={formData.country} onChange={handleChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>City:</label>
+                        <input type="text" name="city" value={formData.city} onChange={handleChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>Street Address:</label>
+                        <input type="text" name="streetAddress" value={formData.streetAddress} onChange={handleChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>Delivery Type:</label>
+                        <select name="deliveryType" value={formData.deliveryType} onChange={handleChange}>
+                            <option value="0">Select Delivery Type</option>
+                            <option value="1">GLS</option>
+                            <option value="2">Posta</option>
+                            <option value="3">DPD</option>
+
+                        </select>
+                    </div>
                     <div className="button-container">
                         {hasBonus && <button className='Apply-Bonus-Button' onClick={toggleApplyBonusModal}>Apply Bonus</button>}
-                        <button className='Send-Order-Button' onClick={toggleSendOrderModal}>Send the order</button>
+                        <button className='Send-Order-Button' onClick={(e) => { toggleSendOrderModal(); handleSubmit(e); }}>Send the order</button>
                     </div>
 
                 </ul>

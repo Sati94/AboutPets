@@ -17,6 +17,44 @@ const AdminUpdateOrder = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [id, setId] = useState("");
+    const [formData, setFormData] = useState({
+        country: "",
+        city: "",
+        streetAddress: "",
+        deliveryType: "0"
+    })
+    const handleSubmitForm = async (e) => {
+        e.preventDefault();
+        const { token, role } = authState;
+        const requestBody = {
+            country: formData.country,
+            city: formData.city,
+            streetAddress: formData.streetAddress,
+            deliveryType: parseInt(formData.deliveryType)
+        };
+        try {
+            const response = await fetch(`${API_BASE_URL}/update-order-delivery/${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Role': role
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`Failed to update order delivery type and address: ${errorMessage}`);
+            }
+
+            toast.success('Order delivery type and address updated successfully!');
+
+        } catch (error) {
+            toast.error('Error updating order delivery type and address!');
+            console.log(error)
+        }
+    };
 
     const toggleDeleteModal = () => {
         setShowDeleteModal(!showDeleteModal);
@@ -54,6 +92,12 @@ const AdminUpdateOrder = () => {
                 setOrder(data);
                 const user = data.userId;
                 setId(user);
+                setFormData({
+                    country: data.country || "",
+                    city: data.city || "",
+                    streetAddress: data.streetAddress || "",
+                    deliveryType: data.deliveryType || "0"
+                });
             } catch (error) {
                 toast.error("Failed to fetch order details.");
             }
@@ -63,6 +107,14 @@ const AdminUpdateOrder = () => {
             fetchOrderDetails();
         }
     }, [authState.token, authState.role, orderId, orderItems]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
 
     useEffect(() => {
         const fetchOrderItems = async () => {
@@ -93,10 +145,6 @@ const AdminUpdateOrder = () => {
 
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setShowUpdateModal(true);
-    };
 
     const handleConfirmUpdate = async () => {
 
@@ -186,6 +234,28 @@ const AdminUpdateOrder = () => {
                     </ul>
                 </div>
             )}
+            <div className="form-group">
+                <label>Country:</label>
+                <input type="text" name="country" value={formData.country} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+                <label>City:</label>
+                <input type="text" name="city" value={formData.city} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+                <label>Street Address:</label>
+                <input type="text" name="streetAddress" value={formData.streetAddress} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+                <label>Delivery Type:</label>
+                <select name="deliveryType" value={formData.deliveryType} onChange={handleChange}>
+                    <option value="0">Select Delivery Type</option>
+                    <option value="1">GLS</option>
+                    <option value="2">Posta</option>
+                    <option value="3">DPD</option>
+
+                </select>
+            </div>
             <h2>Order Items</h2>
             {orderItems.length > 0 ? (
                 orderItems.map(item => (
@@ -202,9 +272,7 @@ const AdminUpdateOrder = () => {
             ) : (
                 <p>No items found for this order</p>
             )}
-            <form onSubmit={handleSubmit}>
-                <button className='send-order-button'>Update Status</button>
-            </form>
+            <button className='send-order-button' onClick={(e) => { handleSubmitForm(e); handleConfirmUpdate() }}>Send the order</button>
             <ToastContainer />
             <ConfirmModal
                 isOpen={showDeleteModal}
