@@ -19,7 +19,9 @@ const UserProfile = () => {
         firstName: "",
         lastName: "",
         phoneNumber: "",
-        address: "",
+        country: "",
+        city: "",
+        streetAddress: "",
         bonus: 0
     });
 
@@ -129,8 +131,16 @@ const UserProfile = () => {
                     <input type="text" name="phoneNumber" value={profile.phoneNumber} onChange={handleChange} />
                 </div>
                 <div>
-                    <label>Address:</label>
-                    <input type="text" name="address" value={profile.address} onChange={handleChange} />
+                    <label>Country:</label>
+                    <input type="text" name="country" value={profile.country} onChange={handleChange} />
+                </div>
+                <div>
+                    <label>City:</label>
+                    <input type="text" name="city" value={profile.city} onChange={handleChange} />
+                </div>
+                <div>
+                    <label>Street Address:</label>
+                    <input type="text" name="streetAddress" value={profile.streetAddress} onChange={handleChange} />
                 </div>
 
                 <button type="submit"> Update Profile</button>

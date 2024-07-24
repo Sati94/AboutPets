@@ -16,7 +16,9 @@ const UpdateUserProfile = () => {
         firstName: "",
         lastName: "",
         phoneNumber: "",
-        address: "",
+        country: "",
+        city: "",
+        streetAddress: "",
         bonus: ""
     });
     const handleInputChange = (e) => {
@@ -105,14 +107,31 @@ const UpdateUserProfile = () => {
                     onChange={handleInputChange}
                     required
                 />
-                <label>Address</label>
+                <label>Country</label>
                 <input
                     type="text"
-                    name="address"
-                    value={userProfile.address}
+                    name="country"
+                    value={userProfile.country}
                     onChange={handleInputChange}
                     required
                 />
+                <label>City</label>
+                <input
+                    type="text"
+                    name="city"
+                    value={userProfile.city}
+                    onChange={handleInputChange}
+                    required
+                />
+                <label>Street Address</label>
+                <input
+                    type="text"
+                    name="streetAddress"
+                    value={userProfile.streetAddress}
+                    onChange={handleInputChange}
+                    required
+                />
+
                 <label>Bonus:</label>
                 <input
                     type="text"
@@ -121,6 +140,8 @@ const UpdateUserProfile = () => {
                     onChange={handleInputChange}
                     required
                 />
+
+
 
                 <button type="submit">Update Profile</button>
             </form>
