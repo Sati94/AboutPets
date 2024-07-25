@@ -85,6 +85,9 @@ const Nav = () => {
       case 'profile':
         navigate('/profile');
         break;
+      case 'order':
+        navigate('/my-orders')
+        break;
       case 'adminDashboard':
         navigate('/admin');
         break;
@@ -140,6 +143,10 @@ const Nav = () => {
           <li className={menu === 'profile' ? 'active' : ''} onClick={() => handleMenuClick('profile')}>
             My Profile
             {menu === 'profile' && <hr />}
+          </li>
+          <li className={menu === 'order' ? 'active' : ''} onClick={() => handleMenuClick('order')}>
+            My Orders
+            {menu === 'order' && <hr />}
           </li>
         </ul>
       </div>

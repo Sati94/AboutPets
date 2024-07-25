@@ -37,10 +37,10 @@ namespace WebShopAPI.Service.OrderServiceMap
             var order = await _context.Orders.FirstOrDefaultAsync(o=> o.OrderId == orderId);
             return order;
         }
-        public async Task<Order> GetOrderByUserId(string userId)
+        public async Task<IEnumerable<Order>> GetOrderByUserId(string userId)
         {
-            var order = _context.Orders.FirstOrDefault(o=> o.UserId == userId);
-            return order;
+            var orderList = await _context.Orders.Where(o => o.UserId == userId).ToListAsync();
+            return orderList;
         }
         public async Task<Order> DeleteOrderById(int orderId)
         {

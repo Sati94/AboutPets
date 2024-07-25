@@ -8,6 +8,7 @@ import Product from './Pages/Product'
 import Profile from './Pages/Profile';
 import Cart from './Pages/Cart';
 import Login from './Pages/Login';
+import OrderList from './Pages/OrderList';
 import ProductsDisplay from './Components/ProductsDisplay/ProductsDisplay';
 import SubCategoryPage from './Pages/SubCategoryPage';
 import Register from './Pages/Register';
@@ -20,6 +21,7 @@ import ManageOrdersPages from './AdminPages/ManageOrdersPages';
 import UpdateOrdersPage from './AdminPages/UpdateOrdersPage';
 import { AuthProvider } from './AuthContext/AuthContext';
 import UpdateUserProfilePage from './AdminPages/UpdateUserProfilePage';
+
 
 
 
@@ -45,6 +47,7 @@ const App = () => {
             <Route path='/category/:category/:subCategory' element={<SubCategoryPage />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/cart' element={<Cart />} />
+            <Route path='/my-orders' element={<OrderList />} />
 
             <Route path='/admin' element={<AdminToDo />} />
             <Route path='/admin/products' element={<ManageProductsPage />} />

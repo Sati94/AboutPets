@@ -71,7 +71,7 @@ namespace WebShopAPI.Controllers
             }
         }
         [HttpGet("/order/user/{userId}"), Authorize(Roles = "Admin, User")]
-        public async Task<ActionResult<Order>> GetOrderByUserId(string userId)
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrderByUserId(string userId)
         {
             try
             {

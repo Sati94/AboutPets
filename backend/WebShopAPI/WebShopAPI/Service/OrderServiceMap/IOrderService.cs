@@ -10,7 +10,7 @@ namespace WebShopAPI.Service.OrderServiceMap
     {
         Task<IEnumerable<Order>> GetAllOrderAsync();
         Task<Order> GetOrderByIdAsync(int orderId);
-        Task<Order> GetOrderByUserId(string userId);
+        Task<IEnumerable<Order>> GetOrderByUserId(string userId);
         Task<Order> DeleteOrderById (int orderId);
         Task<Order> GetOrderItemsByOrderIdAsync(int orderId);
         Task<Order> GetPendingOrders(string userId);
