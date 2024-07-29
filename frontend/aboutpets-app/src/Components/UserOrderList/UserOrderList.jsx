@@ -14,7 +14,19 @@ const UserOrderList = () => {
     const [error, setError] = useState(null);
     const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
 
+    const statusMapping = {
+        1: 'Pending',
+        2: 'Processing',
+        3: 'Shipped',
+        4: 'Delivered',
+        5: 'Cancelled'
 
+    }
+    const deliveryMapping = {
+        1: 'GLS',
+        2: 'Post',
+        3: 'DPD'
+    }
     useEffect(() => {
         const { token, role, userId } = authState;
 
@@ -64,8 +76,10 @@ const UserOrderList = () => {
     return (
         <div className='order-container'>
             <h1>My Orders</h1>
-            {orderList.length === 0 ? (
-                <p>No orders found.</p>
+            {orderList.length === 0 || orderList.every(order => order.orderStatuses === 4 || order.orderStatuses === 5) ? (
+                <div className='No-data'>
+                    <p>No orders found.</p>
+                </div>
             ) : (
                 <div className='order-list'>
                     {orderList.map(order => (
@@ -73,10 +87,10 @@ const UserOrderList = () => {
                             <p><strong>Order ID:</strong> {order.orderId}</p>
                             <p><strong>Order Date:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
                             <p><strong>Total Price:</strong> ${order.totalPrice}</p>
-                            <p><strong>Delivery Type:</strong> {order.deliveryType}</p>
-                            <p><strong>Order Status:</strong> {order.orderStatuses}</p>
+                            <p><strong>Delivery Type:</strong> {deliveryMapping[order.deliveryType]}</p>
+                            <p><strong>Order Status:</strong> {statusMapping[order.orderStatuses]}</p>
                             <p><strong>Address:</strong> {order.streetAddress}, {order.city}, {order.country}</p>
-                            <p><strong>Order Items:</strong> {order.orderItems.length > 0 ? order.orderItems.join(', ') : 'No items in this order'}</p>
+
                         </div>
                     ))}
                 </div>

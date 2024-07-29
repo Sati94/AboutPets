@@ -133,6 +133,16 @@
     transition: 0.4s;
 }
 
+.nav-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.nav-link p {
+    margin: 0;
+}
+
 @media (max-width: 1000px) {
     .nav-menu {
         display: none;

@@ -67,8 +67,8 @@ const Nav = () => {
 
 
   const handleMenuClick = (menuItem) => {
-    setMenu(menuItem); // Menüpont állapotának frissítése
-    // Navigálás az adott oldalra
+    setMenu(menuItem);
+
     switch (menuItem) {
       case 'shop':
         navigate('/');
@@ -120,7 +120,9 @@ const Nav = () => {
     <div className='nav'>
       <div className='nav-logo'>
         <img src={logo} alt='' />
-        <p>About Pets</p>
+        <Link to="/home" className="nav-link">
+          <p>About Pets</p>
+        </Link>
       </div>
       <div className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
         <ul className="nav-menu">

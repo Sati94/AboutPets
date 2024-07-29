@@ -5,7 +5,7 @@ import "./Footer.css"
 import { ToastContainer, toast } from "react-toastify"
 import API_BASE_URL from "../../config"
 
-const Footer = ({ currentUser }) => {
+const Footer = () => {
 
     const [showAddModal, setShowAddModal] = useState(false);
 
@@ -46,7 +46,7 @@ const Footer = ({ currentUser }) => {
                     isOpenAdd={showAddModal}
                     onCancelAdd={closeAddModal}
                     onConfirmAdd={handleAddItem}
-                    currentUser={currentUser}
+
                 />
             </div>
         </footer>

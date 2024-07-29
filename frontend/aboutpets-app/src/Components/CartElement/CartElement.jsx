@@ -284,7 +284,29 @@ const CartElement = () => {
         });
     };
     return (
-        <div>
+        <div className='form-data'>
+            <div className="form-group">
+                <label>Country:</label>
+                <input type="text" name="country" value={formData.country} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+                <label>City:</label>
+                <input type="text" name="city" value={formData.city} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+                <label>Street Address:</label>
+                <input type="text" name="streetAddress" value={formData.streetAddress} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+                <label>Delivery Type:</label>
+                <select name="deliveryType" value={formData.deliveryType} onChange={handleChange}>
+                    <option value="0">Select Delivery Type</option>
+                    <option value="1">GLS</option>
+                    <option value="2">Posta</option>
+                    <option value="3">DPD</option>
+
+                </select>
+            </div>
             {!Array.isArray(orderItems) || orderItems.length === 0 || orders.orderStatuses > 1 ? (
                 <div className='No-Data'>
                     <p>No data</p>
@@ -301,7 +323,7 @@ const CartElement = () => {
                                     <p>Price: {item.price}$</p>
                                     <p>Stock: {item.quantity}</p>
                                 </div>
-                                <button onClick={() => {
+                                <button className='delete-order-button' onClick={() => {
                                     setDeleteItemId(item.orderItemId);
                                     setShowDeleteModal(true);
                                 }}>Delete</button>
@@ -309,28 +331,7 @@ const CartElement = () => {
                         </li>
                     ))}
                     <h2 className='Total-Price'>Total Price : {orders.totalPrice}$</h2>
-                    <div className="form-group">
-                        <label>Country:</label>
-                        <input type="text" name="country" value={formData.country} onChange={handleChange} />
-                    </div>
-                    <div className="form-group">
-                        <label>City:</label>
-                        <input type="text" name="city" value={formData.city} onChange={handleChange} />
-                    </div>
-                    <div className="form-group">
-                        <label>Street Address:</label>
-                        <input type="text" name="streetAddress" value={formData.streetAddress} onChange={handleChange} />
-                    </div>
-                    <div className="form-group">
-                        <label>Delivery Type:</label>
-                        <select name="deliveryType" value={formData.deliveryType} onChange={handleChange}>
-                            <option value="0">Select Delivery Type</option>
-                            <option value="1">GLS</option>
-                            <option value="2">Posta</option>
-                            <option value="3">DPD</option>
 
-                        </select>
-                    </div>
                     <div className="button-container">
                         {hasBonus && <button className='Apply-Bonus-Button' onClick={toggleApplyBonusModal}>Apply Bonus</button>}
                         <button className='Send-Order-Button' onClick={(e) => { toggleSendOrderModal(); handleSubmit(e); }}>Send the order</button>

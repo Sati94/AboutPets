@@ -37,13 +37,27 @@
     align-items: stretch;
 }
 
-.order-item-data ul {
+.order-item-data p {
     list-style-type: none;
     padding: 0;
     margin-bottom: 10px;
     color: white;
 }
 
-.order-item-data ul li {
+.order-item-data p {
     margin-bottom: 10px;
+}
+
+.No-Data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.No-Data p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
 }

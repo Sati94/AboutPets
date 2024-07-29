@@ -19,6 +19,7 @@ import AddProductPage from './AdminPages/AddProductPage';
 import ManageUseresPages from './AdminPages/ManageUseresPages';
 import ManageOrdersPages from './AdminPages/ManageOrdersPages';
 import UpdateOrdersPage from './AdminPages/UpdateOrdersPage';
+import HomePage from './Pages/HomePage';
 import { AuthProvider } from './AuthContext/AuthContext';
 import UpdateUserProfilePage from './AdminPages/UpdateUserProfilePage';
 
@@ -36,6 +37,7 @@ const App = () => {
         <Router>
           <Nav />
           <Routes>
+            <Route path="/home" element={<HomePage />} />
             <Route path='/' element={<Shop />} />
             <Route path='/dog' element={<ShopCategory category={1} />} />
             <Route path='/cat' element={<ShopCategory category={2} />} />
@@ -48,6 +50,7 @@ const App = () => {
             <Route path='/profile' element={<Profile />} />
             <Route path='/cart' element={<Cart />} />
             <Route path='/my-orders' element={<OrderList />} />
+
 
             <Route path='/admin' element={<AdminToDo />} />
             <Route path='/admin/products' element={<ManageProductsPage />} />

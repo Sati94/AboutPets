@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import './AddItemModal.css'
 
-const AddItemModal = ({ isOpenAdd, onCancelAdd, onConfirmAdd, currentUser }) => {
+const AddItemModal = ({ isOpenAdd, onCancelAdd, onConfirmAdd }) => {
 
-    const [sender, setSender] = useState(currentUser.userName || '');
+    const [sender, setSender] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
     const handleConfirmAdd = () => {
         onConfirmAdd({ sender, title, description });
-        setSender(currentUser.userName || '');
+        setSender('');
         setTitle('');
         setDescription('');
     }

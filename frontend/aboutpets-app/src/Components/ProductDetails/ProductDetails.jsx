@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/ReactToastify.css'
 import { AuthContext } from '../../AuthContext/AuthContext'
-import Footer from '../FooterItem/Footer'
+
 
 const ProductDetails = () => {
 
@@ -150,7 +150,6 @@ const ProductDetails = () => {
                 <button onClick={handleAddToCart}>Add to Cart</button>
             </div>
             <ToastContainer />
-            {authState.role === 'User' && <Footer currentUser={authState.userId ? authState.userName : ""} />}
         </div>
 
 
