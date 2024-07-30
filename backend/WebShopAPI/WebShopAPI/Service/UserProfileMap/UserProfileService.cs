@@ -31,8 +31,8 @@ namespace WebShopAPI.Service.UserProfileMap
             existingProfile.FirstName = userProfile.FirstName;
             existingProfile.LastName = userProfile.LastName;
             existingProfile.PhoneNumber = userProfile.PhoneNumber;
-            existingProfile.City = userProfile.City;
             existingProfile.Country = userProfile.Country;
+            existingProfile.City = userProfile.City;
             existingProfile.StreetAddress = userProfile.StreetAddress;
 
             await _context.SaveChangesAsync();

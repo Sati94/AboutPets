@@ -134,7 +134,9 @@ namespace WebShopApiTest.IntegrationTest
                     FirstName = "Nagy",
                     LastName = "Béla",
                     PhoneNumber = "123456789",
-                    Address = "Nagy Street 25",
+                    Country = "Test",
+                    City = "Test",
+                    StreetAddress = "Test",
                     Bonus = 0.1m
                 };
 
@@ -143,7 +145,9 @@ namespace WebShopApiTest.IntegrationTest
                     firstname = updater.FirstName,
                     lastname = updater.LastName,
                     phonenumber = updater.PhoneNumber,
-                    address = updater.Address,
+                    country = updater.Country,
+                    city = updater.City,
+                    streetaddress = updater.StreetAddress,
                     bonus = updater.Bonus
                 }), Encoding.UTF8, "application/json");
 
@@ -157,7 +161,8 @@ namespace WebShopApiTest.IntegrationTest
                 Assert.That(updatedProfile.FirstName, Is.EqualTo(updater.FirstName));
                 Assert.That(updatedProfile.LastName, Is.EqualTo(updater.LastName));
                 Assert.That(updatedProfile.PhoneNumber, Is.EqualTo(updater.PhoneNumber));
-                Assert.That(updatedProfile.Address, Is.EqualTo(updater.Address));
+                Assert.That(updatedProfile.Country, Is.EqualTo(updater.Country));
+                Assert.That(updatedProfile.StreetAddress, Is.EqualTo(updater.StreetAddress));
                 Assert.That(updatedProfile.Bonus, Is.EqualTo(updater.Bonus));
 
 

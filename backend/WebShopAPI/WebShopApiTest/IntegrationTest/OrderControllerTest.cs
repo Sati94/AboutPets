@@ -179,28 +179,37 @@ namespace WebShopApiTest.IntegrationTest
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
                 var order = await dbContext.Orders.FirstOrDefaultAsync();
-                var newStatus = OrderStatuses.Shipped;
-                var orderId = order.OrderId;
-                if (order != null)
-                {
-                    var content = new StringContent(JsonConvert.SerializeObject(new
-                    {
-                        orderid = orderId,
-                        orderdate = order.OrderDate,
-                        totalprice = order.TotalPrice,
-                        orderStatuses = newStatus,
-                        userId = order.UserId
 
-                    }), Encoding.UTF8, "application/json"); ;
-                    var response = await _httpClient.PutAsync($"/order/update/{orderId}", content);
-                    response.EnsureSuccessStatusCode();
-                    var responseContent = await response.Content.ReadAsStringAsync();
+                if (order == null)
+                {
+                    Assert.Fail("No orders found in the database.");
+                }
+
+                var newStatus = (int)OrderStatuses.Shipped; // Ensure this matches the enum value
+                var orderId = order.OrderId;
+
+                var content = new StringContent(JsonConvert.SerializeObject(newStatus), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PutAsync($"/order/update/{orderId}", content);
+
+                
+                Console.WriteLine($"Status Code: {response.StatusCode}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
                     var isUpdateSuccessful = JsonConvert.DeserializeObject<bool>(responseContent);
                     Assert.That(isUpdateSuccessful, Is.True);
                 }
+                else
+                {
+                    
+                    Assert.Fail($"Update failed with status code {response.StatusCode} and response: {responseContent}");
+                }
             }
-        }    
-           
+        }
+
         [Test]
         public async Task UpdateOrderTotalPriceWithBonus_ShouldReturnTrue()
         {

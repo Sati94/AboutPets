@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebShopAPI.Data;
+using WebShopAPI.Model.UserModels;
 using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
@@ -24,14 +25,14 @@ namespace WebShopApiTest.UnitTest
                 .UseInMemoryDatabase(databaseName: "TestDataBase")
                 .Options;
             _webShopContext = new WebShopContext(options);
-           
 
+            _webShopContext.Database.EnsureCreated();
             _userProfileService = new UserProfileService(_webShopContext);
         }
         [TearDown]
         public void TearDown()
         {
-
+            _webShopContext.Database.EnsureDeleted();
             _webShopContext.Dispose();
 
         }
@@ -43,7 +44,7 @@ namespace WebShopApiTest.UnitTest
         public async Task GetUserProfileById_ShouldReturnIsNotNull()
         {
             var userId = "someUserId";
-            var profile = new UserProfile { UserId = userId, FirstName = "Test", LastName = "Test" , Address = "Test", PhoneNumber = "00"};
+            var profile = new UserProfile { UserId = userId, FirstName = "Test", LastName = "Test" , Country = "Test",City = "Test", StreetAddress = "Test", PhoneNumber = "00"};
             _webShopContext.UserProfiles.Add(profile);
             await _webShopContext.SaveChangesAsync();
 
@@ -62,7 +63,9 @@ namespace WebShopApiTest.UnitTest
                 FirstName = "Test2",
                 LastName = "Test",
                 PhoneNumber = "1234567890",
-                Address = "SomeWhere"
+                Country = "SomeWhere",
+                City = "SomeWhere",
+                StreetAddress= "SomeWhere"
 
             };
 
@@ -71,10 +74,17 @@ namespace WebShopApiTest.UnitTest
                 FirstName = newUserProfile.FirstName,
                 LastName = newUserProfile.LastName,
                 PhoneNumber = newUserProfile.PhoneNumber,
-                Address = newUserProfile.Address
+                Country = newUserProfile.Country,
+                City = newUserProfile.City,
+                StreetAddress = newUserProfile.StreetAddress,
+                UserId = userId,
+                
 
             };
+            _webShopContext.UserProfiles.Add(userProfile);
+            await _webShopContext.SaveChangesAsync();
             var result = await _userProfileService.UpdateUserProfile(userId, newUserProfile);
+        
 
             Assert.That(result, Is.Not.Null);
             Assert.That(userId, Is.EqualTo(result.UserId));
@@ -91,21 +101,30 @@ namespace WebShopApiTest.UnitTest
                 FirstName = "Test2",
                 LastName = "Test",
                 PhoneNumber = "1234567890",
-                Address = "SomeWhere",
+                Country = "Test",
+                City = "Test",
+                StreetAddress = "Test",
                 Bonus = 10
              
             };
+           
 
             var userProfile = new UserProfile
             {
+                UserId = userId,
                 FirstName = newUserProfile.FirstName,
                 LastName = newUserProfile.LastName,
                 PhoneNumber = newUserProfile.PhoneNumber,
-                Address = newUserProfile.Address,
+                Country = newUserProfile.Country,
+                City = newUserProfile.City,
+                StreetAddress = newUserProfile.StreetAddress,
                 Bonus = newUserProfile.Bonus
                 
 
             };
+            _webShopContext.UserProfiles.Add(userProfile);
+            await _webShopContext.SaveChangesAsync();
+
             var result = await _userProfileService.UpdateAdminUserProfileAsync(userId, newUserProfile);
 
             Assert.That(result, Is.Not.Null);

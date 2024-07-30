@@ -7,6 +7,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using WebShopAPI.Data;
+using WebShopAPI.Model.TodoItem;
+using WebShopAPI.Model.TodoItem.TodoItemStatus;
+using WebShopAPI.Model.OrderModel.DeliveryType;
 
 namespace WebShopApiTest.IntegrationTest
 {
@@ -34,7 +37,9 @@ namespace WebShopApiTest.IntegrationTest
                     {
                         FirstName = "Test",
                         LastName = "Test",
-                        Address = "Test",
+                        Country = "Test",
+                        City = "Test",
+                        StreetAddress = "Test",
                         PhoneNumber = "Test",
                         Bonus = 1,
                         UserId = newUser.Id,
@@ -68,6 +73,19 @@ namespace WebShopApiTest.IntegrationTest
                         OrderStatuses = OrderStatuses.Pending,
                         UserId = newUser.Id,
                         TotalPrice = newOrderItem.Price,
+                        Country = "Test",
+                        City = "Test",
+                        StreetAddress = "Test",
+                        DeliveryType = DeliveryTypes.Post
+
+                    };
+                    TodoItem newTodoItem = new TodoItem
+                    {
+                        CreatedDate = DateTime.Now,
+                        Title = "Test",
+                        Description = "Test",
+                        Sender = "Test",
+                        Status = TodoStatus.New,
 
                     };
 
@@ -79,7 +97,7 @@ namespace WebShopApiTest.IntegrationTest
                     dbContext.Products.Add(newProduct);
                     dbContext.Orders.Add(newOrder);
                     dbContext.OrderItems.Add(newOrderItem);
-
+                    dbContext.TodoItems.Add(newTodoItem);
                     dbContext.SaveChanges();
                 }
                 else 

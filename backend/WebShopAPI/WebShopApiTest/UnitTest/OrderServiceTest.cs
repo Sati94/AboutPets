@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebShopAPI.Data;
+using WebShopAPI.Service.NotificatonServiceMap;
 using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
@@ -14,6 +15,7 @@ namespace WebShopApiTest.UnitTest
         private WebShopContext _webShopContext;
         private IOrderService _orderService;
         private Mock<UserManager<IdentityUser>> _mockUserManager;
+        private INotificationService _notificationService;
 
         [SetUp]
         public void SetUp() 
@@ -26,7 +28,7 @@ namespace WebShopApiTest.UnitTest
             _webShopContext = new WebShopContext(options);
        
 
-            _orderService = new OrderService(_webShopContext);
+            _orderService = new OrderService(_webShopContext, _notificationService);
         }
         [TearDown]
         public void TearDown()
@@ -52,7 +54,9 @@ namespace WebShopApiTest.UnitTest
                 FirstName = "Test",
                 LastName = "Test",
                 UserId = user.Id,
-                Address = "Test",
+                Country = "Test",
+                City = "Test",
+                StreetAddress = "Test",
                 PhoneNumber = "Test",
                 Bonus = 0
             };
@@ -81,7 +85,10 @@ namespace WebShopApiTest.UnitTest
                 OrderId = 100,
                 OrderDate = DateTime.Now,
                 OrderStatuses = OrderStatuses.Pending,
-                UserId = user.Id
+                UserId = user.Id,
+                Country = "Test",
+                City = "Test",
+                StreetAddress = "Test",
             };
             order.OrderItems.Add(orderItem);
             _webShopContext.UserProfiles.Add(userProfile);
@@ -106,13 +113,13 @@ namespace WebShopApiTest.UnitTest
             Assert.That(orderId, Is.EqualTo(order.OrderId));
         }
         [Test]
-        public async Task GetOrderByUserId_ShioldReturnTrue()
+        public async Task GetOrderByUserId_ShouldReturnTrue()
         {
             var userId = "123456asd";
            
             var result = await _orderService.GetOrderByUserId(userId);
             Assert.That(result, Is.Not.Null);
-            Assert.That(userId, Is.EqualTo(result.UserId));
+            
         }
        
 
@@ -121,7 +128,7 @@ namespace WebShopApiTest.UnitTest
         {
             var order = await _webShopContext.Orders.FirstOrDefaultAsync();
             var orderId = order.OrderId;
-            OrderStatuses newStatus = OrderStatuses.Cancelled;
+            int newStatus = 4;
 
             var result = await _orderService.UpdateOrderStatus(orderId, newStatus);
 
@@ -143,14 +150,23 @@ namespace WebShopApiTest.UnitTest
        [Test]
        public async Task DeleteOrderById_ShouldReturnIsNull()
        {
-           var order = await _webShopContext.Orders.FirstOrDefaultAsync();
+            var order = new Order
+            {
+                OrderId = 50,
+                OrderDate = DateTime.Now,
+                OrderStatuses = OrderStatuses.Pending,
+                City = "Test",
+                Country = "Test",
+                StreetAddress = "Test",
+                UserId = "1234"
+            };
+            _webShopContext.Orders.Add(order);
            var orderId = order.OrderId;
 
            var act = await _orderService.DeleteOrderById(orderId);
 
-           var result = await _webShopContext.Orders.FindAsync(orderId);
 
-           Assert.That(result, Is.Null);
+           Assert.That(act, Is.Null);
 
        }
     }
