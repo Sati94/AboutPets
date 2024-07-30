@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework.Internal;
 using System.Net;
 using WebShopAPI.Data;
-
+using WebShopAPI.Model.OrderModel.DeliveryType;
 
 namespace WebShopApiTest.IntegrationTest
 {
@@ -213,60 +213,104 @@ namespace WebShopApiTest.IntegrationTest
         [Test]
         public async Task UpdateOrderTotalPriceWithBonus_ShouldReturnTrue()
         {
-                using (var scope = Services.CreateScope())
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                var user = await userManager.FindByEmailAsync("test@test.com");
+                var userId = user.Id;
+
+                var allOrder = dbContext.Orders.OrderByDescending(o => o.OrderId).ToList();
+                var order = allOrder.FirstOrDefault();
+                int orderId = order.OrderId;
+                var userProfile = dbContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
+                if (user != null && order != null && userProfile != null)
                 {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
-                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                    var bonus = userProfile.Bonus;
 
-                    var user = await userManager.FindByEmailAsync("test@test.com");
-                    var userId = user.Id;
-
-                    var allOrder = dbContext.Orders.OrderByDescending(o => o.OrderId).ToList();
-                    var order = allOrder.FirstOrDefault();
-                    int orderId = order.OrderId;
-                    var userProfile = dbContext.UserProfiles.FirstOrDefault(up => up.UserId == userId);
-                    if (user != null && order != null && userProfile != null)
+                    if (bonus > 0)
                     {
-                        var bonus = userProfile.Bonus;
-
-                        if (bonus > 0)
+                        var newTotalPrice = order.TotalPrice - (order.TotalPrice * bonus);
+                        var content = new StringContent(JsonConvert.SerializeObject(new
                         {
-                            var newTotalPrice = order.TotalPrice - (order.TotalPrice * bonus);
-                            var content = new StringContent(JsonConvert.SerializeObject(new
-                            {
-                                orderId = order.OrderId,
-                                orderdate = order.OrderDate,
-                                totalprice = newTotalPrice,
-                                orderStatuses = order.OrderStatuses,
-                                userId = order.UserId
-                            }), Encoding.UTF8, "application/json");
+                            orderId = order.OrderId,
+                            orderdate = order.OrderDate,
+                            totalprice = newTotalPrice,
+                            orderStatuses = order.OrderStatuses,
+                            userId = order.UserId
+                        }), Encoding.UTF8, "application/json");
 
-                            var response = await _httpClient.PutAsync($"/order/{orderId}/apply-cupon/{userId}", content);
-                            response.EnsureSuccessStatusCode();
+                        var response = await _httpClient.PutAsync($"/order/{orderId}/apply-cupon/{userId}", content);
+                        response.EnsureSuccessStatusCode();
 
 
-                            var responseContent = await response.Content.ReadAsStringAsync();
+                        var responseContent = await response.Content.ReadAsStringAsync();
 
-                            var result = JsonConvert.DeserializeObject<bool>(responseContent);
-                            Assert.That(result, Is.True);
-                        }
-
+                        var result = JsonConvert.DeserializeObject<bool>(responseContent);
+                        Assert.That(result, Is.True);
                     }
 
                 }
-         
-           
-            
-           
-        
-            
-            
-            
 
-           
-          
+            }
 
+        }
+        [Test]
+        public async Task UpdateOrderDelivery_ShouldReturnSuccess()
+        {
 
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var order = await dbContext.Orders.FirstOrDefaultAsync();
+
+                if (order == null)
+                {
+                    Assert.Fail("No orders found in the database.");
+                }
+
+                var request = new UpdateOrderDeliveryRequest
+                {
+                    DeliveryType = DeliveryTypes.DPD,
+                    Country = "NewCountry",
+                    City = "NewCity",
+                    StreetAddress = "NewAddress"
+                };
+                var orderId = order.OrderId;
+
+                var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync($"/update-order-delivery/{orderId}", content);
+
+                response.EnsureSuccessStatusCode();
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+               
+                Assert.That(responseContent, Is.EqualTo("Order delivery type and address updated successfully."));
+
+            }
+        }
+        [Test]
+        public async Task GetOrderByIdPending_ShouldReturnOrder()
+        {
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                var user = await userManager.FindByEmailAsync("test@test.com");
+                var userId = user.Id;
+
+                // Teszt
+                var response = await _httpClient.GetAsync($"/order/pending/{userId}");
+                response.EnsureSuccessStatusCode();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var resultOrder = JsonConvert.DeserializeObject<Order>(responseContent);
+
+                Assert.That(resultOrder, Is.Not.Null);
+                Assert.That(resultOrder.UserId, Is.EqualTo(userId));
+                Assert.That(resultOrder.OrderStatuses, Is.EqualTo(OrderStatuses.Pending));
+            }
         }
     }
 }
