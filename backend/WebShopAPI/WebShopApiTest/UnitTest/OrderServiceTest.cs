@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebShopAPI.Data;
+using WebShopAPI.Model.UserModels;
 using WebShopAPI.Service.NotificatonServiceMap;
+using WebShopAPI.Model.OrderModel.DeliveryType;
 using WebShopApiTest.IntegrationTest;
 
 namespace WebShopApiTest.UnitTest
@@ -37,7 +39,7 @@ namespace WebShopApiTest.UnitTest
             _webShopContext.Dispose();
 
         }
-        
+      
         [Test]
         public async Task GetAllOrder_ShouldReturnIsNotNull()
         {
@@ -79,7 +81,7 @@ namespace WebShopApiTest.UnitTest
                 Price = 10,
                 Quantity = 5
             };
-           
+
             var order = new Order
             {
                 OrderId = 100,
@@ -89,6 +91,7 @@ namespace WebShopApiTest.UnitTest
                 Country = "Test",
                 City = "Test",
                 StreetAddress = "Test",
+                DeliveryType = DeliveryTypes.Post
             };
             order.OrderItems.Add(orderItem);
             _webShopContext.UserProfiles.Add(userProfile);
@@ -101,6 +104,42 @@ namespace WebShopApiTest.UnitTest
            
             Assert.That(result, Is.Not.Null);
             Assert.That(100, Is.EqualTo(order.OrderId));
+        }
+        [Test]
+        public async Task GetPendingOrders_ShouldReturnOrder_WhenPendingOrderExists()
+        { 
+
+            var userId = "123456asd";
+  
+            var result = await _orderService.GetPendingOrders(userId);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.OrderId, Is.EqualTo(100));
+        }
+        [Test]
+        public async Task UpdateOrderDeliveryTypeAndAddress_ShouldReturnTrue_WhenOrderExists()
+        {
+
+            var userId = "123456asd";
+            var order =  await _webShopContext.Orders.FirstOrDefaultAsync(o => o.UserId == userId);
+            var request = new UpdateOrderDeliveryRequest
+            {
+                DeliveryType = DeliveryTypes.DPD,
+                Country = "NewCountry",
+                City = "NewCity",
+                StreetAddress = "NewAddress"
+            };
+         
+
+
+           
+            var result = await _orderService.UpdateOrderDeliveryTypeAndAddress(order.OrderId, request);
+
+            Assert.That(result, Is.True);
+            Assert.That(order.DeliveryType, Is.EqualTo(request.DeliveryType));
+            Assert.That(order.Country, Is.EqualTo(request.Country));
+            Assert.That(order.City, Is.EqualTo(request.City));
+            Assert.That(order.StreetAddress, Is.EqualTo(request.StreetAddress));
         }
         [Test]
         public async Task GetOrderById_ShouldReturnTrue()
