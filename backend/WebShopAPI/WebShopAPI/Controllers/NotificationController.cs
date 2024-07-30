@@ -35,7 +35,7 @@ namespace WebShopAPI.Controllers
             }
         }
 
-        [HttpDelete("notifications/deleteTodoItem/{todoItemId}")]
+        [HttpDelete("/notifications/deleteTodoItem/{todoItemId}")]
         public async Task<ActionResult<bool>> DeleteTodoItemController(int todoItemId)
         {
             try

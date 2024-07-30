@@ -83,6 +83,7 @@ namespace WebShopApiTest.IntegrationTest
                 dbContext.Orders.RemoveRange(dbContext.Orders);
                 dbContext.OrderItems.RemoveRange(dbContext.OrderItems);
                 dbContext.UserProfiles.RemoveRange(dbContext.UserProfiles);
+                dbContext.TodoItems.RemoveRange(dbContext.TodoItems);
 
 
                 dbContext.SaveChanges();

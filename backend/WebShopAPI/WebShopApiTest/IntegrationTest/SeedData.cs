@@ -81,6 +81,7 @@ namespace WebShopApiTest.IntegrationTest
                     };
                     TodoItem newTodoItem = new TodoItem
                     {
+                        Id = 100,
                         CreatedDate = DateTime.Now,
                         Title = "Test",
                         Description = "Test",
