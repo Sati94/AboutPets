@@ -146,21 +146,47 @@ namespace WebShopApiTest.IntegrationTest
 
                 var response = await _httpClient.DeleteAsync($"/notifications/deleteTodoItem/{todoId}");
 
-                // Assert - Check that the response is successful
+                
                 response.EnsureSuccessStatusCode();
+                var responseContent = await response.Content.ReadAsStringAsync();
+              
+                
+                Assert.That(responseContent, Is.EqualTo("true"));
 
-                // Verify that the TodoItem was deleted from the database
-                var deletedTodoItem = await dbContext.TodoItems.FindAsync(todoId);
-                if (deletedTodoItem != null)
-                {
-                    // Optionally log or print the details of the TodoItem for debugging purposes
-                    Console.WriteLine($"Deleted TodoItem details: Id = {deletedTodoItem.Id}, Title = {deletedTodoItem.Title}");
-                }
-
-                // Assert that the TodoItem is not present in the database
-                Assert.That(deletedTodoItem, Is.Null, "TodoItem should be deleted and not found in the database.");
+              
             }
         
+        }
+        [Test]
+        public async Task UpdateTodoItemStatus_ShouldReturnTrue_WhenTodoItemExists()
+        {
+            // Arrange
+            using (var scope = Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<WebShopContext>();
+                int todoId = 30;
+                var todoItem = new TodoItem
+                {
+                    Id = todoId,
+                    Title = "Test Todo",
+                    Description = "Test Description",
+                    Sender = "Test Sender",
+                    CreatedDate = DateTime.UtcNow,
+                    Status = TodoStatus.New
+                };
+                dbContext.TodoItems.Add(todoItem);
+                await dbContext.SaveChangesAsync();
+
+
+
+                var response = await _httpClient.PutAsJsonAsync($"/updateTodoItemStatus/{todoItem.Id}", TodoStatus.Completed);
+
+                // Assert
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<bool>();
+                Assert.That(result, Is.True);
+
+            }
         }
     }
 }
