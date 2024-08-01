@@ -86,7 +86,7 @@ const AdminToDo = () => {
         if (itemToDelete) {
             try {
                 const { token, role } = authState;
-                const response = await fetch(`${API_BASE_URL}/Notification/notifications/deleteTodoItem/${itemToDelete.id}`, {
+                const response = await fetch(`${API_BASE_URL}/notifications/deleteTodoItem/${itemToDelete.id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
