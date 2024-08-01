@@ -1,7 +1,7 @@
 # About Pets
 About Pets
 
-# About pets WebShop
+# About Pets WebShop
 
 About Pets WebShop is a web-based platform that facilitates buying products online. It provides a seamless user experience for users to list products, search for items, and users can send notification to Admin.
 
